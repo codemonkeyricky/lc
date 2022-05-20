@@ -5,7 +5,7 @@
 #include <queue>
 #include <algorithm>
 #include <unordered_map>
-#include <unordered_set>
+#include <vector>
 #include <map>
 #include <set>
 #include <bitset>
@@ -39,7 +39,7 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-    vector<vector<unordered_set<int>>> dp;
+    vector<vector<vector<int>>> dp;
 
     vector<string> dfs(vector<string> s, char op)
     {
@@ -60,14 +60,14 @@ class Solution
         return rv;
     }
 
-    unordered_set<int> dfs2(string &s, int i, int j)
+    vector<int> dfs2(string &s, int i, int j)
     {
         if (i + 1 == j)
             return {s[i] - '0'};
 
         if (dp[i][j].empty())
         {
-            unordered_set<int> rv;
+            vector<int> rv;
             for (auto k = i; k < j; ++k)
                 if (s[k] == '*' || s[k] == '+')
                 {
@@ -78,15 +78,17 @@ class Solution
                             if (s[k] == '*')
                             {
                                 if (fir * sec <= 1000)
-                                    rv.insert(fir * sec);
+                                    rv.push_back(fir * sec);
                             }
                             else
                             {
                                 if (fir + sec <= 1000)
-                                    rv.insert(fir + sec);
+                                    rv.push_back(fir + sec);
                             }
                 }
 
+            set<int> s(rv.begin(), rv.end());
+            rv.assign(s.begin(), s.end());
             dp[i][j] = rv;
         }
         return dp[i][j];
@@ -95,14 +97,16 @@ class Solution
 public:
     int scoreOfStudents(string s, vector<int> &answers)
     {
-        dp = vector<vector<unordered_set<int>>>(32, vector<unordered_set<int>>(32));
+        dp = vector<vector<vector<int>>>(32, vector<vector<int>>(32));
 
         vector<string> input;
         for (auto &c : s)
             input.push_back(string(1, c));
 
         int right = stoi(dfs(dfs(input, '*'), '+')[0]);
-        auto wrong = dfs2(s, 0, s.size()); 
+        auto wrongs = dfs2(s, 0, s.size());
+
+        set<int> wrong(wrongs.begin(), wrongs.end());
 
         int rv = 0;
         for (auto &a : answers)
