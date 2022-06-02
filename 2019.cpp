@@ -5,7 +5,7 @@
 #include <queue>
 #include <algorithm>
 #include <unordered_map>
-#include <vector>
+#include <unordered_set>
 #include <map>
 #include <set>
 #include <bitset>
@@ -39,7 +39,7 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-    vector<vector<vector<int>>> dp;
+    unordered_set<int> dp[32][32];
 
     vector<string> dfs(vector<string> s, char op)
     {
@@ -60,59 +60,54 @@ class Solution
         return rv;
     }
 
-    vector<int> dfs2(string &s, int i, int j)
+    void dfs2(string &s, int i, int j)
     {
-        if (i + 1 == j)
-            return {s[i] - '0'};
-
         if (dp[i][j].empty())
         {
-            vector<int> rv;
-            for (auto k = i; k < j; ++k)
-                if (s[k] == '*' || s[k] == '+')
-                {
-                    auto first = dfs2(s, i, k);
-                    auto second = dfs2(s, k + 1, j);
-                    for (auto &fir : first)
-                        for (auto &sec : second)
-                            if (s[k] == '*')
-                            {
-                                if (fir * sec <= 1000)
-                                    rv.push_back(fir * sec);
-                            }
-                            else
-                            {
-                                if (fir + sec <= 1000)
-                                    rv.push_back(fir + sec);
-                            }
-                }
+            if (i + 1 == j)
+                dp[i][j].insert(s[i] - '0');
+            else
+            {
+                unordered_set<int> rv;
+                for (auto k = i; k < j; ++k)
+                    if (s[k] == '*' || s[k] == '+')
+                    {
+                        dfs2(s, i, k);
+                        dfs2(s, k + 1, j);
+                        for (auto &fir : dp[i][k])
+                            for (auto &sec : dp[k + 1][j])
+                                if (s[k] == '*')
+                                {
+                                    if (fir * sec <= 1000)
+                                        rv.insert(fir * sec);
+                                }
+                                else
+                                {
+                                    if (fir + sec <= 1000)
+                                        rv.insert(fir + sec);
+                                }
+                    }
 
-            set<int> s(rv.begin(), rv.end());
-            rv.assign(s.begin(), s.end());
-            dp[i][j] = rv;
+                dp[i][j] = rv;
+            }
         }
-        return dp[i][j];
     }
 
 public:
     int scoreOfStudents(string s, vector<int> &answers)
     {
-        dp = vector<vector<vector<int>>>(32, vector<vector<int>>(32));
-
         vector<string> input;
         for (auto &c : s)
             input.push_back(string(1, c));
 
         int right = stoi(dfs(dfs(input, '*'), '+')[0]);
-        auto wrongs = dfs2(s, 0, s.size());
-
-        set<int> wrong(wrongs.begin(), wrongs.end());
+        dfs2(s, 0, s.size());
 
         int rv = 0;
         for (auto &a : answers)
             if (a == right)
                 rv += 5;
-            else if (wrong.count(a))
+            else if (dp[0][s.size()].count(a))
                 rv += 2;
         return rv;
     }

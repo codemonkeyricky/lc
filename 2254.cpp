@@ -39,41 +39,71 @@ TreeNode *populate(vector<int> &tree)
 
 class VideoSharingPlatform
 {
-    vector<string> videos;
+    unordered_map<int, string> videos;
+    unordered_map<int, array<int, 2>> likes;
+    unordered_map<int, int> views;
+    priority_queue<int, vector<int>, greater<int>> q;
 
 public:
     VideoSharingPlatform()
     {
+        for (auto i = 0; i <= 1e5; ++i)
+            q.push(i);
     }
 
     int upload(string video)
     {
-        videos.push_back(video);
-        return videos.size() - 1;
+        int id = q.top();
+        q.pop();
+        videos[id] = video;
+        return id;
     }
 
-    void remove(int videoId)
+    void remove(int id)
     {
+        if (videos.count(id))
+        {
+            videos.erase(id);
+            likes.erase(id);
+            views.erase(id);
+            q.push(id);
+        }
     }
 
-    string watch(int videoId, int startMinute, int endMinute)
+    string watch(int id, int startMinute, int endMinute)
     {
+        if (videos.count(id))
+        {
+            ++views[id];
+            return videos[id].substr(startMinute, endMinute - startMinute + 1);
+        }
+        return "-1";
     }
 
-    void like(int videoId)
+    void like(int id)
     {
+        if (videos.count(id))
+            ++likes[id][0];
     }
 
-    void dislike(int videoId)
+    void dislike(int id)
     {
+        if (videos.count(id))
+            ++likes[id][1];
     }
 
-    vector<int> getLikesAndDislikes(int videoId)
+    vector<int> getLikesAndDislikes(int id)
     {
+        if (videos.count(id))
+            return {likes[id][0], likes[id][1]};
+        return {-1};
     }
 
-    int getViews(int videoId)
+    int getViews(int id)
     {
+        if (videos.count(id))
+            return views[id];
+        return -1;
     }
 };
 
