@@ -45,37 +45,32 @@ public:
         int m = g.size();
         int n = g[0].size();
 
+        priority_queue<array<int, 3>, vector<array<int,3>>, greater<array<int,3>>> q;
         vector<vector<int>> seen(m, vector<int>(n, 1e9));
-        queue<array<int, 3>> q;
         q.push({0, 0, 0});
-        seen[0][0] = 0;
         int rv = 1e9;
         while (q.size())
         {
-            auto s = q.size();
-            while (s)
+            auto [c, i, j] = q.top();
+            q.pop();
+
+            if (i == m - 1 && j == n - 1)
+                return c;
+
+            if (g[i][j])
+                ++c;
+
+            vector<int> off = {0, 1, 0, -1, 0};
+            for (auto k = 0; k < 4; ++k)
             {
-                auto [i, j, c] = q.front();
-                q.pop();
-                if (i == m - 1 && j == n - 1)
-                    rv = min(rv, c);
-
-                if (g[i][j])
-                    ++c;
-
-                vector<int> off = {0, 1, 0, -1, 0};
-                for (auto k = 0; k < 4; ++k)
-                {
-                    int ni = i + off[k + 0];
-                    int nj = j + off[k + 1];
-                    if (ni >= 0 && nj >= 0 && ni < m && nj < n)
-                        if (seen[ni][nj] > c)
-                        {
-                            seen[ni][nj] = c;
-                            q.push({ni, nj, c});
-                        }
-                }
-                --s;
+                int ni = i + off[k + 0];
+                int nj = j + off[k + 1];
+                if (ni >= 0 && nj >= 0 && ni < m && nj < n)
+                    if (seen[ni][nj] > c)
+                    {
+                        seen[ni][nj] = c;
+                        q.push({c, ni, nj});
+                    }
             }
         }
         return rv;
