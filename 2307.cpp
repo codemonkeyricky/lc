@@ -40,65 +40,66 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-    bool bellmanFord(const vector<vector<double>> &g, int k)
+public:
+    vector<int> parent;
+    vector<double> value;
+    unordered_map<string, int> mp;
+    int n = 0;
+
+    pair<int, double> find(int k)
     {
-        vector<double> dist(g.size(), INT_MAX);
-        dist[k] = 0;
-        bool update = false;
-        for (auto times = 1; times < g.size(); ++times)
-        {
-            for (auto i = 0; i < g.size(); ++i)
-                for (auto j = 0; j < g[i].size(); ++j)
-                    if (g[i][j] != INT_MAX && dist[i] != INT_MAX && dist[j] > dist[i] + g[i][j])
-                        update = true, dist[j] = dist[i] + g[i][j];
+        if (parent[k] == k)
+            return {k, value[k]};
 
-            if (!update)
-                return false;
-        }
-
-        for (auto i = 0; i < g.size(); ++i)
-            for (auto j = 0; j < g[i].size(); ++j)
-                if (g[i][j] != INT_MAX && dist[i] != INT_MAX && dist[j] - (dist[i] + g[i][j]) > 0.00001)
-                    return true;
-        return false;
+        auto p = find(parent[k]);
+        parent[k] = p.first;
+        value[k] = value[k] * p.second;
+        return {parent[k], value[k]};
     }
 
-public:
+    int getId(string &s)
+    {
+        if (!mp.count(s))
+        {
+            mp[s] = n;
+            parent.push_back(n);
+            value.push_back(1.0);
+            n++;
+        }
+        return mp[s];
+    }
+
+    void unionize(int a, int b, double d)
+    {
+        parent[a] = b;
+        value[a] = d;
+    }
+
+    bool equal(double a, double b)
+    {
+        static const double er = (1e-9);
+        return fabs(a / b - 1.0) < er;
+    }
+
     bool checkContradictions(vector<vector<string>> &equations, vector<double> &values)
     {
-        unordered_map<string, int> lookup;
-        int count = 0;
-        for (auto &eq : equations)
+        for (int i = 0; i < equations.size(); i++)
         {
-            if (!lookup.count(eq[0]))
-                lookup[eq[0]] = count++;
-            if (!lookup.count(eq[1]))
-                lookup[eq[1]] = count++;
-        }
-
-        vector<vector<double>> currency(count, vector<double>(count, INT_MAX));
-        for (auto i = 0; i < equations.size(); ++i)
-        {
-            auto a = lookup[equations[i][0]];
-            auto b = lookup[equations[i][1]];
-
-            double c = -log10(values[i]);
-            if (currency[a][b] == INT_MAX || abs(c - currency[a][b]) <= 0.00001)
-                currency[a][b] = c; 
-            else 
-                return true;
-
-            c = -log10(1.0f / values[i]);
-            if (currency[b][a] == INT_MAX || abs(c - currency[b][a]) <= 0.00001)
-                currency[b][a] = c;
+            auto &e = equations[i];
+            int x = getId(e[0]);
+            int y = getId(e[1]);
+            double d = values[i];
+            auto a = find(x);
+            auto b = find(y);
+            if (a.first != b.first)
+                unionize(a.first, b.first, b.second * d / a.second);
             else
-                return true;
+            {
+                if (!equal(a.second, b.second * d))
+                    return true;
+            }
         }
-
-        for (auto i = 0; i < count; ++i)
-            if (!bellmanFord(currency, i))
-                return false;
-        return true;
+        return false;
     }
 };
 
