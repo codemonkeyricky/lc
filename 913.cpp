@@ -39,84 +39,91 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-    int dfs(vector<vector<int>> &al, int mouse = 1, int cat = 2, int steps = 0)
+    vector<array<int, 3>> parents(vector<vector<int>> &graph, int m, int c, int t)
     {
-        if (steps >= al.size() * 2)
-            return 0;
-
-        if (mouse == cat)
-            return 2;
-
-        if (mouse == 0)
-            return 1;
-
-        /*
-         *  2 - cat wins
-         *  1 - mouse wins
-         *  0 = draw
-         */
-
-        if (!dp[steps][mouse][cat])
-        {
-            auto isMouse = steps % 2 == 0;
-            if (isMouse)
-            {
-                int won = false, draw = false;
-                for (auto k = 0; k < al[mouse].size() && !won; ++k)
-                {
-                    int r = dfs(al, al[mouse][k], cat, steps + 1);
-                    if (r == 1)
-                    {
-                        won = true;
-                        break;
-                    }
-                    else if (r == 0)
-                        draw = true;
-                }
-
-                if (won)
-                    dp[steps][mouse][cat] = 1 + 1;
-                else if (draw)
-                    dp[steps][mouse][cat] = 0 + 1;
-                else 
-                    dp[steps][mouse][cat] = 2 + 1;
-            }
-            else 
-            {
-                int won = false, draw = false;
-                for(auto k = 0; k < al[cat].size() && !won; ++k)
-                {
-                    if (al[cat][k])
-                    {
-                        int r = dfs(al, mouse, al[cat][k], steps + 1);
-                        if (r == 2)
-                        {
-                            won = true; 
-                            break;
-                        }
-                        else if (r == 0)
-                            draw = true;
-                    }
-                }
-                if (won)
-                    dp[steps][mouse][cat] = 2 + 1;
-                else if (draw)
-                    dp[steps][mouse][cat] = 0 + 1;
-                else 
-                    dp[steps][mouse][cat] = 1 + 1;
-            }
-        }
-        return dp[steps][mouse][cat] - 1;
+        vector<array<int, 3>> rv;
+        if (t == 2)
+            for (int m2 : graph[m])
+                rv.push_back({m2, c, 3 - t});
+        else
+            for (int c2 : graph[c])
+                if (c2 > 0)
+                    rv.push_back({m, c2, 3 - t});
+        return rv;
     }
 
-    vector<vector<vector<int>>> dp;
-
 public:
-    int catMouseGame(vector<vector<int>> &graph)
+    int catMouseGame(vector<vector<int>> graph)
     {
         int n = graph.size();
-        dp = vector<vector<vector<int>>>(n * 2, vector<vector<int>>(n, vector<int>(n)));
-        return dfs(graph);
+        int DRAW = 0, MOUSE = 1, CAT = 2;
+
+        int color[51][51][3] = {};
+        int degree[51][51][3] = {};
+
+        // degree[node] : the number of neutral children of this node
+        for (int m = 0; m < n; ++m)
+            for (int c = 0; c < n; ++c)
+            {
+                degree[m][c][1] = graph[m].size();
+                degree[m][c][2] = graph[c].size();
+                for (int x : graph[c])
+                    if (x == 0)
+                    {
+                        degree[m][c][2]--;
+                        break;
+                    }
+            }
+
+        // enqueued : all nodes that are colored
+        queue<array<int, 4>> q;
+        for (int i = 0; i < n; ++i)
+            for (int t = 1; t <= 2; ++t)
+            {
+                color[0][i][t] = MOUSE;
+                q.push({0, i, t, MOUSE});
+                if (i > 0)
+                {
+                    color[i][i][t] = CAT;
+                    q.push({i, i, t, CAT});
+                }
+            }
+
+        // percolate
+        while (q.size())
+        {
+            // for nodes that are colored
+            auto [i, j, t, c] = q.front();
+            q.pop();
+
+            // for every parent of this node i, j, t
+            for (auto &[i2, j2, t2] : parents(graph, i, j, t))
+            {
+                // if this parent is not colored
+                if (color[i2][j2][t2] == DRAW)
+                {
+                    // if the parent can make a winning move (ie. mouse to MOUSE), do so
+                    if (t2 == c)
+                    {
+                        color[i2][j2][t2] = c;
+                        q.push({i2, j2, t2, c});
+                    }
+                    else
+                    {
+                        // else, this parent has degree[parent]--, and enqueue
+                        // if all children of this parent are colored as losing moves
+                        --degree[i2][j2][t2];
+                        if (degree[i2][j2][t2] == 0)
+                        {
+                            color[i2][j2][t2] = 3 - t2;
+                            q.push({i2, j2, t2, 3 - t2});
+                        }
+                    }
+                }
+            }
+        }
+
+        return color[1][2][1];
     }
 };
 
