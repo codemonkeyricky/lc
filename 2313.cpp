@@ -58,6 +58,9 @@ class Solution
         if (curr->val == 1 || curr->val == 0)
             return curr->val != result;
 
+        if (dp[result].count(curr))
+            return dp[result][curr];
+
         auto lt = dfs(curr->left, true);
         auto lf = dfs(curr->left, false);
         auto rt = dfs(curr->right, true);
@@ -66,41 +69,43 @@ class Solution
         {
             // OR
             if (result)
-                return min(lt + min(rt, rf), min(lt, lf) + rt);
+                return dp[result][curr] = min(lt + min(rt, rf), min(lt, lf) + rt);
             else
-                return lf + rf;
+                return dp[result][curr] = lf + rf;
         }
         else if (curr->val == 3)
         {
             // AND
             if (result)
-                return lt + rt;
+                return dp[result][curr] = lt + rt;
             else
-                return min(lf + min(rt, rf), min(lt, lf) + rf);
+                return dp[result][curr] = min(lf + min(rt, rf), min(lt, lf) + rf);
         }
         else if (curr->val == 4)
         {
             // XOR
             if (result)
-                return min(lt + rf, lf + rt);
+                return dp[result][curr] = min(lt + rf, lf + rt);
             else 
-                return min(lf + rf, lt + rt);
+                return dp[result][curr] = min(lf + rf, lt + rt);
         }
         else // 5 
         {
             // NOT
             if (curr->left)
                 if (result)
-                    return lf;
+                    return dp[result][curr] = lf;
                 else 
-                    return lt;
+                    return dp[result][curr] = lt;
             else 
                 if (result)
-                    return rf;
+                    return dp[result][curr] = rf;
                 else
-                    return rt;
+                    return dp[result][curr] = rt;
         }
     }
+
+    unordered_map<TreeNode *, int> dp[2];
 
 public:
     int minimumFlips(TreeNode *root, bool result)
