@@ -11,6 +11,7 @@
 #include <bitset>
 #include <numeric>
 #include <cmath>
+#include <climits>
 
 using namespace std;
 
@@ -37,42 +38,44 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-
 class Solution
 {
-    const int MOD = 1000000007;
-    int dp[10001][2][2] = {};
-    int dfs(int n, int k = 0, int p1 = 0, int p2 = 0)
+    int dp[1000] = {}, last[1000] = {};
+    int dfs(vector<int> &n, vector<vector<int>> &al, int i, int p, int &ids)
     {
-        if (k >= n)
-            return 1;
-
-        if (!dp[k][p1][p2])
+        int res = n[i];
+        for (auto j : al[i])
         {
-            int rv = 0;
-            if (p1 && p2)
-                rv = dfs(n, k + 1, 0, 0) % MOD;
-            else if (!p1 && p2)
-                rv = (dfs(n, k + 1, 1, 0) + dfs(n, k + 1, 0, 0) )% MOD;
-            else if (p1 && !p2)
-                rv = (dfs(n, k + 1, 0, 0) + dfs(n, k + 1, 0, 1)) % MOD;
-            else
+            if (j != p)
             {
-                rv = (rv + dfs(n, k + 1, 0, 0)) % MOD;
-                rv = (rv + dfs(n, k + 1, 0, 1)) % MOD;
-                rv = (rv + dfs(n, k + 1, 1, 0)) % MOD;
-                rv = (rv + dfs(n, k + 1, 1, 1)) % MOD;
+                int id = ids++;
+                dp[id] = dfs(n, al, j, i, ids);
+                last[id] = ids;
+                res ^= dp[id];
             }
-
-            dp[k][p1][p2] = rv + 1;
         }
-        return dp[k][p1][p2] - 1;
+        return res;
     }
 
 public:
-    int countHousePlacements(int n)
+    int minimumScore(vector<int> &n, vector<vector<int>> &edges)
     {
-        return dfs(n);
+        int ids = 0, res = INT_MAX;
+        vector<vector<int>> al(n.size());
+        for (auto &e : edges)
+            al[e[0]].push_back(e[1]), al[e[1]].push_back(e[0]);
+
+        int all = dfs(n, al, 0, -1, ids);
+        for (int i = 0; i < edges.size(); ++i)
+        {
+            for (int j = i + 1; j < edges.size(); ++j)
+            {
+                int p1 = j < last[i] ? all ^ dp[i] : all ^ dp[i] ^ dp[j];
+                int p2 = j < last[i] ? dp[i] ^ dp[j] : dp[i];
+                res = min(res, max({p1, p2, dp[j]}) - min({p1, p2, dp[j]}));
+            }
+        }
+        return res;
     }
 };
 
@@ -81,5 +84,6 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.minimumScore(vector<int>() = {1, 5, 5, 4, 11}, vector<vector<int>>() = {{0, 1}, {1, 2}, {1, 3}, {3, 4}});
     cout << r << endl;
 }
