@@ -37,10 +37,33 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<int> smallerNumbersThanCurrent(vector<int> &nums)
+    {
+        vector<array<int, 2>> nums2;
+        for (auto i = 0; i < nums.size(); ++i)
+            nums2.push_back({nums[i], i});
+
+        sort(begin(nums2), end(nums2));
+        vector<int> rv(nums2.size());
+        for (auto i = 0, j = 0; j < nums2.size(); ++j)
+        {
+            if (j && nums2[j][0] != nums2[j - 1][0])
+                i = j;
+            rv[nums2[j][1]] = i;
+        }
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    sol.smallerNumbersThanCurrent(vector<int>() = {8, 1, 2, 2, 3});
     cout << r << endl;
 }

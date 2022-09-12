@@ -39,25 +39,33 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    int longestCycle(vector<int> &e)
+    void dfs(vector<int> &edges, int n, int d, vector<int> &dp)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
-            {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
-                {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
-                }
-            }
-        return rv;
+        /* cycle detection */
+        if (dp[n] != -1)
+            return;
+
+        dp[n] = d;
+        if (edges[n] != -1) 
+            dfs(edges, edges[n], d + 1, dp); 
+    }
+
+public:
+    int closestMeetingNode(vector<int> &edges, int n1, int n2)
+    {
+        int n = edges.size();
+
+        vector<int> dp1(n, -1), dp2(n, -1);
+
+        dfs(edges, n1, 0, dp1);
+        dfs(edges, n2, 0, dp2);
+
+        int sum = 1e9, k = -1;
+        for (auto i = 0; i < n; ++i)
+            if (dp1[i] != -1 && dp2[i] != -1)
+                if (max(dp1[i], dp2[i]) < sum)
+                    sum = max(dp1[i], dp2[i]), k = i;
+        return k;
     }
 };
 
@@ -66,9 +74,9 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    r = sol.closestMeetingNode(vector<int>() = {4, 4, 8, -1, 9, 8, 4, 4, 1, 1}, 5, 6);
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.closestMeetingNode(vector<int>() = {2, 2, 3, -1}, 0, 1);
     cout << r << endl;
 }

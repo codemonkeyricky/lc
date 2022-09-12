@@ -37,10 +37,27 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int diagonalSum(vector<vector<int>> &mat)
+    {
+        int rv = 0, n = mat.size();
+        for (auto i = 0; i < n; ++i)
+            rv += mat[i][i] + mat[i][n - i - 1];
+
+        if (n % 2)
+            rv -= mat[n >> 1][n >> 1];
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.diagonalSum(vector<vector<int>>() = {{5}});
     cout << r << endl;
 }

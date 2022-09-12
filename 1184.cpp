@@ -37,6 +37,25 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution {
+public:
+    int distanceBetweenBusStops(vector<int>& d, int src, int dst) {
+        
+        auto sum = accumulate(begin(d),end(d), 0); 
+        
+        auto dist = 0;
+        while (src != dst)
+        {
+            dist += d[src];
+            src = (src + 1) % d;
+        }
+        
+        return min(dist, sum - dist); 
+    }
+};
+
+
+
 int main()
 {
     Solution sol;

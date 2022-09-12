@@ -37,10 +37,36 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    long long taskSchedulerII(vector<int> &tasks, int space)
+    {
+        unordered_map<int, int> last;
+
+        long long rv = 0, curr = 0;
+        for (auto i = 0; i < tasks.size(); ++i)
+        {
+            if (!last.count(tasks[i]) || curr - last[tasks[i]] > space)
+                ;
+            else
+            {
+                auto days = last[tasks[i]] + space + 1 - curr;
+                curr += days; 
+            }
+
+            last[tasks[i]] = curr;
+            ++curr;
+        }
+        return curr; 
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.taskSchedulerII(vector<int>() = {1, 2, 1, 2, 3, 1}, 3);
     cout << r << endl;
 }

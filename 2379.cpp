@@ -37,10 +37,37 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int minimumRecolors(string blocks, int k)
+    {
+        int rv = k;
+        for (auto i = 0, j = 0, w = 0, b = 0; j <= blocks.size(); ++j)
+        {
+            if (j >= k)
+                rv = min(rv, w);
+
+            if (j < blocks.size())
+            {
+                w += blocks[j] == 'W';
+                if (j >= k)
+                    w -= blocks[i] == 'W', ++i;
+            }
+        }
+
+        return rv; 
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.minimumRecolors("BWWWBB", 6);
+    cout << r << endl;
+
+    r = sol.minimumRecolors("WBWBBBW", 2);
     cout << r << endl;
 }

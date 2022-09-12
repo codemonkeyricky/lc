@@ -37,6 +37,22 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<string> buildArray(vector<int> &target, int n)
+    {
+        vector<string> rv;
+        for (auto i = 0, j = 1; j <= n && i < target.size();)
+        {
+            while (target[i] != j)
+                rv.push_back("Push"), rv.push_back("Pop"), ++j;
+            rv.push_back("Push"), ++i, ++j;
+        }
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;

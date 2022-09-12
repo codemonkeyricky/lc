@@ -37,6 +37,21 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    bool findSubarrays(vector<int> &nums)
+    {
+        unordered_set<int> sum;
+        for(auto i = 1; i < nums.size(); ++i)
+            if (sum.count(nums[i - 1] + nums[i]))
+                return true;
+            else
+                sum.insert(nums[i - 1] + nums[i]);
+        return false;
+    }
+};
+
 int main()
 {
     Solution sol;

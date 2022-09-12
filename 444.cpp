@@ -37,6 +37,26 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    bool sequenceReconstruction(vector<int> &nums, vector<vector<int>> &sequences)
+    {
+        auto mm = *max_element(begin(nums), end(nums));
+
+        vector<unordered_set<int>> al(mm + 1);
+        for (auto &seq : sequences)
+            for (auto i = 1; i < seq.size(); ++i)
+                al[seq[i - 1]].insert(seq[i]);
+
+        for (auto i = 1; i < nums.size(); ++i)
+            if (!al[nums[i - 1]].count(nums[i]))
+                return false;
+
+        return true;
+    }
+};
+
 int main()
 {
     Solution sol;

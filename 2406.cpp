@@ -37,10 +37,41 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int minGroups(vector<vector<int>> &intervals)
+    {
+        multiset<array<int, 2>> set;
+        for (auto &interval : intervals)
+            set.insert({interval[0], interval[1]});
+
+        int rv = 0;
+        while (set.size())
+        {
+            auto it = begin(set);
+            do
+            {
+                auto [a, b] = *it;
+                auto next = set.upper_bound({b + 1, b + 1});
+                set.erase(it); 
+                it = next;
+            } while (it != end(set));
+            ++rv; 
+        }
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.minGroups(vector<vector<int>>() = {{100, 3005}, {100, 3005}, {100, 3005}, {100, 3005}});
+    cout << r << endl;
+
+    r = sol.minGroups(vector<vector<int>>() = {{5, 10}, {6, 8}, {1, 5}, {2, 3}, {1, 10}});
     cout << r << endl;
 }

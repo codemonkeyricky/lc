@@ -37,10 +37,39 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<int> beautifulArray(int n)
+    {
+        /* 
+         *  beautiful array
+         */
+
+        if (n == 1)
+            return {1};
+
+        vector<int> first = beautifulArray(n / 2);
+        vector<int> second = beautifulArray(n - (n / 2));
+
+        /* 
+         *  Convert into even/odd and concatenate.
+         */ 
+
+        vector<int> rv;
+        for (auto e : first)
+            rv.push_back(2 * e);
+        for (auto e : second)
+            rv.push_back((2 * e) - 1);
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    sol.beautifulArray(10);
     cout << r << endl;
 }

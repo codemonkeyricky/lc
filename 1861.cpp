@@ -37,10 +37,38 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<vector<char>> rotateTheBox(vector<vector<char>> &box)
+    {
+        int m = box.size(), n = box[0].size();
+        for (auto k = 0; k < m; ++k)
+            for (int i = n - 1, j = n - 1; i >= -1; --i)
+                if (i >= 0 && box[k][i] == '#')
+                    box[k][j--] = box[k][i];
+                else if (i == -1 || box[k][i] == '*')
+                {
+                    while (i != j)
+                        box[k][j--] = '.';
+                    --j;
+                }
+
+        vector<vector<char>> rv(n, vector<char>(m));
+        for (auto i = 0; i < m; ++i)
+            for (auto j = 0; j < n; ++j)
+                rv[j][m - i - 1] = box[i][j];
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
-    cout << r << endl;
+    sol.rotateTheBox(vector<vector<char>>() = {{'#', '.', '*', '.'}});
+
+    sol.rotateTheBox(vector<vector<char>>() = {{'#', '.', '#'}});
 }

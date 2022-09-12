@@ -37,6 +37,18 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int findDerangement(int n)
+    {
+        int rv = 1;
+        while (n > 1)
+            rv *= --n;
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;

@@ -37,10 +37,30 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    string smallestNumber(string p)
+    {
+        string res;
+        for (int i = 0, j = 0; i <= p.size(); ++i)
+        {
+            res.push_back('1' + i);
+            if (i == p.size() || p[i] == 'I')
+            {
+                reverse(begin(res) + j, end(res));
+                j = i + 1;
+            }
+        }
+        return res;
+    }
+};
+
 int main()
 {
     Solution sol;
-    int r;
+    string r;
 
+    r = sol.smallestNumber("IIIDIDDD");
     cout << r << endl;
 }

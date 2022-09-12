@@ -37,10 +37,36 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+    int dfs(int n, int p, int k)
+    {
+        if (k == 0)
+            return p == n;
+        
+        if(!dp[p + 2000][k])
+            dp[p + 2000][k] = (dfs(n, p + 1, k - 1) + dfs(n, p - 1, k - 1)) % 1000000007 + 1;
+
+        return dp[p + 2000][k] - 1;
+    }
+
+    int dp[4001][1001] = {};
+
+public:
+    int numberOfWays(int start, int end, int k)
+    {
+        return dfs(end, start, k);
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.numberOfWays(2, 5, 10);
+    cout << r << endl;
+
+    r = sol.numberOfWays(1, 2, 3);
     cout << r << endl;
 }

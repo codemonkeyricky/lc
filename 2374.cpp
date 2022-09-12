@@ -37,10 +37,25 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int edgeScore(vector<int> &edges)
+    {
+        int n = edges.size();
+        vector<int> sum(n);
+        for (auto i = 0; i < edges.size(); ++i)
+            sum[edges[i]] += i;
+        auto it = max_element(begin(sum), end(sum));
+        return it - begin(sum);
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.edgeScore(vector<int>() = {1, 0, 0, 0, 0, 7, 7, 5});
     cout << r << endl;
 }

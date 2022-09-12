@@ -37,10 +37,40 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+    int dfs(vector<int> &piles, int i, int j)
+    {
+        if (i > j)
+            return 0;
+
+        if (!dp[i][j])
+        {
+            int n = piles.size();
+            auto l = dfs(piles, i + 1, j);
+            auto r = dfs(piles, i, j - 1);
+            dp[i][j] = max(piles[i] - l, piles[j] - r);
+        }
+        return dp[i][j];
+    }
+
+    int dp[501][501] = {};
+
+public:
+    bool stoneGame(vector<int> &piles)
+    {
+        return dfs(piles, 0, piles.size() - 1) > 0;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.stoneGame(vector<int>() = {3, 7, 2, 3});
+    cout << r << endl;
+
+    r = sol.stoneGame(vector<int>() = {5, 3, 4, 5});
     cout << r << endl;
 }

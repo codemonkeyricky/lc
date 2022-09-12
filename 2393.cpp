@@ -37,10 +37,27 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    long long countSubarrays(vector<int> &nums)
+    {
+        long long rv = 0, n = nums.size();
+        for (auto j = 0, k = 0; j < n; ++j)
+            if (j && nums[j - 1] < nums[j])
+                rv += ++k;
+            else
+                ++rv, k = 1;
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.countSubarrays(vector<int>() = {1, 3, 5, 4, 4, 6});
     cout << r << endl;
 }

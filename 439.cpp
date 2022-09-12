@@ -40,35 +40,42 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    int longestCycle(vector<int> &e)
+    string parseTernary(string exp)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
+        if (exp.empty())
+            return "";
+        
+        string stack;
+        for (int i = exp.size() - 1; i >= 0; --i)
+        {
+            if (stack.size() && stack.back() == '?')
             {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
+                stack.pop_back();
+                auto first = stack.back(); 
+                stack.pop_back();
+                stack.pop_back();
+                auto second = stack.back();
+                stack.pop_back();
+                if (exp[i] == 'T')
+                    stack.push_back(first);
                 else
-                {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
-                }
+                    stack.push_back(second);
             }
-        return rv;
+            else
+                stack.push_back(exp[i]);
+        }
+        return string(1, stack.back());
     }
 };
 
 int main()
 {
     Solution sol;
-    int r;
+    string r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    r = sol.parseTernary("F?1:T?4:5");
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.parseTernary("T?T?F:5:3");
     cout << r << endl;
 }

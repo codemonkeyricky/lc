@@ -39,25 +39,41 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    int longestCycle(vector<int> &e)
+    map<vector<int>, bool> dp;
+
+    bool dfs(vector<int> piles)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
+        if (accumulate(begin(piles), end(piles), 0) == 0)
+            return false;
+
+        sort(begin(piles), end(piles));
+        if (!dp.count(piles))
+        {
+            bool rv = false;
+            for (auto i = 0; i < piles.size() && !rv; ++i)
             {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
+                for (auto j = 1; j <= piles[i]; ++j)
                 {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
+                    piles[i] -= j;
+                    if (!dfs(piles))
+                    {
+                        piles[i] += j;
+                        rv = true;
+                        break; 
+                    }
+                    piles[i] += j;
                 }
             }
-        return rv;
+
+            dp[piles] = rv;
+        }
+        return dp[piles];
+    }
+
+public:
+    bool nimGame(vector<int> &piles)
+    {
+        return dfs(piles);
     }
 };
 
@@ -66,9 +82,9 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    r = sol.nimGame(vector<int>() = {1, 1});
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.nimGame(vector<int>() = {7, 6, 6, 7});
     cout << r << endl;
 }

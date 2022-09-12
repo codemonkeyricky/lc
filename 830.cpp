@@ -37,10 +37,28 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<vector<int>> largeGroupPositions(string s)
+    {
+        vector<vector<int>> rv;
+        for (auto i = 0, j = 1; j <= s.size(); ++j)
+            if (j >= s.size() || s[i] != s[j])
+            {
+                if (j - 1 - i + 1 >= 3)
+                    rv.push_back({i, j - 1});
+                i = j; 
+            }
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    sol.largeGroupPositions("abbxxxxzzy");
     cout << r << endl;
 }

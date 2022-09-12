@@ -37,10 +37,33 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int repeatedStringMatch(string a, string b)
+    {
+        int n = a.size();
+        bool first = true;
+        while (first || a.size() < b.size() * 2)
+        {
+            first = false;
+            auto aa = a;
+            aa.insert(end(aa), begin(a), end(a));
+            swap(aa, a);
+        }
+
+        auto p = a.find(b);
+        if (p == string::npos)
+            return -1;
+        return (p + b.size() + n - 1) / n;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.repeatedStringMatch("abcd", "cdabcdab");
     cout << r << endl;
 }

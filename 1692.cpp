@@ -37,10 +37,46 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+    int dp[1001][1001] = {};
+    int dfs(int n, int k, int empty)
+    {
+        if (n == 0 && empty == 0)
+            return 1;
+
+        if (n == 0)
+            return 0;
+
+        if (!dp[n][empty])
+        {
+            long long not_empty = k - empty, a = 0, b = 0;
+            if (empty)
+                a = dfs(n - 1, k, empty - 1);
+            b = not_empty * dfs(n - 1, k, empty);
+            dp[n][empty] = (a + b) % 1000000007 + 1;
+        }
+        return dp[n][empty] - 1;
+    }
+
+public:
+    int waysToDistribute(int n, int k)
+    {
+        return dfs(n, k, k);
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.waysToDistribute(20, 5);
+    cout << r << endl;
+
+    r = sol.waysToDistribute(4, 2);
+    cout << r << endl;
+
+    r = sol.waysToDistribute(3, 2);
     cout << r << endl;
 }

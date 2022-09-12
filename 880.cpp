@@ -37,10 +37,42 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    string decodeAtIndex(string &s, int k, long long len = 0)
+    {
+        for (auto i = 0; i < s.size(); ++i)
+        {
+            if (isalpha(s[i]))
+            {
+                if (++len == k)
+                    return string(1, s[i]);
+            }
+            else
+            {
+                if (len * (s[i] - '0') >= k)
+                    return decodeAtIndex(s, k % len == 0 ? len : k % len);
+                len *= s[i] - '0';
+            }
+        }
+    }
+};
+
 int main()
 {
     Solution sol;
-    int r;
+    string r;
 
+    r = sol.decodeAtIndex(string() = "a1b2c3d4e5g6", 301);
     cout << r << endl;
+
+    // r = sol.decodeAtIndex("abc", 1);
+    // cout << r << endl;
+
+    // r = sol.decodeAtIndex("a2345678999999999999999", 1);
+    // cout << r << endl;
+
+    // r = sol.decodeAtIndex("leet2code3", 34);
+    // cout << r << endl;
 }

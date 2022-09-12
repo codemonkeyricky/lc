@@ -37,10 +37,30 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<int> findPermutation(string s)
+    {
+        vector<int> rv;
+        for (int i = 0, j = 0; j <= s.size(); ++j)
+        {
+            rv.push_back(1 + j);
+            if (j == s.size() || s[j] == 'I')
+            {
+                reverse(begin(rv) + i, end(rv));
+                i = j + 1;
+            }
+        }
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
-    cout << r << endl;
+    sol.findPermutation("IIIIIDI");
+    sol.findPermutation("DI");
 }

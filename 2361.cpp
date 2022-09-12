@@ -37,10 +37,35 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<long long> minimumCosts(vector<int> &regular, vector<int> &express, int expressCost)
+    {
+        int n = regular.size() + 1;
+        vector<array<long long, 2>> dp(n);
+        dp[0][1] = expressCost;
+
+        for (auto i = 1; i < n; ++i)
+        {
+            dp[i][0] = min(dp[i - 1][0], dp[i - 1][1]) + regular[i - 1];
+            dp[i][1] = min(dp[i - 1][1], dp[i - 1][0] + expressCost) + express[i - 1];
+        }
+
+        vector<long long> rv;
+        for (auto i = 1; i < n; ++i)
+            rv.push_back(min(dp[i][0], dp[i][1]));
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
-    int r;
+    vector<long long> r;
 
-    cout << r << endl;
+    r = sol.minimumCosts(vector<int>() = {1, 6, 9, 5}, vector<int>() = {5, 2, 3, 10}, 8);
+    for (auto &c : r)
+        cout << c << ", ";
+    cout << endl;
 }

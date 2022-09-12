@@ -37,10 +37,42 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<vector<long long>> splitPainting(vector<vector<int>> &segments)
+    {
+        vector<int> dp(100001);
+        for (auto &segment : segments)
+        {
+            auto i = segment[0], j = segment[1], k = segment[2];
+            dp[i] += k;
+            dp[j] -= k;
+        }
+
+        vector<vector<long long>> rv;
+        long long sum = 0;
+        for (auto i = 0, j = 0; j < dp.size(); ++j)
+        {
+            if (dp[j])
+            {
+                if (sum)
+                    rv.push_back({i, j, sum});
+                i = j;
+            }
+
+            sum += dp[j];
+        }
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    sol.splitPainting(vector<vector<int>>() = {{1, 4, 5}, {4, 7, 7}, {1, 7, 9}});
     cout << r << endl;
 }

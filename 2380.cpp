@@ -37,10 +37,28 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution {
+public:
+    int secondsToRemoveOccurrences(string s)
+    {
+        int rv = -1, retry;
+        do
+        {
+            ++rv, retry = 0;
+            for (auto i = 1; i < s.size(); ++i)
+                if (s[i - 1] == '0' && s[i] == '1')
+                    swap(s[i - 1], s[i]), ++i, retry = true;
+        } while (retry);
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.secondsToRemoveOccurrences("0110101");
     cout << r << endl;
 }

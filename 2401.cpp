@@ -37,6 +37,23 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int longestNiceSubarray(vector<int> &nums)
+    {
+        int mask = 0, rv = 0;
+        for (auto i = 0, j = 0; j < nums.size(); ++j)
+        {
+            while (mask & nums[j])
+                mask &= ~nums[i++];
+            mask |= nums[j];
+            rv = max(rv, j - i + 1);
+        }
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;

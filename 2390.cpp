@@ -37,6 +37,21 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    string removeStars(string s)
+    {
+        string rv; 
+        for(auto & c : s)
+            if (rv.size() && c == '*')
+                rv.pop_back();
+            else
+                rv += c;
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;

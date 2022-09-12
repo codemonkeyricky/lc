@@ -37,10 +37,37 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int partitionString(string s)
+    {
+        array<int, 26> seen = {};
+        int rv = 1; 
+        for (int i = 0; i < s.size(); ++i)
+        {
+            if (seen[s[i] - 'a'])
+                seen = {}, ++rv;
+            ++seen[s[i] - 'a'];
+        }
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.partitionString("ssssss");
+    cout << r << endl;
+
+    r = sol.partitionString("gizfdfri");
+    cout << r << endl;
+
+    r = sol.partitionString("gizfdfri");
+    cout << r << endl;
+
+    r = sol.partitionString("abacaba");
     cout << r << endl;
 }

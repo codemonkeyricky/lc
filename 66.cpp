@@ -37,10 +37,34 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<int> plusOne(vector<int> &digits)
+    {
+        reverse(begin(digits), end(digits));
+
+        int carry = 1;
+        for (auto i = 0; i < digits.size() && carry; ++i)
+            if (digits[i] == 9)
+                digits[i] = 0;
+            else
+                ++digits[i], carry = 0;
+
+        if (carry)
+            digits.push_back(carry);
+
+        reverse(begin(digits), end(digits));
+
+        return digits;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+sol.plusOne(vector<int>'9')
     cout << r << endl;
 }

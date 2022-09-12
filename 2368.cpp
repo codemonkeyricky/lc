@@ -37,6 +37,28 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+    void dfs(vector<vector<int>> &al, int k, unordered_set<int> &res, unordered_set<int> &seen)
+    {
+        seen.insert(k);
+        for (auto &n : al[k])
+            if (!seen.count(n) && !res.count(n))
+                dfs(al, n, res, seen);
+    }
+
+public:
+    int reachableNodes(int n, vector<vector<int>> &edges, vector<int> &restricted)
+    {
+        vector<vector<int>> al(n);
+        for (auto &e : edges)
+            al[e[0]].push_back(e[1]), al[e[1]].push_back(e[0]);
+        unordered_set<int> res(begin(restricted), end(restricted)), seen;
+        dfs(al, 0, res, seen);
+        return seen.size();
+    }
+};
+
 int main()
 {
     Solution sol;

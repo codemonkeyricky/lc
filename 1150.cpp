@@ -37,10 +37,47 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    bool isMajorityElement(vector<int> &nums, int target)
+    {
+        int l = 0, r = nums.size() - 1;
+        while (l < r)
+        {
+            int m = (l + r + 1) / 2;
+            if (nums[m] <= target)
+                l = m;
+            else
+                r = m - 1;
+        }
+        int right = l;
+
+        l = 0, r = nums.size() - 1;
+        while (l < r)
+        {
+            int m = (l + r) / 2;
+            if(nums[m] >= target)
+                r = m;
+            else 
+                l = m + 1;
+        }
+        int left = l;
+
+        int len = nums[left] == target ? (right - left + 1) : 0;
+
+        return len > nums.size() / 2;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.isMajorityElement(vector<int>() = {438885258}, 786460391);
+    cout << r << endl;
+
+    r = sol.isMajorityElement(vector<int>() = {10, 100, 101, 101}, 101);
     cout << r << endl;
 }

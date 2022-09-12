@@ -37,10 +37,32 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<int> answerQueries(vector<int> &nums, vector<int> &queries)
+    {
+        sort(begin(nums), end(nums));
+        vector<int> sum(nums.size() + 1);
+        for (auto i = 0; i < nums.size(); ++i)
+            sum[i + 1] += sum[i] + nums[i];
+
+        vector<int> rv; 
+        for (auto &q : queries)
+            rv.push_back(upper_bound(begin(sum), end(sum), q) - begin(sum) - 1);
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    sol.answerQueries(vector<int>() = {736411, 184882, 914641, 37925, 214915}, vector<int>() = {718089, 665450});
+    cout << r << endl;
+
+    sol.answerQueries(vector<int>() = {4, 5, 2, 1}, vector<int>() = {3, 10, 21});
     cout << r << endl;
 }

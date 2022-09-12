@@ -37,10 +37,28 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int prefixCount(vector<string> &words, string pref)
+    {
+        long long rhash = 0, p = 1, mod = 1e9 + 7;
+        for (auto &c : pref)
+            rhash *= 26, rhash = (rhash + c - '0') % mod;
+
+        int rv = 0;
+        for (long long i = 0, hash = 0; i < words.size(); ++i, rv += rhash == hash, hash = 0)
+            for(auto j = 0; j < words[i].size() && j < pref.size(); ++j)
+                hash *= 26, hash = (hash + words[i][j] - '0') % mod;
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.prefixCount(vector<string>() = {"pay", "attention", "practice", "attend"}, "at");
     cout << r << endl;
 }

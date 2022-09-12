@@ -37,6 +37,29 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+    bool dfs(string state)
+    {
+        int n = state.size();
+        for(auto i = 1; i < n; ++i)
+            if (state[i - 1] == '+' && state[i] == '+')
+            {
+                state[i - 1] = state[i] = '-';
+                if (!dfs(state))
+                    return true;
+                state[i - 1] = state[i] = '+';
+            }
+        return false;
+    }
+
+public:
+    bool canWin(string state)
+    {
+        return dfs(state);
+    }
+};
+
 int main()
 {
     Solution sol;

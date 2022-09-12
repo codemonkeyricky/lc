@@ -37,10 +37,37 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    bool isPalindrome(int x)
+    {
+        if (x < 0)
+            return false;
+        
+        long long l = 1;
+        while (x / l)
+            l *= 10;
+        l /= 10;
+
+        while (l)
+        {
+            if (x / l != x % 10)
+                return false;
+            
+            x %= l;
+            x /= 10;
+            l /= 100;
+        }
+        return true;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.isPalindrome(121);
     cout << r << endl;
 }

@@ -40,24 +40,21 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    int longestCycle(vector<int> &e)
+    int kthLargestValue(vector<vector<int>> &mat, int k)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
-            {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
-                {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
-                }
-            }
-        return rv;
+        int m = mat.size();
+        int n = mat[0].size();
+        vector<vector<int>> dp(m, vector<int>(n));
+        vector<int> sum; 
+        for (auto i = 0; i < m; ++i)
+            for (auto j = 0; j < n; sum.push_back(dp[i][j++]))
+                dp[i][j] = (i ? dp[i - 1][j] : 0) ^
+                           (j ? dp[i][j - 1] : 0) ^
+                           (i && j ? dp[i - 1][j - 1] : 0) ^
+                           mat[i][j];
+
+        nth_element(begin(sum), begin(sum) + k - 1, end(sum), greater<int>{});
+        return sum[k - 1];
     }
 };
 
@@ -66,9 +63,12 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    r = sol.kthLargestValue(vector<vector<int>>() = {{8, 10, 5, 8, 5, 7, 6, 0, 1, 4, 10, 6, 4, 3, 6, 8, 7, 9, 4, 2}}, 2);
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.kthLargestValue(vector<vector<int>>() = {{5, 2}, {1, 6}}, 4);
+    cout << r << endl;
+
+    r = sol.kthLargestValue(vector<vector<int>>() = {{5, 2}, {1, 6}}, 1);
     cout << r << endl;
 }

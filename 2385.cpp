@@ -50,42 +50,45 @@ TreeNode *populate(vector<int> &tree)
  */
 class Solution
 {
-    int dfs(TreeNode *curr, array<int, 10> &nums)
+    void dfs(vector<vector<int>> &al, TreeNode *curr, TreeNode *p = nullptr)
     {
-        ++nums[curr->val];
-        if (!curr->left && !curr->right)
-        {
-            int odd = 0;
-            for (auto &n : nums)
-                if (n % 2)
-                    ++odd;
-            --nums[curr->val];
-            return odd <= 1;
-        }
-
-        int rv = 0;
+        if (p)
+            al[curr->val].push_back(p->val);
         if (curr->left)
-            rv += dfs(curr->left, nums);
+            al[curr->val].push_back(curr->left->val), dfs(al, curr->left, curr);
         if (curr->right)
-            rv += dfs(curr->right, nums);
+            al[curr->val].push_back(curr->right->val), dfs(al, curr->right, curr);
+    }
 
-        --nums[curr->val];
+public:
+    int amountOfTime(TreeNode *root, int start)
+    {
+        vector<vector<int>> al(100001);
+        dfs(al, root);
 
+        vector<int> seen(100001);
+        queue<int> q;
+        q.push(start);
+        seen[start] = 1;
+        int rv = 0;
+        while (q.size())
+        {
+            auto s = q.size();
+            while (s)
+            {
+                auto n = q.front();
+                q.pop();
+
+                for (auto &nn : al[n])
+                    if (!seen[nn])
+                        seen[nn] = 1, q.push(nn);
+                --s; 
+            }
+
+            if (q.size())
+                ++rv;
+        }
         return rv; 
-    }
-
-public:
-    int pseudoPalindromicPaths(TreeNode *root)
-    {
-        return dfs(root, array<int, 10>() = {});
-    }
-};
-
-class Solution
-{
-public:
-    bool circularArrayLoop(vector<int> &nums)
-    {
     }
 };
 

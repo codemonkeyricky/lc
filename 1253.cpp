@@ -40,24 +40,34 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    int longestCycle(vector<int> &e)
+    vector<vector<int>> reconstructMatrix(int upper, int lower, vector<int> &colsum)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
-            {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
+        int n = colsum.size();
+        vector<vector<int>> rv(2, vector<int>(n));
+        for (auto i = 0; i < n; ++i)
+        {
+            if (colsum[i] == 2)
+                if (upper == 0 || lower == 0)
+                    return {};
+                else
+                    rv[0][i] = rv[1][i] = 1, --upper, --lower;
+            else if (colsum[i] == 1)
+                if (upper >= lower)
+                    if (upper == 0)
+                        return {};
+                    else
+                        rv[0][i] = 1, --upper;
                 else
                 {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
+                    if (lower == 0)
+                        return {};
+                    else
+                        rv[1][i] = 1, --lower;
                 }
-            }
-        return rv;
+        }
+        if (lower == 0 && upper == 0)
+            return rv;
+        return {};
     }
 };
 
@@ -66,9 +76,9 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    sol.reconstructMatrix(4, 7, vector<int>() = {2, 1, 2, 2, 1, 1, 1});
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    sol.reconstructMatrix(2, 1, vector<int>() = {1, 1, 1});
     cout << r << endl;
 }

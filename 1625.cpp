@@ -39,24 +39,42 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    int longestCycle(vector<int> &e)
+    unordered_set<string> visited;
+    string rv;
+    int a, b, n;
+
+    string rotate(string s, int x)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
-            {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
-                {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
-                }
-            }
+        reverse(s.begin(), s.end());
+        reverse(s.begin(), s.begin() + x);
+        reverse(s.begin() + x, s.end());
+        return s;
+    }
+
+    string add(string s, int x)
+    {
+        for (int i = 1; i < n; i += 2)
+            s[i] = '0' + (s[i] - '0' + x) % 10;
+        return s;
+    }
+
+public:
+    void dfs(string s)
+    {
+        if (!visited.count(s))
+        {
+            rv = min(rv, s);
+            visited.insert(s);
+            dfs(rotate(s, b));
+            dfs(add(s, a));
+        }
+    }
+
+    string findLexSmallestString(string s, int a, int b)
+    {
+        rv = s;
+        this->a = a, this->b = b, this->n = s.size();
+        dfs(s);
         return rv;
     }
 };
@@ -64,11 +82,14 @@ public:
 int main()
 {
     Solution sol;
-    int r;
+    string r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    r = sol.findLexSmallestString("565510", 7, 2);
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.findLexSmallestString("43987654", 7, 3);
+    cout << r << endl;
+
+    r = sol.findLexSmallestString("5525", 9, 2);
     cout << r << endl;
 }

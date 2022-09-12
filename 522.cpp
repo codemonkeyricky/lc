@@ -37,6 +37,38 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+    void dfs(string &s, string &curr, int k, unordered_map<string, int> &sub)
+    {
+        if (k >= s.size())
+        {
+            ++sub[curr];
+            return;
+        }
+
+        dfs(s, curr, k + 1, sub);
+        curr.push_back(s[k]);
+        dfs(s, curr, k + 1, sub);
+        curr.pop_back();
+    }
+
+public:
+    int findLUSlength(vector<string> &strs)
+    {
+        unordered_map<string, int> sub;
+        string ref;
+        for (auto &s : strs)
+            dfs(s, ref, 0, sub);
+        
+        int rv = -1;
+        for (auto &s : sub)
+            if (s.second == 1)
+                rv = max(rv, (int)s.first.size());
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;

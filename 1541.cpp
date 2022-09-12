@@ -40,23 +40,38 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    int longestCycle(vector<int> &e)
+    int minInsertions(string s)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
+        string ss;
+        int n = s.size(), rv = 0;
+        for (auto i = 0; i < n; ++i)
+        {
+            if (i + 1 < n && s[i] == ')' && s[i + 1] == ')')
+                ss += ')', ++i;
+            else 
             {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
-                {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
-                }
+                if (s[i] == ')')
+                    ++rv;
+                ss += s[i];
             }
+        }
+
+        swap(ss, s);
+        ss.clear();
+
+        for (auto &c : s)
+            if (ss.size() && ss.back() == '(' && c == ')')
+                ss.pop_back();
+            else
+                ss += c;
+
+        for (auto &c : ss)
+        {
+            if (c == '(')
+                ++rv;
+            ++rv;
+        }
+
         return rv;
     }
 };
@@ -66,9 +81,12 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    r = sol.minInsertions("))())(");
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.minInsertions("(()))(()))()())))");
+    cout << r << endl;
+
+    r = sol.minInsertions("(()))");
     cout << r << endl;
 }

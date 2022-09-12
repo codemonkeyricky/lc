@@ -37,6 +37,41 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+    int modPow(int x, unsigned int y, unsigned int m)
+    {
+        if (y == 0)
+            return 1;
+        long p = modPow(x, y / 2, m) % m;
+        p = (p * p) % m;
+        return y % 2 ? (p * x) % m : p;
+    }
+
+public:
+    int maxNiceDivisors(int pf)
+    {
+        if (pf <= 3)
+            return pf;
+
+        int MOD = 1e9 + 7;
+
+        int threes = pf / 3, twos = 0;
+        if (pf % 3 == 0)
+            ;
+        else if (pf % 3 == 2)
+            twos = 1;
+        else if (pf % 3 == 1)
+            --threes, twos = 2;
+
+        long long rv = modPow(3, threes, MOD);
+        while (twos--)
+            rv = (rv * 2) % MOD;
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;

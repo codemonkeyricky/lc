@@ -37,10 +37,40 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+    bool isPalindrome(vector<int> &nums)
+    {
+        int i = 0, j = nums.size() - 1;
+        while (i < j)
+            if (nums[i++] != nums[j--])
+                return false;
+        return true;
+    }
+
+public:
+    bool isStrictlyPalindromic(int n)
+    {
+        for (auto i = 2; i < n - 1; ++i)
+        {
+            vector<int> nums;
+            auto nn = n;
+            while (nn)
+                nums.push_back(nn % i), nn /= i;
+
+            if (!isPalindrome(nums))
+                return false;
+        }
+
+        return true;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.isStrictlyPalindromic(9);
     cout << r << endl;
 }

@@ -39,24 +39,31 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    int longestCycle(vector<int> &e)
+    int dfs(vector<int> &rows, int r, int mask, int cols)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
-            {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
-                {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
-                }
-            }
+        mask |= rows[r];
+        if (__builtin_popcount(mask) > cols)
+            return -1e9; 
+        
+        int rv = 0;
+        for (auto i = r + 1; i < rows.size(); ++i)
+            rv = max(rv, dfs(rows, i, mask, cols));
+        return rv + 1;
+    }
+
+public:
+    int maximumRows(vector<vector<int>> &mat, int cols)
+    {
+        vector<int> rows(mat.size());
+        for (auto i = 0; i < mat.size(); ++i)
+            for (auto j = 0; j < mat[i].size(); ++j)
+                if (mat[i][j])
+                    rows[i] |= 1 << j;
+
+        int rv = 0;
+        for (auto i = 0; i < rows.size(); ++i)
+            rv = max(rv, dfs(rows, i, 0, cols));
+
         return rv;
     }
 };
@@ -66,9 +73,9 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    r = sol.maximumRows(vector<vector<int>>() = {{1, 0, 1, 1, 1, 1}, {0, 0, 0, 1, 1, 0}, {1, 1, 0, 0, 0, 0}, {0, 0, 1, 1, 0, 1}}, 2);
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.maximumRows(vector<vector<int>>() = {{0, 0, 0}, {1, 0, 1}, {0, 1, 1}, {0, 0, 1}}, 2);
     cout << r << endl;
 }

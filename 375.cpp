@@ -37,10 +37,36 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+int dp[201][201] = {};
+class Solution
+{
+    int dfs(int i, int j)
+    {
+        if (i >= j)
+            return 0;
+
+        int rv = 1e9;
+        if (!dp[i][j])
+        {
+            for (auto k = i; k <= j; ++k)
+                rv = min(rv, k + max(dfs(k + 1, j), dfs(i, k - 1)));
+            dp[i][j] = rv + 1;
+        }
+        return dp[i][j] - 1;
+    }
+
+public:
+    int getMoneyAmount(int n)
+    {
+        return dfs(1, n);
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.getMoneyAmount(10);
     cout << r << endl;
 }

@@ -37,10 +37,32 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    string findContestMatch(int n)
+    {
+        vector<string> nums;
+        for (auto i = 1; i <= n; ++i)
+            nums.push_back(to_string(i));
+
+        while (nums.size() > 1)
+        {
+            vector<string> rv;
+            int i = 0, j = nums.size() - 1;
+            while (i < j)
+                rv.push_back("(" + nums[i++] + "," + nums[j--] + ")");
+            swap(rv, nums);
+        }
+        return nums[0];
+    }
+};
+
 int main()
 {
     Solution sol;
-    int r;
+    string r;
 
+    r = sol.findContestMatch(4096);
     cout << r << endl;
 }

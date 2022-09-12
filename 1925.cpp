@@ -37,10 +37,25 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int countTriples(int n)
+    {
+        int rv = 0;
+        for (auto a = 1; a < n; ++a)
+            for (int b = a + 1, c = (int)sqrt(a * a + b * b); b < n; ++b, c = sqrt(a * a + b * b))
+                if (c <= n && c * c == a * a + b * b)
+                    rv += 2; 
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.countTriples(10);
     cout << r << endl;
 }

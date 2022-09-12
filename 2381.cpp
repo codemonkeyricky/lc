@@ -40,35 +40,38 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    int longestCycle(vector<int> &e)
+    string shiftingLetters(string s, vector<vector<int>> &shifts)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
-            {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
-                {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
-                }
-            }
-        return rv;
+        int n = s.size();
+        vector<int> shift(n + 1);
+        for (auto &s : shifts)
+        {
+            int i = s[0], j = s[1] + 1;
+            shift[i] += s[2] ? 1 : -1, shift[j] += s[2] ? -1 : 1;
+        }
+
+        for (auto i = 0, offset = 0; i < shift.size() - 1; ++i)
+        {
+            offset += shift[i];
+            auto k = s[i] - 'a';
+            k = (k + offset) % 26;
+            if (k < 0)
+                k += 26;
+            s[i] = k + 'a';
+        }
+
+        return s;
     }
 };
 
 int main()
 {
     Solution sol;
-    int r;
+    string r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    r = sol.shiftingLetters("xuwdbdqik", vector<vector<int>>() = {{4, 8, 0}, {4, 4, 0}, {2, 4, 0}, {2, 4, 0}, {6, 7, 1}, {2, 2, 1}, {0, 2, 1}, {8, 8, 0}, {1, 3, 1}});
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.shiftingLetters("abc", vector<vector<int>>() = {{0, 1, 0}, {1, 2, 1}, {0, 2, 1}});
     cout << r << endl;
 }

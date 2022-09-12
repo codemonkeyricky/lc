@@ -37,10 +37,31 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int mostFrequentEven(vector<int> &nums)
+    {
+        map<int, int> dp;
+        for (auto i = 0; i < nums.size(); ++i)
+            if (!(nums[i] & 1))
+                ++dp[nums[i]];
+
+        int count = -1, rv = -1;
+        for (auto i = 0; i < nums.size(); ++i)
+            if (!(nums[i] & 1))
+                if (dp[nums[i]] > count || (dp[nums[i]] == count && nums[i] < rv))
+                    count = dp[nums[i]], rv = nums[i];
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.mostFrequentEven(vector<int>() = {0, 1, 2, 2, 4, 4, 1});
     cout << r << endl;
 }

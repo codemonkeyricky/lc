@@ -37,6 +37,25 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int maximumGroups(vector<int> &grades)
+    {
+        int sum = 0, cnt = 0, csum = 0, ccnt = 0;
+        sort(begin(grades), end(grades));
+
+        int rv = 0;
+        for (auto &g : grades)
+        {
+            ++ccnt, csum += g;
+            if (csum > sum && ccnt > cnt)
+                sum = csum, cnt = ccnt, ccnt = csum = 0, ++rv;
+        }
+        return rv; 
+    }
+};
+
 int main()
 {
     Solution sol;

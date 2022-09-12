@@ -37,6 +37,25 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    bool isMonotonic(vector<int> &nums)
+    {
+        bool skip = false;
+        for (auto i = 1; i < nums.size() && !skip; i++)
+            if (nums[i - 1] > nums[i])
+                skip = true;
+        if (!skip)
+            return true;
+
+        for (auto i = 1; i < nums.size(); i++)
+            if (nums[i - 1] <= nums[i])
+                return false;
+        return true;
+    }
+};
+
 int main()
 {
     Solution sol;

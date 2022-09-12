@@ -37,10 +37,26 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    bool checkDistances(string s, vector<int> &distance)
+    {
+        vector<int> last(26, -1);
+        for (auto i = 0; i < s.size(); ++i)
+            if (last[s[i] - 'a'] == -1)
+                last[s[i] - 'a'] = i;
+            else if (i - last[s[i] - 'a'] - 1 != distance[s[i] - 'a'])
+                return false;
+        return true;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.checkDistances("abaccb", vector<int>() = {1, 3, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     cout << r << endl;
 }

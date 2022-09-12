@@ -37,10 +37,35 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    vector<int> constructArray(int n, int k)
+    {
+        vector<int> rv, copy;
+        for (auto i = 1; i <= n; ++i)
+        {
+            rv.push_back(i);
+            if (i <= k + 1)
+                copy.push_back(i);
+        }
+
+        for (auto i = 0, j = k, l = 0; i <= j; l += 2)
+        {
+            rv[l] = copy[i++];
+            if (l < k)
+                rv[l + 1] = copy[j--];
+        }
+
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    sol.constructArray(10, 5);
     cout << r << endl;
 }

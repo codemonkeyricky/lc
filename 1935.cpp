@@ -37,10 +37,34 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int canBeTypedWords(string text, string brokenLetters)
+    {
+        unordered_set<char> bl;
+        for (auto &c : brokenLetters)
+            bl.insert(c);
+
+        int rv = 0;
+        for (auto i = 0; i < text.size(); ++i)
+        {
+            int add = 1;
+            while (i < text.size() && text[i] != ' ')
+                if (bl.count(text[i++]))
+                    add = 0;
+
+            rv += add;
+        }
+        return rv;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.canBeTypedWords("hello world", "ad");
     cout << r << endl;
 }

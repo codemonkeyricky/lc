@@ -40,23 +40,33 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    int longestCycle(vector<int> &e)
+    string splitLoopedString(vector<string> &strs)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
+        string s, rv;
+        for (auto i = 0; i < strs.size(); ++i)
+        {
+            auto r = strs[i];
+            reverse(r.begin(), r.end());
+            s += max(r, strs[i]);
+        }
+
+        for (auto i = 0, l = 0; i < strs.size(); l += strs[i++].size())
+        {
+            string p1, p2;
+            p1 = p2 = strs[i];
+            reverse(begin(p2), end(p2));
+
+            auto body = s.substr(l + p1.size()) + s.substr(0, l);
+
+            for (auto j = 0; j < strs[i].size(); ++j)
             {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
-                {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
-                }
+                if (p1[j] >= rv[0])
+                    rv = max(rv, p1.substr(j) + body + p1.substr(0, j));
+
+                if (p2[j] >= rv[0])
+                    rv = max(rv, p2.substr(j) + body + p2.substr(0, j));
             }
+        }
         return rv;
     }
 };
@@ -64,11 +74,8 @@ public:
 int main()
 {
     Solution sol;
-    int r;
+    string r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
-    cout << r << endl;
-
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.splitLoopedString(vector<string>() = {"abc", "xyz"});
     cout << r << endl;
 }

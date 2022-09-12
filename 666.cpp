@@ -39,25 +39,38 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    int longestCycle(vector<int> &e)
+    void dfs(int d, int p, int curr, int &sum)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
-            {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
-                {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
-                }
-            }
-        return rv;
+        if (nodes[d + 1][p * 2] == -1 && nodes[d + 1][p * 2 + 1] == -1)
+        {
+            sum += curr + nodes[d][p];
+            return;
+        }
+
+        if (nodes[d + 1][p * 2] != -1)
+            dfs(d + 1, p * 2, curr + nodes[d][p], sum);
+        if (nodes[d + 1][p * 2 + 1] != -1)
+            dfs(d + 1, p * 2 + 1, curr + nodes[d][p], sum);
+    }
+
+    vector<vector<int>> nodes;
+
+public:
+    int pathSum(vector<int> &nums)
+    {
+        nodes = vector<vector<int>>(6, vector<int>(17, -1));
+        for (auto n : nums)
+        {
+            int v = n % 10;
+            n /= 10;
+            int p = n % 10;
+            n /= 10;
+            int d = n % 10;
+            nodes[d - 1][p - 1] = v;
+        }
+        int sum = 0;
+        dfs(0, 0, 0, sum);
+        return sum;
     }
 };
 
@@ -66,9 +79,6 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
-    cout << r << endl;
-
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.pathSum(vector<int>() = {115, 215, 224, 325, 336, 446, 458});
     cout << r << endl;
 }

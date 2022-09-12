@@ -37,10 +37,33 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    int matrixMedian(vector<vector<int>> &grid)
+    {
+        int m = grid.size(), n = grid[0].size();
+        int l = 0, r = 1e9;
+        while (l < r)
+        {
+            int mid = (l + r + 1) / 2, cnt = 0;
+            for (auto &row : grid)
+                cnt += n - (lower_bound(begin(row), end(row), mid) - begin(row));
+
+            if (cnt >= n * m / 2 + 1)
+                l = mid;
+            else
+                r = mid - 1;
+        }
+        return l;
+    }
+};
+
 int main()
 {
     Solution sol;
     int r;
 
+    r = sol.matrixMedian(vector<vector<int>>() = {{1, 1, 2}, {2, 3, 3}, {1, 3, 4}});
     cout << r << endl;
 }

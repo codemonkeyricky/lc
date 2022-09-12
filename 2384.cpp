@@ -37,6 +37,31 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+class Solution
+{
+public:
+    string largestPalindromic(string num)
+    {
+        vector<int> dig(10);
+        for (auto &n : num)
+            ++dig[n - '0'];
+        
+        string rv; 
+        for (int i = 9; i >= 0; --i)
+            if (i != 0 || rv.size())
+                rv += string(dig[i] / 2, i + '0'), dig[i] -= dig[i] / 2 * 2;
+
+        string m;
+        for (int i = 9; i >= 0 && m.empty(); --i)
+            if (dig[i])
+                m = string(1, i + '0');
+
+        string rrv(rbegin(rv), rend(rv));
+
+        return rv + m + rrv;
+    }
+};
+
 int main()
 {
     Solution sol;

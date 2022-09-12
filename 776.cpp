@@ -50,43 +50,30 @@ TreeNode *populate(vector<int> &tree)
  */
 class Solution
 {
-    int dfs(TreeNode *curr, array<int, 10> &nums)
+public:
+    vector<TreeNode *> splitBST(TreeNode *curr, int V)
     {
-        ++nums[curr->val];
-        if (!curr->left && !curr->right)
+        vector<TreeNode *> rv(2, nullptr);
+        if (curr)
         {
-            int odd = 0;
-            for (auto &n : nums)
-                if (n % 2)
-                    ++odd;
-            --nums[curr->val];
-            return odd <= 1;
+            if (curr->val > V)
+            {
+                rv[1] = curr;
+                auto r = splitBST(curr->left, V);
+                curr->left = r[1];
+                rv[0] = r[0];
+            }
+            else
+            {
+                rv[0] = curr;
+                auto r = splitBST(curr->right, V);
+                curr->right = r[0];
+                rv[1] = r[1];
+            }
         }
 
-        int rv = 0;
-        if (curr->left)
-            rv += dfs(curr->left, nums);
-        if (curr->right)
-            rv += dfs(curr->right, nums);
-
-        --nums[curr->val];
-
-        return rv; 
-    }
-
-public:
-    int pseudoPalindromicPaths(TreeNode *root)
-    {
-        return dfs(root, array<int, 10>() = {});
-    }
-};
-
-class Solution
-{
-public:
-    bool circularArrayLoop(vector<int> &nums)
-    {
-    }
+        return rv;
+    } 
 };
 
 int main()

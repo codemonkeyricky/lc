@@ -39,25 +39,44 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    int longestCycle(vector<int> &e)
+    int dp[2][11][2048] = {};
+
+    int dfs(int n, int d, int l = 1, int mask = 0)
     {
-        int rv = -1;
-        vector<pair<int, int>> dp(e.size(), {-1, -1});
-        for (int i = 0; i < e.size(); ++i)
-            for (int j = i, dist = 0; j != -1; j = e[j])
-            {
-                auto [dist_i, from_i] = dp[j];
-                if (dist_i == -1)
-                    dp[j] = {dist++, i};
-                else
+        if (d == 0)
+            return mask ? 1 : 0;
+
+        if (!dp[l][d][mask])
+        {
+            auto dd = d - 1;
+            int p = 1;
+            while (dd)
+                p *= 10, --dd;
+
+            auto digit = (n / p) % 10;
+
+            int rv = 0;
+            for (int i = l ? digit : 9; i >= 0; --i)
+                if (!((1 << i) & mask))
                 {
-                    if (from_i == i)
-                        rv = max(rv, dist - dist_i);
-                    break;
+                    auto mmask = 0;
+                    if (mask || i)
+                        mmask = (1 << i) | mask;
+                    rv += dfs(n, d - 1, l && i == digit, mmask);
                 }
-            }
-        return rv;
+            dp[l][d][mask] = rv + 1;
+        }
+        return dp[l][d][mask] - 1;
+    }
+
+public:
+    int countSpecialNumbers(int n)
+    {
+        int d = 0;
+        auto nn = n;
+        while (nn)
+            ++d, nn /= 10;
+        return dfs(n, d);
     }
 };
 
@@ -66,9 +85,9 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.longestCycle(vector<int>() = {3, 3, 4, 2, 3});
+    r = sol.countSpecialNumbers(100);
     cout << r << endl;
 
-    r = sol.longestCycle(vector<int>() = {-1, 4, -1, 2, 0, 4});
+    r = sol.countSpecialNumbers(20);
     cout << r << endl;
 }
