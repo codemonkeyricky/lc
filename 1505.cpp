@@ -60,34 +60,35 @@ class Solution
 public:
     string minInteger(string num, int k)
     {
-        bit = vector<int>(N);
-
         int n = num.size();
+
+        bit = vector<int>(N);
         for (auto i = 0; i < n; ++i)
             update(i, 1);
 
-        priority_queue<array<int, 2>, vector<array<int, 2>>, greater<array<int, 2>>> q;
-        for (auto i = 0; i < num.size(); ++i)
-            q.push({num[i], i});
+        vector<vector<int>> arr(10);
+        for (auto i = 0; i < n; ++i)
+            arr[num[i] - '0'].push_back(i);
 
         string rv;
-        vector<int> seen(num.size());
-        while (k && q.size())
+        vector<int> index(10);
+        int retry;
+        do
         {
-            auto [v, i] = q.top();
-            q.pop();
-            auto moves = get(i - 1);
-            if (moves <= k)
-            {
-                k -= moves, seen[i] = 1, rv += v;
-                update(i, -1);
-            }
-        }
-
-        for (auto i = 0; i < num.size(); ++i)
-            if (!seen[i])
-                rv += num[i];
-
+            retry = false;
+            for (auto i = 0; i < 10 && !retry; ++i)
+                if (index[i] < arr[i].size())
+                {
+                    int count = get(arr[i][index[i]] - 1);
+                    if (count <= k)
+                    {
+                        k -= count;
+                        rv += i + '0';
+                        retry = true;
+                        update(arr[i][index[i]++], -1);
+                    }
+                }
+        } while (retry);
         return rv;
     }
 };
