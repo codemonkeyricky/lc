@@ -40,29 +40,20 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int numSpecial(vector<vector<int>> &mat)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        int m = mat.size(), n = mat[0].size(); 
+        vector<int> row(m), col(n);
+        for (auto i = 0; i < m; ++i)
+            for (auto j = 0; j < n; ++j)
+                if (mat[i][j])
+                    ++row[i], ++col[j];
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
+        int rv = 0;
+        for (auto i = 0; i < m; ++i)
+            for (auto j = 0; j < n; ++j)
+                if (mat[i][j] && row[i] == 1 && col[j] == 1)
+                    ++rv;
         return rv;
     }
 };
@@ -70,8 +61,8 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.numSpecial(vector<vector<int>>() = {{1, 0, 0}, {0, 0, 1}, {1, 0, 0}});
     cout << r << endl;
 }

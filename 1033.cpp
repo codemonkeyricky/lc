@@ -39,39 +39,38 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    string longestNiceSubstring(string s)
+    int fast(int a, int b, int c)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        if (a + 1 == b || b + 1 == c || a + 2 == b || b + 2 == c)
+            return 1;
+        return 2;
+    }
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+    int slow(int a, int b, int c)
+    {
+        return c - b - 1 + b - a - 1;
+    }
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+public:
+    vector<int> numMovesStones(int a, int b, int c)
+    {
+        if (a > b)
+            swap(a, b);
+        if (b > c)
+            swap(b, c);
+        if (a > b)
+            swap(a, b);
+
+        if (a + 1 == b && b + 1 == c)
+            return {0, 0};
+        return {fast(a, b, c), slow(a, b, c)};
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
     cout << r << endl;
 }

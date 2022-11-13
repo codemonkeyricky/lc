@@ -39,39 +39,46 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    string longestNiceSubstring(string s)
+    int sum(long long n)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
+        int rv = 0;
+        while (n)
+            rv += n % 10, n /= 10;
         return rv;
+    }
+
+public:
+    long long makeIntegerBeautiful(long long n, int target)
+    {
+        long long m = 1;
+        auto nn = n;
+        while (sum(m) < sum(n))
+        {
+            n = nn;
+            n += m - 1;
+            n -= n % m;
+            if (sum(n) <= target)
+                return n - nn;
+            m *= 10;
+        }
+        return m - nn;
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.makeIntegerBeautiful(20, 2);
+    cout << r << endl;
+
+    r = sol.makeIntegerBeautiful(8, 2);
+    cout << r << endl;
+
+    r = sol.makeIntegerBeautiful(467, 6);
+    cout << r << endl;
+
+    r = sol.makeIntegerBeautiful(16, 6);
     cout << r << endl;
 }

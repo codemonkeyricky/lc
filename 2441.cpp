@@ -40,38 +40,26 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int findMaxK(vector<int> &nums)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+        sort(begin(nums), end(nums));
+        int i = 0, j = nums.size() - 1;
+        while (i < j && nums[i] < 0 && nums[j] > 0)
+            if (abs(nums[i]) == nums[j])
+                return nums[j];
+            else if (abs(nums[i]) < nums[j])
+                --j;
+            else
+                ++i;
+        return -1;
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.findMaxK(vector<int>() = {-1, 2, -3, 3});
     cout << r << endl;
 }

@@ -40,29 +40,19 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    vector<int> createTargetArray(vector<int> &nums, vector<int> &index)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        int n = nums.size();
+        vector<int> rv;
+        for (auto i = 0; i < n; ++i)
+        {
+            if (index[i] >= rv.size())
+                rv.resize(index[i] + 1);
+            rv.insert(begin(rv) + index[i], nums[i]);
+        }
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        rv.resize(n);
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
         return rv;
     }
 };
@@ -70,8 +60,7 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
-    cout << r << endl;
+    sol.createTargetArray(vector<int>() = {0, 1, 2, 3, 4}, vector<int>() = {0, 1, 2, 2, 1});
 }

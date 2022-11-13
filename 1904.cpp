@@ -40,38 +40,27 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int numberOfRounds(string loginTime, string logoutTime)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        int login = stoi(loginTime.substr(0, 2)) * 60 + stoi(loginTime.substr(3));
+        int logout = stoi(logoutTime.substr(0, 2)) * 60 + stoi(logoutTime.substr(3));
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        if (logout < login)
+            logout += 1440;
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+        int rv = 0;
+        for (auto i = login; i <= logout; ++i)
+            if (i % 15 == 0)
+                ++rv;
+        return max(0, rv - 1);
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.numberOfRounds("09:31", "10:14");
     cout << r << endl;
 }

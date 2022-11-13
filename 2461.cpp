@@ -40,29 +40,27 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    long long maximumSubarraySum(vector<int> &nums, int k)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
+        vector<int> seen(100001);
+        long long sum = 0, rv = 0;
+        for (auto i = 0, j = 0; j <= nums.size(); ++j)
+        {
+            if (j - i == k)
+                rv = max(rv, sum);
+
+            if (j < nums.size())
             {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+                while (seen[nums[j]])
+                    sum -= nums[i], --seen[nums[i++]];
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+                sum += nums[j];
+                ++seen[nums[j]];
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
+                if (j - i >= k)
+                    sum -= nums[i], --seen[nums[i++]];
             }
+        }
         return rv;
     }
 };
@@ -70,8 +68,8 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.maximumSubarraySum(vector<int>() = {1, 5, 4, 2, 9, 9, 9}, 3);
     cout << r << endl;
 }

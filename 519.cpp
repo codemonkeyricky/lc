@@ -40,38 +40,41 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int total;
+    int cols;
+    int rows;
+    unordered_map<int, int> map;
+
+    Solution(int n_rows, int n_cols) : rows(n_rows), cols(n_cols), total(n_rows * n_cols)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+    }
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+    vector<int> flip()
+    {
+        int k = rand() % (total--);
+        int i = map.count(k) ? map[k] : k;
+        map[k] = map.count(total) ? map[total] : total;
+        return {i / cols, i % cols};
+    }
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+    void reset()
+    {
+        total = rows * cols;
+        map.clear();
     }
 };
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(m, n);
+ * vector<int> param_1 = obj->flip();
+ * obj->reset();
+ */
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
     cout << r << endl;
 }

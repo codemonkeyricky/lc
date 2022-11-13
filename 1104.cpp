@@ -40,26 +40,42 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    vector<bool> canMakePaliQueries(string s, vector<vector<int>> &queries)
+    vector<int> pathInZigZagTree(int label)
     {
-        int n = s.size();
-        vector<array<int, 26>> dp(n);
-        for (auto i = 0; i < s.size(); ++i)
+        int size = 1;
+        int mmax = 0, rev = 0;
+        while (mmax + size < label)
         {
-            if (i)
-                dp[i] = dp[i - 1];
-            ++dp[i][s[i] - 'a'];
+            mmax += size;
+            size *= 2;
+        }
+        mmax += size;
+
+        vector<int> rv = {label};
+        // if (rev)
+        // {
+        //     auto l = mmax - size + 1, r = mmax;
+        //     auto p = label - l;
+        //     rv.push_back(r - p);
+        // }
+        // else
+        //     rv.push_back(label);
+
+        while (rv.back() / 2)
+            rv.push_back(rv.back() / 2);
+
+        int rev = 0;
+        for (auto &n : rv)
+        {
+            auto l = mmax - size + 1, r = mmax;
+            auto p = n - l;
+            if (rev)
+                n = r - p;
+            mmax -= size, size /= 2, rev = !rev;
         }
 
-        vector<bool> rv;
-        for (auto &q : queries)
-        {
-            auto l = q[0], r = q[1], k = q[2];
-            auto odd = 0;
-            for (auto i = 0; i < 26; ++i)
-                odd += (dp[r][i] - (l ? dp[l - 1][i] : 0)) % 2;
-            rv.push_back(k >= odd / 2);
-        }
+        reverse(begin(rv), end(rv));
+
         return rv;
     }
 };
@@ -67,7 +83,10 @@ public:
 int main()
 {
     Solution sol;
-    int r;
+    vector<int>  r;
 
-    sol.canMakePaliQueries("abcda", vector<vector<int>>() = {{3, 3, 0}, {1, 2, 0}, {0, 3, 1}, {0, 3, 2}, {0, 4, 1}});
+    r = sol.pathInZigZagTree(26);
+    for (auto &c : r)
+        cout << c << ", ";
+    cout << endl;
 }

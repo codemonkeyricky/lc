@@ -40,29 +40,19 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    vector<string> simplifiedFractions(int n)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
+        set<array<int, 2>> uniq;
+        for (auto i = 2; i <= n; ++i)
+            for (auto j = 1; j < i; ++j)
             {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+                auto g = __gcd(i, j);
+                uniq.insert({j / g, i / g});
+        }
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
+        vector<string> rv;
+        for (auto &u : uniq)
+            rv.push_back(to_string(u[0]) + "/" + to_string(u[1]));
         return rv;
     }
 };
@@ -70,8 +60,7 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
     cout << r << endl;
 }

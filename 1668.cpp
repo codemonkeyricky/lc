@@ -40,29 +40,17 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int maxRepeating(string seq, string word)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
+        int p = seq.find(word), rv = 0, sz = word.size();
+        while (p != string::npos)
+        {
+            int i = p + sz, j = 0;
+            while (i < seq.size() && seq[i] == word[j % sz])
+                ++i, ++j;
+            rv = max(rv, 1 + j / sz);
+            p = seq.find(word, p + 1);
+        }
         return rv;
     }
 };
@@ -70,8 +58,8 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.maxRepeating("ababc", "ac");
     cout << r << endl;
 }

@@ -40,38 +40,37 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int validSubarraySplit(vector<int> &nums)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
+        int n = nums.size();
+        vector<vector<int>> dp(n + 1, vector<int>(n + 1));
+
+        for (auto i = 0; i < n; ++i)
             for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+                dp[i][j] = __gcd(nums[i], nums[j]) > 1 ? 1 : 1e9;
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        for (auto j = 0; j < n; ++j)
+            for (auto i = 0; i < j; ++i)
+                dp[0][j] = min(dp[0][j], dp[0][i] + dp[i + 1][j]);
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+        return dp[0][n - 1] != 1e9 ? dp[0][n - 1] : -1;
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.validSubarraySplit(vector<int>() = {29, 5, 59, 73, 89, 31, 73, 89, 73, 79, 89, 89, 23, 53, 43, 47, 3, 2, 61, 7});
+    cout << r << endl;
+
+    r = sol.validSubarraySplit(vector<int>() = {1, 2, 1});
+    cout << r << endl;
+
+    r = sol.validSubarraySplit(vector<int>() = {3, 5});
+    cout << r << endl;
+
+    r = sol.validSubarraySplit(vector<int>() = {2, 6, 3, 4, 3});
     cout << r << endl;
 }

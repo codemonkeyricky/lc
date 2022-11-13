@@ -40,29 +40,25 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    vector<int> secondGreaterElement(vector<int> &nums)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
+        int n = nums.size();
+        priority_queue<array<int, 2>> heap;
+        vector<int> rv(n, -1);
+        vector<int> stack;
+        for (auto i = 0; i < n; ++i)
+        {
+            while (heap.size() && nums[i] > -heap.top()[0])
             {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
+                auto [v, k] = heap.top();
+                rv[k] = nums[i];
+                heap.pop();
             }
+
+            while (stack.size() && nums[stack.back()] < nums[i])
+                heap.push({-nums[stack.back()], stack.back()}), stack.pop_back();
+            stack.push_back(i);
+        }
         return rv;
     }
 };
@@ -70,8 +66,15 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    vector<int> r;
 
-    r = sol.longestNiceSubstring("YazaAay");
-    cout << r << endl;
+    r = sol.secondGreaterElement(vector<int>() = {11, 13, 15, 12, 0, 15, 12, 11, 9});
+    for (auto &c : r)
+        cout << c << ", ";
+    cout << endl;
+
+    r = sol.secondGreaterElement(vector<int>() = {2, 4, 0, 9, 6});
+    for (auto &c : r)
+        cout << c << ", ";
+    cout << endl;
 }

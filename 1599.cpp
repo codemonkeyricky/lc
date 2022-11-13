@@ -40,38 +40,34 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int minOperationsMaxProfit(vector<int> &customers, int boarding, int running)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+        int profit = 0;
+        int n = customers.size();
+        int gondola[4] = {}, k = 0;
+        int maxProfit = 0;
+        int rotation = -1;
+        for (auto i = 0, waiting = 0, rot = 1; i < n || waiting; ++i, ++rot)
+        {
+            if (i < n)
+                waiting += customers[i];
+            gondola[k] = 0;
+            int b = min(4, waiting);
+            waiting -= b;
+            profit += b * boarding - running;
+            if (profit > maxProfit)
+                maxProfit = profit, rotation = rot;
+            k = (k + 1) % 4;
+        }
+        return rotation; 
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.minOperationsMaxProfit(vector<int>() = {8, 3}, 5, 6);
     cout << r << endl;
 }

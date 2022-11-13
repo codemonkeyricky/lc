@@ -40,38 +40,35 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int numberOfNodes(int n, vector<int> &queries)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        unordered_set<int> set;
+        for (auto &q : queries)
+            if (!set.count(q))
+                set.insert(q);
+            else
+                set.erase(q);
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        sort(begin(queries), end(queries), greater<int>());
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+        vector<int> tree(n + 1);
+        for (int i = n, k = i; i >= 0; --i, k = i)
+        {
+            int v = 0;
+            while (k)
+                v = set.count(k) ? !v : v, k /= 2;
+            tree[i] = v;
+        }
+
+        return accumulate(begin(tree), end(tree), 0);
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.numberOfNodes(5, vector<int>() = {1, 2, 5});
     cout << r << endl;
 }

@@ -40,29 +40,36 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    string robotWithString(string s)
     {
         int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        vector<vector<int>> dp(n, vector<int>(26, -1));
+        for (int i = n - 1; i >= 0; --i)
+        {
+            if (i < n - 1)
+                dp[i] = dp[i + 1];
+            dp[i][s[i] - 'a'] = i;
+        }
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        string rv, t;
+        for (auto i = 0; i < n;)
+        {
+            int j;
+            for (j = 0; j < 26; ++j)
+                if (dp[i][j] != -1 && dp[i][j] >= i)
+                    break;
+            while (t.size() && j < 26 && t.back() <= j + 'a')
+                rv += t.back(), t.pop_back();
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
+            while (i < dp[i][j])
+                t.push_back(s[i++]);
+
+            rv.push_back(s[i++]);
+        }
+
+        while (t.size())
+            rv += t.back(), t.pop_back();
+
         return rv;
     }
 };
@@ -72,6 +79,12 @@ int main()
     Solution sol;
     string r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.robotWithString("vzhofnpo");
+    cout << r << endl;
+
+    r = sol.robotWithString("bac");
+    cout << r << endl;
+
+    r = sol.robotWithString("bdda");
     cout << r << endl;
 }

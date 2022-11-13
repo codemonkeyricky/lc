@@ -40,29 +40,33 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    string arrangeWords(string text)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        string word;
+        vector<string> words;
+        vector<array<int, 2>> dp;
+        for (auto i = 0, k = 0; i <= text.size(); ++i)
+        {
+            if (i == text.size() || text[i] == ' ')
+                dp.push_back({(int)word.size(), k++}), words.push_back(word), word.clear();
+            else
+                word += text[i]; 
+        }
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        sort(begin(dp), end(dp));
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
+        string rv;
+        for(auto i = 0 ; i < dp.size(); ++i)
+        {
+            auto [l, k] = dp[i];
+            if (i == 0)
+                words[k][0] = toupper(words[k][0]);
+            else
+                words[k][0] = tolower(words[k][0]);
+            rv += words[k];
+            rv += " ";
+        }
+        rv.pop_back();
         return rv;
     }
 };
@@ -70,8 +74,7 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
-    cout << r << endl;
+    sol.arrangeWords("Leetcode is cool");
 }

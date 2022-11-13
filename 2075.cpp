@@ -40,29 +40,17 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    string decodeCiphertext(string encoded, int rows)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        int m = rows, n = encoded.size() / rows;
+        string rv;
+        for (auto k = 0, i = 0, j = k; k < n; ++k, i = 0, j = k)
+            while (i * n + j < encoded.size())
+                rv.push_back(encoded[i++ * n + j++]);
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        while (rv.back() == ' ')
+            rv.pop_back();
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
         return rv;
     }
 };
@@ -72,6 +60,9 @@ int main()
     Solution sol;
     string r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.decodeCiphertext("ch   ie   pr", 3);
+    cout << r << endl;
+
+    r = sol.decodeCiphertext("iveo    eed   l te   olc", 4);
     cout << r << endl;
 }

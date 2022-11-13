@@ -40,28 +40,18 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int subarrayGCD(vector<int> &nums, int k)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
+        int rv = 0;
+        int n = nums.size();
+        for (auto i = 0; i < n; ++i)
+            for (auto j = i, d = nums[j]; j < n; ++j)
             {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
+                d = gcd(d, nums[j]);
+                if (d == k)
+                    ++rv;
+                else if (d < k)
+                    break;
             }
         return rv;
     }
@@ -70,8 +60,8 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.subarrayGCD(vector<int>() = {9, 3, 1, 2, 6, 3}, 3);
     cout << r << endl;
 }

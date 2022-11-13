@@ -37,32 +37,48 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+struct ListNode
+{
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
 class Solution
 {
-public:
-    string longestNiceSubstring(string s)
+    ListNode *insert(ListNode *root, ListNode *node)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
+        auto rv = node;
+        if (root)
+        {
+            if (node->val < root->val)
+                node->next = root;
+            else
             {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
+                rv = root;
+                while (root && root->next && root->next->val < node->val)
+                    root = root->next;
+                auto next = root->next;
+                root->next = node;
+                node->next = next;
             }
+        }
+        return rv; 
+    }
+
+public:
+    ListNode *insertionSortList(ListNode *head)
+    {
+        ListNode *rv = nullptr;
+        while (head)
+        {
+            auto next = head->next;
+            head->next = nullptr;
+            rv = insert(rv, head);
+            head = next; 
+        }
         return rv;
     }
 };
@@ -70,8 +86,7 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
     cout << r << endl;
 }

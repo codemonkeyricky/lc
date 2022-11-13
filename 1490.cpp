@@ -37,41 +37,47 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+// Definition for a Node.
+class Node
+{
+public:
+    int val;
+    vector<Node *> children;
+
+    Node() {}
+
+    Node(int _val)
+    {
+        val = _val;
+    }
+
+    Node(int _val, vector<Node *> _children)
+    {
+        val = _val;
+        children = _children;
+    }
+};
+
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    Node *cloneTree(Node *root)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+        if (root)
+        {
+            Node *n = new Node(root->val);
+            for (auto &nn : root->children)
+                n->children.push_back(cloneTree(nn));
+            return n;
+        }
+        return nullptr;
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
     cout << r << endl;
 }

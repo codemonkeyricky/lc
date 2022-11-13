@@ -39,39 +39,43 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    string longestNiceSubstring(string s)
+    void dfs(int low, int high, long curr, vector<int> &rv)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        if (low <= curr && curr <= high)
+            rv.push_back(curr);
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        if (curr > high)
+            return;
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+        if (!curr)
+            for (auto i = 1; i < 10; ++i)
+                dfs(low, high, i, rv);
+        else 
+        {
+            auto last = curr % 10;
+            if (last > 0)
+                dfs(low, high, curr * 10 + last - 1, rv);
+            if (last < 9)
+                dfs(low, high, curr * 10 + last + 1, rv);
+        }
+    }
+
+public:
+    vector<int> countSteppingNumbers(int low, int high)
+    {
+        vector<int> rv;
+        dfs(low, high, 0, rv);
+        set<int> s(begin(rv), end(rv));
+        return {begin(s), end(s)};
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
-    cout << r << endl;
+    sol.countSteppingNumbers(0, 1000000000);
+    sol.countSteppingNumbers(10, 15);
+    sol.countSteppingNumbers(0, 21);
 }

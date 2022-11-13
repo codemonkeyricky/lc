@@ -40,29 +40,22 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    vector<string> subdomainVisits(vector<string> &cpdomains)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        unordered_map<string, int> dp;
+        for (auto &domain : cpdomains)
+        {
+            auto space = domain.find(' ');
+            auto k = stoi(domain.substr(0, space));
+            auto d = domain.substr(space + 1);
+            for (auto i = space + 1; i < domain.size(); ++i)
+                if (i == space + 1 || domain[i - 1] == '.')
+                    dp[domain.substr(i)] += k;
+        }
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
+        vector<string> rv;
+        for (auto &d : dp)
+            rv.push_back(to_string(d.second) + " " + d.first);
         return rv;
     }
 };
@@ -70,8 +63,7 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
-    cout << r << endl;
+    sol.subdomainVisits(vector<string>() = {"9001 discuss.leetcode.com"});
 }

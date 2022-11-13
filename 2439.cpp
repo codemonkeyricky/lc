@@ -40,38 +40,45 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int minimizeArrayValue(vector<int> &nums)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        long l = 1, r = 1e9;
+        int n = nums.size();
+        vector<long> nums2;
+        for (auto &n : nums)
+            nums2.push_back(n);
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        while (l < r)
+        {
+            auto copy = nums2;
+            long m = (l + r) / 2;
+            for (int i = n - 1; i >= 1; --i)
+                if (nums2[i] > m)
+                {
+                    auto d = nums2[i] - m;
+                    nums2[i] -= d;
+                    nums2[i - 1] += d;
+                }
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
-        return rv;
+            if (nums2[0] <= m)
+                r = m;
+            else
+                l = m + 1;
+
+            swap(copy, nums2);
+        }
+        return l;
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.minimizeArrayValue(vector<int>() = {2, 7, 9, 19, 5, 19});
+    cout << r << endl;
+
+    r = sol.minimizeArrayValue(vector<int>() = {3, 7, 1, 6});
     cout << r << endl;
 }

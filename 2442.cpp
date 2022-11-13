@@ -39,39 +39,29 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    string longestNiceSubstring(string s)
+    int rev(int n)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
+        int rv = 0;
+        while (n)
+            rv *= 10, rv += n % 10, n /= 10;
         return rv;
+    }
+
+public:
+    int countDistinctIntegers(vector<int> &nums)
+    {
+        unordered_set<int> uniq(begin(nums), end(nums));
+        auto copy = uniq;
+        for (auto &c : copy)
+            uniq.insert(rev(c));
+        return uniq.size();
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
     cout << r << endl;
 }

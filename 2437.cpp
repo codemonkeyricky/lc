@@ -40,29 +40,23 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int countTime(string time)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
+        int rv = 0;
+        for (auto i = 0; i < 24; ++i)
+            for (auto j = 0; j < 60; ++j)
             {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
+                string h = "00", m = "00";
+                h[0] += i / 10, h[1] += i % 10;
+                m[0] += j / 10, m[1] += j % 10;
+                auto s = h + ":" + m;
+                int match = true;
+                for (auto k = 0; k < 5 && match; ++k)
+                    if (time[k] != '?' && time[k] != s[k])
+                        match = false;
+                rv += match;
             }
+
         return rv;
     }
 };
@@ -70,8 +64,8 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    r = sol.countTime("?5:00");
     cout << r << endl;
 }

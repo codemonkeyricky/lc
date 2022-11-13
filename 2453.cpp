@@ -40,29 +40,20 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    int destroyTargets(vector<int> &nums, int space)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
-            {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
+        int n = nums.size();
+        sort(begin(nums), end(nums));
 
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
+        unordered_map<int, int> dp;
+        for (auto &n : nums)
+            ++dp[n % space];
 
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
-            }
+        int mmax = 0, rv = 0;
+        for (auto &n : nums)
+            if (dp[n % space] > mmax)
+                mmax = dp[n % space], rv = n;
+
         return rv;
     }
 };
@@ -70,8 +61,11 @@ public:
 int main()
 {
     Solution sol;
-    string r;
+    int r;
 
-    r = sol.longestNiceSubstring("YazaAay");
+    // r = sol.destroyTargets(vector<int>() = {625879766, 235326233, 250224393, 501422042, 683823101, 948619719, 680305710, 733191937, 182186779, 353350082}, 4);
+    // cout << r << endl;
+
+    r = sol.destroyTargets(vector<int>() = {3, 7, 8, 1, 1, 5}, 2);
     cout << r << endl;
 }

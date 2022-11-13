@@ -40,38 +40,24 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    string longestNiceSubstring(string s)
+    string restoreString(string s, vector<int> &indices)
     {
-        int n = s.size();
-        string rv, curr;
-        array<int, 26> chars = {};
-        for (int i = 0; i < n; ++i, chars = {}, curr.clear())
-            for (auto j = i; j < n; ++j)
+        for (int i = 0; i < indices.size(); i++)
+            while (indices[i] != i)
             {
-                if (islower(s[j]))
-                    chars[s[j] - 'a'] |= 1;
-                else 
-                    chars[s[j] - 'A'] |= 2;
-                curr += s[j];
-
-                bool isMatch = true;
-                for (auto k = 0; k < 26 && isMatch; ++k)
-                    if (chars[k] && chars[k] != 0x3)
-                        isMatch = false;
-
-                if (isMatch)
-                    if (curr.size() > rv.size())
-                        rv = curr;
+                swap(s[i], s[indices[i]]);
+                swap(indices[i], indices[indices[i]]);
             }
-        return rv;
+
+        return s;
     }
 };
 
 int main()
 {
     Solution sol;
-    string r;
+    string s; 
 
-    r = sol.longestNiceSubstring("YazaAay");
-    cout << r << endl;
+    s = sol.restoreString("codeleet", vector<int>() = {4, 5, 6, 7, 0, 2, 1, 3});
+    cout << s << endl;
 }
