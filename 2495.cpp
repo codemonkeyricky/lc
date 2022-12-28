@@ -37,41 +37,19 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    long long evenProduct(vector<int> &nums)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+        long long n = nums.size(), rv = 0, k = -1;
+        for (long long i = 0; i < n; ++i)
+            if (nums[i] % 2 == 0)
+                k = i, rv += k + 1;
+            else
+                rv += k != -1 ? k + 1 : 0;
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +57,6 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.evenProduct(vector<int>() = {17, 161, 66, 34, 116, 83, 15, 150});
     cout << r << endl;
 }

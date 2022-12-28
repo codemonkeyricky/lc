@@ -39,9 +39,10 @@ TreeNode *populate(vector<int> &tree)
 
 class MKAverage
 {
-    vector<multiset<long>> set;
+    vector<multiset<int>> set;
     long sum[3], k, m;
-    queue<long> q;
+    vector<int> q; 
+    int pos = 0; 
 
     void balance()
     {
@@ -50,19 +51,19 @@ class MKAverage
         {
             if (set[i].size() > kk[i])
             {
-                auto plast = *prev(end(set[i]));
+                auto plast = *rbegin(set[i]);
 
                 set[i + 1].insert(plast);
                 sum[i + 1] += plast;
 
-                set[i].erase(set[i].find(plast));
+                set[i].erase(prev(end(set[i])));
                 sum[i] -= plast;
             }
             else if (set[i].size() == kk[i])
             {
                 if (set[i + 1].size())
                 {
-                    auto plast = *prev(end(set[i]));
+                    auto plast = *rbegin(set[i]);
                     auto nbeg = *begin(set[i + 1]);
                     if (plast > nbeg)
                     {
@@ -71,7 +72,7 @@ class MKAverage
                         set[i + 1].insert(plast);
                         sum[i + 1] += plast;
 
-                        set[i + 0].erase(prev(begin(set[i + 0])));
+                        set[i + 0].erase(prev(end(set[i + 0])));
                         sum[i + 0] -= plast;
                         set[i + 0].insert(nbeg);
                         sum[i + 0] += nbeg;
@@ -84,24 +85,23 @@ class MKAverage
 public:
     MKAverage(int m, int k) : k(k), m(m)
     {
-        set = vector<multiset<long>>(3);
+        set = vector<multiset<int>>(3);
         sum[0] = sum[1] = sum[2] = 0;
+        q = vector<int>(m);
     }
 
     void addElement(int num)
     {
-        if (q.size() == m)
+        if (pos >= m)
             for (auto i = 0; i < 3; ++i)
-                if (set[i].count(q.front()))
+                if (set[i].count(q[pos % m]))
                 {
-                    set[i].erase(set[i].find(q.front()));
-                    sum[i] -= q.front();
+                    set[i].erase(set[i].find(q[pos % m]));
+                    sum[i] -= q[pos % m];
                     break;
                 }
 
-        if (q.size() == m)
-            q.pop();
-        q.push(num);
+        q[pos++ % m] = num;
 
         set[0].insert(num);
         sum[0] += num;

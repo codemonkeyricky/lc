@@ -37,41 +37,42 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int compareVersion(string version1, string version2)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
+        vector<int> a, b;
+        string w; 
+        for (auto i = 0; i <= version1.size(); ++i)
+            if (i == version1.size() || version1[i] == '.')
+                a.push_back(stoi(w)), w.clear();
             else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+                w += version1[i];
+
+        for (auto i = 0; i <= version2.size(); ++i)
+            if (i == version2.size() || version2[i] == '.')
+                b.push_back(stoi(w)), w.clear();
+            else 
+                w += version2[i];
+
+        int i;
+        for (i = 0; i < a.size() && i < b.size(); ++i)
+            if (a[i] < b[i])
+                return -1;
+            else if (a[i] > b[i])
+                return 1;
+
+        while (i < a.size())
+            if (a[i++])
+                return 1;
+
+        while (i < b.size())
+            if (b[i++])
+                return -1;
+        
+        return 0;
+    }
 };
 
 int main()

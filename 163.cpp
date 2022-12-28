@@ -37,41 +37,24 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    vector<string> findMissingRanges(vector<int> &nums, int lower, int upper)
     {
-        if (curr)
+        vector<int> stack = {lower - 1};
+        vector<string> rv;
+        for(auto k = 0; k <= nums.size(); ++k)
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            int n = k < nums.size() ? nums[k] : upper + 1;
+            if (n - stack.back() == 2)
+                rv.push_back(to_string(n - 1));
+            else if (n - stack.back() > 2)
+                rv.push_back(to_string(stack.back() + 1) + "->" + to_string(n - 1));
+            stack.push_back(n);
         }
-        return {nullptr, nullptr};
-    } 
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +62,5 @@ int main()
     Solution sol;
     int r;
 
-    cout << r << endl;
+    sol.findMissingRanges(vector<int>() = {0, 1, 3, 50, 75}, 0, 99);
 }

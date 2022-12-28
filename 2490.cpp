@@ -37,41 +37,18 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    bool isCircularSentence(string sentence)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+        for (auto i = 0; i < sentence.size(); ++i)
+            if (sentence[i] == ' ')
+                if (sentence[i - 1] != sentence[i + 1])
+                    return false;
+
+        return sentence[0] == sentence.back();
+    }
 };
 
 int main()

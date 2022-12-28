@@ -40,39 +40,35 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    double averageWaitingTime(vector<vector<int>> &customers)
+    int lengthLongestPath(string input)
     {
-        long wait = 0;
-        long time = 0;
-        for (auto &c : customers)
+        vector<string> path;
+        int i = 0, n = input.size(), len = 0;
+        int rv = 0;
+        while (i < n)
         {
-            long arrival = c[0];
-            long cost = c[1];
-            if (time >= arrival)
-                wait += time - arrival;
+            int depth = 0;
+            while (i < n && input[i] == '\t')
+                ++depth, ++i;
+            string inode; 
+            bool is_file = false;
+            while (i < n && input[i] != '\n')
+                inode += input[i], is_file |= input[i++] == '.';
+            ++i;
 
-            time = max(time, arrival);
-            wait += cost;
-            time += cost;
+            while (path.size() > depth)
+                len -= path.back().size(), path.pop_back();
+
+            path.push_back(inode);
+            if (!is_file)
+                path.back() += "/";
+            len += path.back().size();
+
+            if (path.back().back() != '/')
+                rv = max(rv, len);
         }
-        return (double)wait / customers.size();
-    }
-};
 
-class Solution
-{
-public:
-    string gcdOfStrings(string str1, string str2)
-    {
-        int gcd = __gcd(str1.size(), str2.size());
-        string ref = str2.substr(0, gcd);
-        for (auto i = 0; i < str2.size(); i += gcd)
-            if (ref != str2.substr(i, gcd))
-                return "";
-        for (auto i = 0; i < str1.size(); i += gcd)
-            if (ref != str1.substr(i, gcd))
-                return ""; 
-        return ref;
+        return rv;
     }
 };
 
@@ -81,5 +77,9 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.lengthLongestPath("a\n\tb1\n\t\tf1.txt\n\taaaaa\n\t\tf2.txt");
+    cout << r << endl;
+
+    r = sol.lengthLongestPath("dir\n\tsubdir1\n\tsubdir2\n\t\tfile.ext");
     cout << r << endl;
 }

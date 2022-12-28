@@ -51,27 +51,35 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    TreeNode *addOneRow(TreeNode *root, int val, int depth)
     {
-        if (curr)
+        if (!root)
+            return nullptr;
+
+        if (depth == 1)
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            TreeNode *new_root = new TreeNode(val); 
+            new_root->left = root; 
+            return new_root;
         }
-        return {nullptr, nullptr};
-    } 
+
+        if (depth == 2)
+        {
+            TreeNode *l = new TreeNode(val);
+            l->left = root->left;
+            TreeNode *r = new TreeNode(val);
+            r->right = root->right;
+            root->left = l;
+            root->right = r;
+            return root;
+        }
+        else
+        {
+            addOneRow(root->left, val, depth - 1);
+            addOneRow(root->right, val, depth - 1);
+            return root;
+        }
+    }
 };
 
 int main()

@@ -37,47 +37,28 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    string baseNeg2(int N, string rv = "")
     {
-        if (curr)
+        while (N != 0)
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            int rem = N % -2;
+            N /= -2;
+            if (rem < 0)
+                rem += 2, N += 1;
+            rv = to_string(rem) + rv;
         }
-        return {nullptr, nullptr};
-    } 
+        return max(string("0"), rv);
+    }
 };
 
 int main()
 {
     Solution sol;
-    int r;
+    string r;
 
+    r = sol.baseNeg2(24);
     cout << r << endl;
 }

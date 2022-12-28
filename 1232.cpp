@@ -37,41 +37,28 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    bool checkStraightLine(vector<vector<int>> &coord)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
+        sort(begin(coord), end(coord));
+        int n = coord.size();
+        int mx = 0, my = 0;
+        for (auto i = 0; i < n; ++i)
+            for (auto j = i + 1; j < n; ++j)
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                auto x = coord[i][0] - coord[j][0];
+                auto y = coord[i][1] - coord[j][1];
+                auto g = __gcd(x, y);
+                if (mx == 0)
+                    mx = x / g, my = y / g;
+                if (mx != x / g || my != y / g)
+                    return false;
             }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+
+        return true;
+    }
 };
 
 int main()

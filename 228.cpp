@@ -37,41 +37,24 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    vector<string> summaryRanges(vector<int> &nums)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
+        vector<string> rv;
+        for (auto i = 0, j = 1; j <= nums.size(); ++j)
+            if (j == nums.size() || nums[j - 1] + 1 != nums[j])
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                if (i == j - 1)
+                    rv.push_back(to_string(nums[i]));
+                else
+                    rv.push_back(to_string(nums[i]) + "->" + to_string(nums[j - 1]));
+                i = j;
             }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +62,5 @@ int main()
     Solution sol;
     int r;
 
-    cout << r << endl;
+    sol.summaryRanges(vector<int>() = {0, 1, 2, 4, 5, 7});
 }

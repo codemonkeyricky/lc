@@ -37,41 +37,26 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int maxStarSum(vector<int> &vals, vector<vector<int>> &edges, int k)
     {
-        if (curr)
+        int n = vals.size();
+        vector<set<array<int, 2>>> al(n);
+        for (auto &e : edges)
+            al[e[0]].insert({vals[e[1]], e[1]}),
+                al[e[1]].insert({vals[e[0]], e[1]});
+
+        int rv = -1e9;
+        for (auto i = 0, kk = k - 1, sum = vals[i]; i < n; ++i, kk = k - 1, sum = vals[i])
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            rv = max(rv, sum);
+            for (auto it = rbegin(al[i]); it != rend(al[i]) && kk >= 0; --kk, ++it)
+                rv = max(rv, sum += (*it)[0]);
         }
-        return {nullptr, nullptr};
-    } 
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +64,9 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.maxStarSum(vector<int>() = {-5}, vector<vector<int>>() = {}, 0);
+    cout << r << endl;
+
+    r = sol.maxStarSum(vector<int>() = {1, 2, 3, 4, 10, -10, -20}, vector<vector<int>>() = {{0, 1}, {1, 2}, {1, 3}, {3, 4}, {3, 5}, {3, 6}}, 2);
     cout << r << endl;
 }

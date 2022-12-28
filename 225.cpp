@@ -37,44 +37,61 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-struct ListNode
+class MyStack
 {
-    int val;
-    ListNode *next;
-    ListNode() : val(0), next(nullptr) {}
-    ListNode(int x) : val(x), next(nullptr) {}
-    ListNode(int x, ListNode *next) : val(x), next(next) {}
-};
+    queue<int> q[2];
+    int back = -1;
 
-class Solution
-{
 public:
-    ListNode *deleteNodes(ListNode *head, int m, int n)
+    MyStack()
     {
-        auto curr = head;
-        while (curr)
-        {
-            int mm = m - 1;
-            while (curr && mm)
-                curr = curr->next, --mm;
-            
-            auto next = curr;
-            auto nn = n + 1;
-            while (next && nn)
-                next = next->next, --nn;
+    }
 
-            if (curr)
-                curr->next = next, curr = curr->next;
-        }
+    void push(int x)
+    {
+        q[0].push(x);
+        back = x;
+    }
 
-        return head;
+    int pop()
+    {
+        while (q[0].size() > 1)
+            q[1].push(q[0].front()), q[0].pop();
+        int rv = q[0].front();
+        q[0].pop();
+        swap(q[0], q[1]);
+        return rv;
+    }
+
+    int top()
+    {
+        auto rv = pop();
+        push(rv);
+        return rv;
+    }
+
+    bool empty()
+    {
+        return q[0].empty();
     }
 };
 
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack* obj = new MyStack();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->top();
+ * bool param_4 = obj->empty();
+ */
+
 int main()
 {
-    Solution sol;
-    int r;
+    MyStack sol;
 
-    cout << r << endl;
+    sol.push(1);
+    sol.push(2);
+    cout << sol.top() << endl;
+    cout << sol.pop() << endl;
+    cout << sol.empty() << endl;
 }

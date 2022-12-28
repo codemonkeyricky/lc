@@ -37,41 +37,22 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int mySqrt(int x)
     {
-        if (curr)
+        long l = 0, r = x;
+        while (l < r)
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            long m = (l + r + 1) / 2;
+            if (m * m <= x)
+                l = m;
+            else
+                r = m - 1;
         }
-        return {nullptr, nullptr};
-    } 
+        return l;
+    }
 };
 
 int main()
@@ -79,5 +60,6 @@ int main()
     Solution sol;
     int r;
 
-    cout << r << endl;
+    cout << sol.mySqrt(8) << endl;
+    cout << sol.mySqrt(4) << endl;
 }

@@ -37,41 +37,23 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    vector<vector<int>> shiftGrid(vector<vector<int>> &grid, int k)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
+        int m = grid.size(), n = grid[0].size();
+        vector<vector<int>> rv(m, vector<int>(n));
+        for (auto i = 0; i < m; ++i)
+            for (auto j = 0; j < n; ++j)
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                int offset = i * n + j + k;
+                int ni = (offset / n) % m;
+                int nj = (offset % n);
+                rv[ni][nj] = grid[i][j];
             }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +61,6 @@ int main()
     Solution sol;
     int r;
 
+    sol.shiftGrid(vector<vector<int>>() = {{1}, {2}, {3}, {4}, {7}, {6}, {5}});
     cout << r << endl;
 }

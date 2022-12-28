@@ -37,41 +37,28 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int deleteGreatestValue(vector<vector<int>> &grid)
     {
-        if (curr)
+        int m = grid.size(), n = grid[0].size(), rv = 0;
+        for (auto it = 0; it < n; ++it)
         {
-            if (curr->val <= v)
+            int mm = 0;
+            for (auto i = 0; i < m; ++i)
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                int k = 0, mmm = 0;
+                for (auto j = 0; j < n; ++j)
+                    if (grid[i][j] != -1 && grid[i][j] > mmm)
+                        mmm = grid[i][j], k = j;
+                mm = max(mm, mmm);
+                grid[i][k] = -1;
             }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            rv += mm;
         }
-        return {nullptr, nullptr};
-    } 
+        return rv; 
+    }
 };
 
 int main()
@@ -79,5 +66,13 @@ int main()
     Solution sol;
     int r;
 
+    [[],[35,21,13,21,72]]
+
+
+    r = sol.deleteGreatestValue(vector<vector<int>>() = {{58,42,8,75,28}, {3, 3, 1}});
+    cout << r << endl;
+
+
+    r = sol.deleteGreatestValue(vector<vector<int>>() = {{1, 2, 4}, {3, 3, 1}});
     cout << r << endl;
 }

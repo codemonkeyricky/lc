@@ -37,41 +37,23 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    vector<vector<int>> generate(int rows)
     {
-        if (curr)
+        vector<vector<int>> rv;
+        rv.push_back({1});
+        for (int i = 1; i < rows; ++i)
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            vector<int> row = {1};
+            for (auto j = 0; j < rv.back().size() - 1; ++j)
+                row.push_back(rv.back()[j] + rv.back()[j + 1]);
+            row.push_back(1);
+            rv.push_back(row);
         }
-        return {nullptr, nullptr};
-    } 
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +61,5 @@ int main()
     Solution sol;
     int r;
 
-    cout << r << endl;
+    sol.generate(5);
 }

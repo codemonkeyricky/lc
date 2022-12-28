@@ -37,41 +37,39 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int maxJump(vector<int> &stones)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
+        if (stones.size() == 2)
+            return stones[1];
+
+        int n = stones.size();
+        vector<int> color(n);
+        int i = 0;
+        for (; i < n; i += 2)
+            ++color[i];
+
+        int p = -1; 
+        int rv = 0;
+        for (i = 0; i < n; ++i)
+            if (color[i])
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                if (p != -1)
+                    rv = max(rv, stones[i] - stones[p]);
+                p = i;
             }
-            else 
+
+        for (i = n - 1; i >= 0; --i)
+            if (!color[i])
             {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
+                rv = max(rv, stones[p] - stones[i]);
+                p = i;
             }
-        }
-        return {nullptr, nullptr};
-    } 
+
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +77,9 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.maxJump(vector<int>() = {0, 1, 2, 3});
+    cout << r << endl;
+
+    r = sol.maxJump(vector<int>() = {0, 2, 5, 6, 7});
     cout << r << endl;
 }

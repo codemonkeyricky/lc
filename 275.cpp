@@ -37,41 +37,24 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int hIndex(vector<int> &citations)
     {
-        if (curr)
+        int n = citations.size();
+        int l = 0;
+        int r = n;
+        while (l < r)
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            int m = (l + r) / 2;
+            if (citations[m] < n - m)
+                l = m + 1;
+            else
+                r = m;
         }
-        return {nullptr, nullptr};
-    } 
+        return n - l;
+    }
 };
 
 int main()
@@ -79,5 +62,21 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.hIndex(vector<int>() = {0});
+    cout << r << endl;
+
+    // r = sol.hIndex(vector<int>() = {11, 15});
+    // cout << r << endl;
+
+    // r = sol.hIndex(vector<int>() = {1, 2});
+    // cout << r << endl;
+
+    // r = sol.hIndex(vector<int>() = {100});
+    // cout << r << endl;
+
+    // r = sol.hIndex(vector<int>() = {1, 2, 100});
+    // cout << r << endl;
+
+    r = sol.hIndex(vector<int>() = {0, 1, 3, 5, 6});
     cout << r << endl;
 }

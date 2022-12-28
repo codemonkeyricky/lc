@@ -37,41 +37,22 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int largestOverlap(vector<vector<int>> &img1, vector<vector<int>> &img2)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+        int n = img1.size();
+        int rv = 0;
+        for (int i = -n; i <= n; ++i)
+            for (int j = -n, r = 0; j <= n; rv = max(rv, r), ++j, r = 0)
+                for (int k = 0; k < n; ++k)
+                    for (int l = 0; l < n; ++l)
+                        if (i + k >= 0 && i + k < n && j + l >= 0 && j + l < n)
+                            if (img2[k][l] && img1[i + k][j + l] == img2[k][l])
+                                ++r;
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +60,6 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.largestOverlap(vector<vector<int>>() = {{1, 1, 0}, {0, 1, 0}, {0, 1, 0}}, vector<vector<int>>() = {{0, 0, 0}, {0, 1, 1}, {0, 0, 1}});
     cout << r << endl;
 }

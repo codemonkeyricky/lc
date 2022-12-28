@@ -37,41 +37,21 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    long long dividePlayers(vector<int> &skill)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+        sort(begin(skill), end(skill));
+        long long rv = 0;
+        int sum = skill[0] + skill.back();
+        for (int i = 0, j = skill.size() - 1; i < j; ++i, --j)
+            if (skill[i] + skill[j] == sum)
+                rv += skill[i] * skill[j];
+            else
+                return -1;
+        return rv;
+    }
 };
 
 int main()

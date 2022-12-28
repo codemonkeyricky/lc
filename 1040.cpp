@@ -37,47 +37,30 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    vector<int> numMovesStonesII(vector<int> &A)
     {
-        if (curr)
+        sort(A.begin(), A.end());
+        int n = A.size(), low = n;
+        int high = max(A[n - 1] - n + 2 - A[1], A[n - 2] - A[0] - n + 2);
+        for (int j = 0, i = 0; j < n; ++j)
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            while (A[j] - A[i] >= n)
+                ++i;
+            if (j - i + 1 == n - 1 && A[j] - A[i] == n - 2)
+                low = min(low, 2);
+            else
+                low = min(low, n - (j - i + 1));
         }
-        return {nullptr, nullptr};
-    } 
+        return {low, high};
+    }
 };
 
 int main()
 {
     Solution sol;
-    int r;
 
-    cout << r << endl;
+    sol.numMovesStonesII(vector<int>() = {6, 5, 4, 3, 10});
 }

@@ -37,41 +37,28 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int longestSquareStreak(vector<int> &nums)
     {
-        if (curr)
+        unordered_set<long> set(begin(nums), end(nums));
+        unordered_set<long> seen;
+        sort(begin(nums), end(nums));
+        int rv = -1;
+        for (auto n : nums)
         {
-            if (curr->val <= v)
+            int streak = 0;
+            while (!seen.count(n) && set.count(n))
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                ++streak;
+                seen.insert(n);
+                n = n * n;
             }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            rv = max(rv, streak);
         }
-        return {nullptr, nullptr};
-    } 
+        return rv >= 2 ? rv : -1;
+    }
 };
 
 int main()
@@ -79,5 +66,6 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.longestSquareStreak(vector<int>() = {4, 3, 6, 16, 8, 2});
     cout << r << endl;
 }

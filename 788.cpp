@@ -37,41 +37,42 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
-public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int rotate(int n)
     {
-        if (curr)
+        string rv;
+        int nn = n;
+        while (n)
         {
-            if (curr->val <= v)
+            switch (n % 10)
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                case 0: rv.push_back(0 + '0'); break;
+                case 1: rv.push_back(1 + '0'); break;
+                case 2: rv.push_back(5 + '0'); break;
+                case 3: return nn; 
+                case 4: return nn; 
+                case 5: rv.push_back(2 + '0'); break;
+                case 6: rv.push_back(9 + '0'); break;
+                case 7: return nn;
+                case 8: rv.push_back(8 + '0'); break;
+                case 9: rv.push_back(6 + '0'); break;
             }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            n /= 10;
         }
-        return {nullptr, nullptr};
-    } 
+        reverse(begin(rv), end(rv));
+        return stoi(rv);
+    }
+
+public:
+    int rotatedDigits(int n)
+    {
+        int rv = 0;
+        for (auto i = 1; i <= n; ++i)
+            if (rotate(i) != i)
+                ++rv;
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +80,6 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.rotatedDigits(10);
     cout << r << endl;
 }

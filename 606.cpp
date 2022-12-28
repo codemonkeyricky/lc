@@ -50,28 +50,35 @@ TreeNode *populate(vector<int> &tree)
  */
 class Solution
 {
-public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    void dfs(TreeNode *curr, string &s)
     {
         if (curr)
         {
-            if (curr->val <= v)
+            s += to_string(curr->val);
+
+            if (curr->left || curr->right)
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                s += "(";
+                dfs(curr->left, s);
+                s += ")";
             }
-            else 
+
+            if (curr->right)
             {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
+                s += "(";
+                dfs(curr->right, s);
+                s += ")";
             }
         }
-        return {nullptr, nullptr};
-    } 
+    }
+
+public:
+    string tree2str(TreeNode *root)
+    {
+        string rv;
+        dfs(root, rv);
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +86,6 @@ int main()
     Solution sol;
     int r;
 
+    sol.tree2str(vector<int>() = {1, 2, 3, 4});
     cout << r << endl;
 }

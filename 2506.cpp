@@ -37,41 +37,25 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int similarPairs(vector<string> &words)
     {
-        if (curr)
+        map<int, int> count;
+        for (auto &word : words)
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            int a = 0;
+            for (auto &c : word)
+                a |= 1 << (c - 'a');
+            ++count[a];
         }
-        return {nullptr, nullptr};
-    } 
+
+        int rv = 0;
+        for (auto &c : count)
+            rv += (c.second * (c.second - 1)) / 2;
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +63,9 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.similarPairs(vector<string>() = {"aabb", "ab", "ba"});
+    cout << r << endl;
+
+    r = sol.similarPairs(vector<string>() = {"aba", "aabb", "abcd", "bac", "aabc"});
     cout << r << endl;
 }

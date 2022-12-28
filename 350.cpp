@@ -37,41 +37,23 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    vector<int> intersect(vector<int> &nums1, vector<int> &nums2)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
+        sort(begin(nums1), end(nums1));
+        sort(begin(nums2), end(nums2));
+        vector<int> rv;
+        for (auto i = 0, j = 0; i < nums1.size() && j < nums2.size();)
+            if (nums1[i] < nums2[j])
+                ++i;
+            else if (nums1[i] > nums2[j])
+                ++j;
             else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+                rv.push_back(nums1[i]), ++i, ++j;
+        return rv;
+    }
 };
 
 int main()

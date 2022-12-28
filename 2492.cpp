@@ -37,41 +37,41 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
-public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int find(int k)
     {
-        if (curr)
+        if (parent[k] < 0)
+            return k;
+        return find(parent[k]);
+    }
+
+    vector<int> parent;
+
+public:
+    int minScore(int n, vector<vector<int>> &roads)
+    {
+        parent = vector<int>(n + 1, -1);
+        for (auto &r : roads)
         {
-            if (curr->val <= v)
+            auto p1 = find(r[0]);
+            auto p2 = find(r[1]);
+            if (p1 != p2)
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
+                if (parent[p1] > parent[p2])
+                    swap(p1, p2);
+                parent[p1] += parent[p2];
+                parent[p2] = p1;
             }
         }
-        return {nullptr, nullptr};
-    } 
+
+        int rv = 1e9;
+        for (auto &r : roads)
+            if (find(1) == find(r[0]))
+                rv = min(rv, r[2]);
+
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +79,6 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.minScore(4, vector<vector<int>>() = {{1, 2, 9}, {2, 3, 6}, {2, 4, 5}, {1, 4, 7}});
     cout << r << endl;
 }

@@ -37,47 +37,37 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    vector<int> cycleLengthQueries(int n, vector<vector<int>> &queries)
     {
-        if (curr)
+        vector<int> rv;
+        for (auto &q : queries)
         {
-            if (curr->val <= v)
+            int a = q[0], b = q[1];
+
+            int r = 0;
+            while (a != b)
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                if (a > b)
+                    swap(a, b);
+                b /= 2; 
+                ++r;
             }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            rv.push_back(r + 1);
         }
-        return {nullptr, nullptr};
-    } 
+        return rv;
+    }
 };
 
 int main()
 {
     Solution sol;
-    int r;
+    vector<int> r;
 
-    cout << r << endl;
+    r = sol.cycleLengthQueries(3, vector<vector<int>>() = {{5, 3}, {4, 7}, {2, 3}});
+    for (auto &c : r)
+        cout << c << ", ";
+    cout << endl;
 }

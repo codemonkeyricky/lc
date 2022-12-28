@@ -37,40 +37,6 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-struct ListNode
-{
-    int val;
-    ListNode *next;
-    ListNode() : val(0), next(nullptr) {}
-    ListNode(int x) : val(x), next(nullptr) {}
-    ListNode(int x, ListNode *next) : val(x), next(next) {}
-};
-
-class Solution
-{
-public:
-    ListNode *deleteNodes(ListNode *head, int m, int n)
-    {
-        auto curr = head;
-        while (curr)
-        {
-            int mm = m - 1;
-            while (curr && mm)
-                curr = curr->next, --mm;
-            
-            auto next = curr;
-            auto nn = n + 1;
-            while (next && nn)
-                next = next->next, --nn;
-
-            if (curr)
-                curr->next = next, curr = curr->next;
-        }
-
-        return head;
-    }
-};
-
 int main()
 {
     Solution sol;

@@ -37,41 +37,25 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int countStudents(vector<int> &students, vector<int> &sandwiches)
     {
-        if (curr)
+        int a[] = {0, 0};
+        for (int i = 0; i < students.size(); i++)
+            a[students[i]] += 1;
+        int k = 0;
+        while (k < sandwiches.size())
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            if (a[sandwiches[k]] > 0)
+                a[sandwiches[k]] -= 1;
+            else
+                break;
+            k += 1;
         }
-        return {nullptr, nullptr};
-    } 
+        return sandwiches.size() - k;
+    }
 };
 
 int main()
@@ -79,5 +63,6 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.countStudents(vector<int>() = {1, 1, 1, 0, 0, 1}, vector<int>() = {1, 0, 0, 0, 1, 1});
     cout << r << endl;
 }

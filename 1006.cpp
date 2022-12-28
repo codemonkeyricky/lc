@@ -37,41 +37,29 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int clumsy(int n)
     {
-        if (curr)
+        vector<int> arr = {1};
+        vector<string> op = {"*", "/", "+", "-"};
+        int k = 0;
+        while (n)
         {
-            if (curr->val <= v)
+            switch (k++ % 5)
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
+            case 0: arr.back() *= n--; break;
+            case 1: arr.back() *= n--; break;
+            case 2: arr.back() /= n--; break;
+            case 3: arr.push_back(n--); break;
+            case 4: arr.push_back(-1); break;
             }
         }
-        return {nullptr, nullptr};
-    } 
+        if ((k - 1) % 5 == 4)
+            arr.pop_back();
+        return accumulate(begin(arr), end(arr), 0);
+    }
 };
 
 int main()
@@ -79,5 +67,7 @@ int main()
     Solution sol;
     int r;
 
-    cout << r << endl;
+    cout << sol.clumsy(13) << endl;
+    cout << sol.clumsy(10) << endl;
+    cout << sol.clumsy(4) << endl;
 }

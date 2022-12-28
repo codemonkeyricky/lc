@@ -37,41 +37,21 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution
 {
 public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int captureForts(vector<int> &forts)
     {
-        if (curr)
-        {
-            if (curr->val <= v)
+        int rv = 0;
+        for (auto i = 0, j = 0; j < forts.size(); ++j)
+            if (forts[j] != 0)
             {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
+                if ((forts[i] == 1 && forts[j] == -1) || (forts[i] == -1 && forts[j] == 1))
+                    rv = max(rv, j - i - 1);
+                i = j;
             }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
-        }
-        return {nullptr, nullptr};
-    } 
+        return rv;
+    }
 };
 
 int main()
@@ -79,5 +59,9 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.captureForts(vector<int>() = {0, 0, 1, -1});
+    cout << r << endl;
+
+    r = sol.captureForts(vector<int>() = {1, 0, 0, -1, 0, 0, 0, 0, 1});
     cout << r << endl;
 }

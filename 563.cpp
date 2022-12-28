@@ -50,28 +50,26 @@ TreeNode *populate(vector<int> &tree)
  */
 class Solution
 {
-public:
-    vector<TreeNode *> splitBST(TreeNode *curr, int v)
+    int dfs(TreeNode *root, int &sum)
     {
-        if (curr)
+        int rv = 0;
+        if (root)
         {
-            if (curr->val <= v)
-            {
-                auto rv = splitBST(curr->right, v);
-                curr->right = rv[0];
-                rv[0] = curr;
-                return rv;
-            }
-            else 
-            {
-                auto rv = splitBST(curr->left, v);
-                curr->left = rv[1];
-                rv[1] = curr;
-                return rv;
-            }
+            auto l = dfs(root->left, sum);
+            auto r = dfs(root->right, sum);
+            sum += abs(l - r);
+            rv = l + r + root->val;
         }
-        return {nullptr, nullptr};
-    } 
+        return rv; 
+    }
+
+public:
+    int findTilt(TreeNode *root)
+    {
+        int rv = 0;
+        dfs(root, rv);
+        return rv; 
+    }
 };
 
 int main()
