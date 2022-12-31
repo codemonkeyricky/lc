@@ -58,35 +58,29 @@ class Solution
         return rv;
     }
 
-    array<int, 2> dfs(string expr)
+    array<int, 2> dfs(string &expr, int &k)
     {
         array<int, 2> cost = {};
         int op = -1;
-        for (auto i = 0; i < expr.size(); ++i)
+        for (auto i = k; i < expr.size(); ++i)
             if (expr[i] == '(')
             {
-                int brackets = 1;
-                int k = i + 1;
-                while (k < expr.size() && brackets)
-                {
-                    if (expr[k] == '(')
-                        ++brackets;
-                    else if (expr[k] == ')')
-                        --brackets;
-                    ++k;
-                }
-
-                auto rv = dfs(expr.substr(i + 1, k - 1 - i - 1));
+                ++i;
+                auto rv = dfs(expr, i);
                 if (op == -1)
                     cost = rv;
                 else
                     cost = resolve(cost, op, rv);
-                i = k - 1;
+            }
+            else if (expr[i] == ')')
+            {
+                k = i;
+                return cost;
             }
             else if (expr[i] == '&')
-                op = false;
+                op = AND; 
             else if (expr[i] == '|')
-                op = true;
+                op = OR;
             else if (expr[i] == '1')
             {
                 if (op == -1)
@@ -107,7 +101,8 @@ class Solution
 public:
     int minOperationsToFlip(string expression)
     {
-        auto rv = dfs(expression);
+        int k = 0;
+        auto rv = dfs(expression, k);
         return max(rv[0], rv[1]);
     }
 };
@@ -117,11 +112,11 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.minOperationsToFlip("1&0|(0&0)&0|0&(1&(1))");
-    cout << r << endl;
+    // r = sol.minOperationsToFlip("1&0|(0&0)&0|0&(1&(1))");
+    // cout << r << endl;
 
-    r = sol.minOperationsToFlip("(0|(1|0&1))");
-    cout << r << endl;
+    // r = sol.minOperationsToFlip("(0|(1|0&1))");
+    // cout << r << endl;
 
     r = sol.minOperationsToFlip("(0&0)&(0&0&0)");
     cout << r << endl;
