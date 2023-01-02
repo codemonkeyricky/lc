@@ -39,21 +39,44 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
+    int dfs(vector<vector<int>> &grid, int i, int j, int v)
+    {
+        int m = grid.size(), n = grid[0].size();
+        vector<int> D = {0, 1, 0, -1, 0};
+        for (auto k = 0; k < 4; ++k)
+        {
+            int x = i + D[k + 0];
+            int y = j + D[k + 1];
+            if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] && vis[x][y] != v)
+            {
+                vis[x][y] = v;
+                // found an augment path
+                if (match[x][y] == -1 || dfs(grid, match[x][y] / n, match[x][y] % n, v))
+                {
+                    match[x][y] = i * n + j;
+                    match[i][j] = x * n + y;
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+
+    vector<vector<int>> match, vis; 
+
 public:
     int minimumOperations(vector<vector<int>> &grid)
     {
-        int m = grid.size(), n = grid[0].size();
-        int r = 0;
-        for (auto i = 0; i < m; ++i)
-            for (auto j = 0; j < n; ++j)
-                if ((i + j) % 2 == 0)
-                    if (grid[i][j])
-                        ++r;
+        int m = grid.size(), n = grid[0].size(), rv = 0;
 
-        for (auto i = 0; i < m; ++i)
-            for (auto j = 0; j < n; ++j)
-                if ((i + j) % 2 == 0)
-                    if (grid[i][j])
+        match = vector<vector<int>>(m, vector<int>(n, -1));
+        vis = vector<vector<int>>(m, vector<int>(n, -1));
+
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (grid[i][j] && match[i][j] == -1)
+                    rv += dfs(grid, i, j, vis[i][j] = i * n + j);
+        return rv;
     }
 };
 

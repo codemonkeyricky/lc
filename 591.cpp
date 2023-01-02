@@ -57,6 +57,10 @@ public:
         vector<string> tags;
         int content = 0;
         int tags_count = 0;
+        if(code[0] != '<')
+            return false;
+        if(code.back() != '>')
+            return false;
         for (auto i = 0; i < n; ++i)
         {
             if (code[i] == '<')
@@ -93,6 +97,8 @@ public:
                         return false;
                     tags.pop_back();
                     token.clear();
+                    if (tags.empty() && i + 1 < n)
+                        return false;
                 }
                 else if (code[i] == '!')
                 {
@@ -132,14 +138,14 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.isValid("<A><A>/A></A></A>");
-    cout << r << endl;
+    // r = sol.isValid("<A><A>/A></A></A>");
+    // cout << r << endl;
 
-    r = sol.isValid("<A>  <B> </A>   </B>");
-    cout << r << endl;
+    // r = sol.isValid("<A>  <B> </A>   </B>");
+    // cout << r << endl;
 
-    r = sol.isValid("<DIV>>>  ![cdata[]] <![CDATA[<div>]>]]>]]>>]</DIV>");
-    cout << r << endl;
+    // r = sol.isValid("<DIV>>>  ![cdata[]] <![CDATA[<div>]>]]>]]>>]</DIV>");
+    // cout << r << endl;
 
     r = sol.isValid("<DIV>This is the first line <![CDATA[<div>]]></DIV>");
     cout << r << endl;
