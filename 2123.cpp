@@ -45,16 +45,16 @@ class Solution
         vector<int> D = {0, 1, 0, -1, 0};
         for (auto k = 0; k < 4; ++k)
         {
-            int x = i + D[k + 0];
-            int y = j + D[k + 1];
-            if (x >= 0 && x < m && y >= 0 && y < n && grid[x][y] && vis[x][y] != v)
+            int ni = i + D[k + 0];
+            int nj = j + D[k + 1];
+            if (ni >= 0 && ni < m && nj >= 0 && nj < n && grid[ni][nj] && vis[ni][nj] != v)
             {
-                vis[x][y] = v;
+                vis[ni][nj] = v;
                 // found an augment path
-                if (match[x][y] == -1 || dfs(grid, match[x][y] / n, match[x][y] % n, v))
+                if (match[ni][nj] == -1 || dfs(grid, match[ni][nj] / n, match[ni][nj] % n, v))
                 {
-                    match[x][y] = i * n + j;
-                    match[i][j] = x * n + y;
+                    match[ni][nj] = i * n + j;
+                    match[i][j] = ni * n + nj;
                     return 1;
                 }
             }
