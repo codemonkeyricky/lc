@@ -51,10 +51,10 @@ class Solution
             {
                 vis[ni][nj] = v;
                 // found an augment path
-                if (match[ni][nj] == -1 || dfs(grid, match[ni][nj] / n, match[ni][nj] % n, v))
+                if (!match.count({ni, nj}) || dfs(grid, match[{ni, nj}][0], match[{ni, nj}][1], v))
                 {
-                    match[ni][nj] = i * n + j;
-                    match[i][j] = ni * n + nj;
+                    match[{ni, nj}] = {i, j};
+                    match[{i, j}] = {ni, nj};
                     return 1;
                 }
             }
@@ -62,19 +62,21 @@ class Solution
         return 0;
     }
 
-    vector<vector<int>> match, vis; 
+    vector<vector<int>> vis;
+    map<array<int, 2>, array<int, 2>> match;
 
 public:
     int minimumOperations(vector<vector<int>> &grid)
     {
         int m = grid.size(), n = grid[0].size(), rv = 0;
 
-        match = vector<vector<int>>(m, vector<int>(n, -1));
         vis = vector<vector<int>>(m, vector<int>(n, -1));
+
+        
 
         for (int i = 0; i < m; i++)
             for (int j = 0; j < n; j++)
-                if (grid[i][j] && match[i][j] == -1)
+                if (grid[i][j] && !match.count({i, j}))
                     rv += dfs(grid, i, j, vis[i][j] = i * n + j);
         return rv;
     }
