@@ -19,15 +19,15 @@ struct TreeNode
     int val;
     TreeNode *left;
     TreeNode *right;
-    TreeNode() : val(0), left(nulong longptr), right(nulong longptr) {}
-    TreeNode(int x) : val(x), left(nulong longptr), right(nulong longptr) {}
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
 TreeNode *recurse(vector<int> &tree, int k)
 {
     if (k >= tree.size() || tree[k] == -1)
-        return nulong longptr;
+        return nullptr;
 
     return new TreeNode(tree[k], recurse(tree, k * 2 + 1), recurse(tree, k * 2 + 2));
 }
@@ -37,71 +37,60 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
-constexpr int mod = 1e9 + 7;
-constexpr int M = 10000;
-int fact[M + 1];
-int inv_fact[M + 1];
-
-inline long long multiply(long long x, long long y)
+const int N = 10020;
+static long long fact[N] = {}; 
+bool __precompute__ = []()
 {
-    return x * y % mod;
-}
+    fact[0] = fact[1] = 1;
+    for (int i = 2; i < N; ++i)
+        fact[i] = (fact[i - 1] * i) % 1000000007;
 
-inline long long binexp(long long x, int pow)
-{
-    if (pow == 0)
-        return 1;
-
-    long long half = binexp(x, pow >> 1);
-    if (pow & 1)
-        return multiply(x, multiply(half, half));
-
-    return multiply(half, half);
-}
-
-inline long long comb(int m, int n)
-{
-    return multiply(fact[m], multiply(inv_fact[n], inv_fact[m - n]));
-}
-
-static const auto init = []
-{
-    fact[0] = 1;
-    for (int i = 1; i <= M; ++i)
-        fact[i] = multiply(fact[i - 1], i);
-
-    inv_fact[M] = binexp(fact[M], mod - 2);
-    for (int i = M - 1; i >= 0; --i)
-        inv_fact[i] = multiply(i + 1, inv_fact[i + 1]);
-
-    return false;
+    return 0;
 }();
 
 class Solution
 {
+    int static constexpr mod = 1000000007;
+    int modPow(int x, unsigned int y, unsigned int m)
+    {
+        if (y == 0)
+            return 1;
+        long p = modPow(x, y / 2, m) % m;
+        p = (p * p) % m;
+        return y % 2 ? (p * x) % m : p;
+    }
+
+    int inv(int a, int p)
+    {
+        return modPow(a, p - 2, p);
+    }
+
+    long long comb(int n, int r)
+    {
+        return fact[n] * inv(fact[r], mod) % mod * inv(fact[n - r], mod) % mod;
+    }
+
 public:
     int countGoodSubsequences(string s)
     {
-        int count[26] = {0};
-        for (char &c : s)
+        array<int, 26> count = {};
+        for (auto &c : s)
             ++count[c - 'a'];
 
-        // Find maximal count of alphabets
         int mmax = 0;
-        for (int i = 0; i < 26; ++i)
+        for (auto i = 0; i < 26; ++i)
             mmax = max(mmax, count[i]);
 
-        int rv = 0;
-        for (int i = 1; i <= mmax; ++i)
+        long rv = 0;
+        for (auto i = 1; i <= mmax; ++i)
         {
-            long long r = 1;
-            for (int j = 0; j < 26; ++j)
+            long r = 1;
+            for (auto j = 0; j < 26; ++j)
                 if (count[j] >= i)
-                    r = multiply(r, comb(count[j], i) + 1);
-
+                    r = (r * (comb(count[j], i) + 1)) % mod;
             rv = (rv + r - 1) % mod;
         }
-        return rv;
+        return rv; 
     }
 };
 
