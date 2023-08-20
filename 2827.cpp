@@ -39,78 +39,34 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-    bool isBeautiful(string &num, int kk, int ph, int sum)
-    {
-        int nn = stoi(num);
-        if (nn < kk)
-            return false;
-
-        if (ph)
-            return false;
-
-        if (sum == 0)
-            return false;
-
-        int n = num.size(), ones = 0, tens = 0;
-        ones = num[n - 1] - '0';
-        if (n > 1)
-            tens = num[n - 2] - '0';
-
-        switch (kk)
-        {
-            case 1:
-                return true;
-            case 2:
-                return ones % 2 == 0;
-            case 3:
-                return sum % 3 == 0;
-            case 4:
-                return (tens * 2 + ones) % 4 == 0;
-            case 5:
-                return ones % 5 == 0;
-            case 6:
-                return (ones % 2 == 0) && (sum % 3 == 0);
-            case 7:
-                return (sum + ones * 4) % 7 == 0;
-            case 8:
-                return (sum * 2 - ones) % 8 == 0;
-            case 9:
-                return sum % 9 == 0;
-            case 10:
-                return ones == 0;
-            case 11:
-                return (sum - 2 * ones) % 11 == 0;
-            case 12:
-                return (sum * 2 - ones * 2) % 12 == 0;
-            case 13:
-                return (sum + ones * 3) % 13 == 0;
-            case 14:
-                return (sum * 2 - ones - tens) % 14 == 0;
-            case 15:
-                return (sum % 3 == 0) && (ones % 5 == 0);
-            case 16:
-                return (sum * 4 - ones * 3 - tens * 3) % 16 == 0;
-            case 17:
-                return (sum - ones * 6) % 17 == 0;
-            case 18:
-                return (ones % 2 == 0) && (sum % 9) == 0;
-            case 19:
-                return (sum + ones * 3 + tens * 3) % 19 == 0;
-            case 20:
-                return (ones == 0) && (tens % 2 == 0);
-        }
-        return false; 
-    }
-
-    int dfs(string &num, string curr, int kk, int k, int ceil, int ph, int sum)
+    int dfs(string &num, string curr, int mod, int k = 0, int ceil = true, int ph = 10, int remainder = 0)
     {
         int n = num.size();
         if(k >= n)
-            return isBeautiful(curr, kk, ph, sum);
+            return (ph == 0) && (remainder % mod == 0);
 
         int rv = 0;
         for (int i = ceil ? num[k] - '0' : 9; i >= 0; --i)
-            rv += dfs(num, curr + string(1, i + '0'), kk, k + 1, ceil && i == num[k] - '0', (sum || i) ? ph + (i % 2 ? 1 : -1) : 0, sum + i);
+        {
+            int add = i % 2 ? 1 : -1;
+            int new_ph = 0;
+            if (i && ph != 10)
+                new_ph = ph + add;
+            else if (i && ph == 10)
+                new_ph = add;
+            else if (!i && ph != 10)
+                new_ph = ph + add;
+            else if (!i && ph == 10)
+                new_ph = 10;
+
+            rv += dfs(num,
+                      curr + string(1, i + '0'),
+                      mod,
+                      k + 1,
+                      ceil && i == num[k] - '0',
+                      new_ph,
+                      (remainder * 10 + i) % mod);
+        }
         return rv;
     }
 
@@ -118,12 +74,12 @@ public:
     int numberOfBeautifulIntegers(int low, int high, int kk)
     {
         string num = to_string(high);
-        int a, b = 0; 
-        a = dfs(num, "", kk, 0, true, 0, 0);
+        int a, b = 0;
+        a = dfs(num, "", kk);
         if (low)
         {
             string num = to_string(low - 1);
-            b = dfs(num, "", kk, 0, true, 0, 0);
+            b = dfs(num, "", kk);
         }
         return a - b;
     }
