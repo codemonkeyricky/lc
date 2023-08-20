@@ -39,7 +39,7 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-    void invert(int n, int l, int r, int i, int j)
+    void add(int n, int l, int r, int i, int j)
     {
         if (lazy[n])
         {
@@ -79,8 +79,8 @@ class Solution
         // case 3:
         int m = (l + r) / 2;
 
-        invert(n * 2, l, m, i, j);
-        invert(n * 2 + 1, m + 1, r, i, j);
+        add(n * 2, l, m, i, j);
+        add(n * 2 + 1, m + 1, r, i, j);
 
         tree[n] = tree[n * 2] + tree[n * 2 + 1];
     }
@@ -127,7 +127,7 @@ public:
 
         for (auto i = 0; i < n; ++i)
             if (n1[i])
-                invert(1, 0, n - 1, i, i);
+                add(1, 0, n - 1, i, i);
 
         long long sum = accumulate(begin(n2), end(n2), 0ll);
         vector<long long> rv; 
@@ -135,7 +135,7 @@ public:
         {
             int type = q[0], l = q[1], r = q[2];
             if (type == 1)
-                invert(1, 0, n - 1, l, r);
+                add(1, 0, n - 1, l, r);
             else if (type == 2)
             {
                 long long ones = query(1, 0, n - 1, 0, n - 1);
