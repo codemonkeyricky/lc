@@ -11,6 +11,7 @@
 #include <bitset>
 #include <numeric>
 #include <cmath>
+#include <cstring>
 
 using namespace std;
 
@@ -39,47 +40,53 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-    int dfs(string &num, string curr, int mod, int k = 0, int ceil = true, int ph = 10, int remainder = 0)
+    int dfs(string &num, int mod, int k = 0, int ceil = true, int ph = 10, int remainder = 0)
     {
         int n = num.size();
         if(k >= n)
             return (ph == 0) && (remainder % mod == 0);
 
-        int rv = 0;
-        for (int i = ceil ? num[k] - '0' : 9; i >= 0; --i)
+        if (dp[k][ceil][ph + 10][remainder] == 0)
         {
-            int add = i % 2 ? 1 : -1;
-            int new_ph = 0;
-            if (i && ph != 10)
-                new_ph = ph + add;
-            else if (i && ph == 10)
-                new_ph = add;
-            else if (!i && ph != 10)
-                new_ph = ph + add;
-            else if (!i && ph == 10)
-                new_ph = 10;
+            int rv = 0;
+            for (int i = ceil ? num[k] - '0' : 9; i >= 0; --i)
+            {
+                int add = i % 2 ? 1 : -1;
+                int new_ph = 0;
+                if (i && ph != 10)
+                    new_ph = ph + add;
+                else if (i && ph == 10)
+                    new_ph = add;
+                else if (!i && ph != 10)
+                    new_ph = ph + add;
+                else if (!i && ph == 10)
+                    new_ph = 10;
 
-            rv += dfs(num,
-                      curr + string(1, i + '0'),
-                      mod,
-                      k + 1,
-                      ceil && i == num[k] - '0',
-                      new_ph,
-                      (remainder * 10 + i) % mod);
+                rv += dfs(num,
+                          mod,
+                          k + 1,
+                          ceil && i == num[k] - '0',
+                          new_ph,
+                          (remainder * 10 + i) % mod);
+            }
+            dp[k][ceil][ph + 10][remainder] = rv + 1;
         }
-        return rv;
+        return dp[k][ceil][ph + 10][remainder] - 1;
     }
+
+    int dp[10][2][21][21] = {};
 
 public:
     int numberOfBeautifulIntegers(int low, int high, int kk)
     {
         string num = to_string(high);
         int a, b = 0;
-        a = dfs(num, "", kk);
+        a = dfs(num, kk);
         if (low)
         {
+            memset(dp, 0, sizeof(dp));
             string num = to_string(low - 1);
-            b = dfs(num, "", kk);
+            b = dfs(num, kk);
         }
         return a - b;
     }
@@ -90,7 +97,7 @@ int main()
     Solution sol;
     int r;
 
-    cout << sol.numberOfBeautifulIntegers(1, 1100, 11) << endl;
+    cout << sol.numberOfBeautifulIntegers(1, 1001, 11) << endl;
     cout << sol.numberOfBeautifulIntegers(1, 20, 20) << endl;
     // cout << sol.numberOfBeautifulIntegers(5, 5, 2) << endl;
     // cout << sol.numberOfBeautifulIntegers(1, 10, 1) << endl;
