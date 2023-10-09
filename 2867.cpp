@@ -40,21 +40,27 @@ TreeNode *populate(vector<int> &tree)
 class Solution
 {
     using ll = long long;
-    void dfs(vector<vector<int>> &al, int p, int u, ll &curr, ll &sum, ll &rv)
+
+    int dfs(vector<vector<int>> &al, int p, int u, set<int> &prime_visited)
     {
-        ++curr; 
-        rv += sum; 
+        np_visited.insert(u);
+        int rv = 1;
         for (auto &v : al[u])
             if (v != p)
-                if (!prime.count(v))
-                    dfs(al, u, v, curr, sum, rv);
+                if (prime.count(v))
+                    prime_visited.insert(v);
+                else 
+                    rv += dfs(al, u, v, prime_visited); 
+        return rv; 
     }
 
-    set<int> prime;
+    set<int> prime, np_visited;
 
 public:
     long long countPaths(int n, vector<vector<int>> &edges)
     {
+        prime.clear();
+
         vector<int> cand(n + 1, 1);
         cand[0] = cand[1] = 0;
         for (auto i = 2; i <= n; ++i)
@@ -65,24 +71,40 @@ public:
         for (auto i = 2; i < cand.size(); ++i)
             if (cand[i])
                 prime.insert(i);
-
+        
         vector<vector<int>> al(n + 1);
         for (auto &e : edges)
             al[e[0]].push_back(e[1]),
                 al[e[1]].push_back(e[0]);
 
+        set<int> not_prime;
+        for (auto &e : edges)
+            for (auto k = 0; k < 2; ++k)
+                if (!prime.count(e[k]))
+                    not_prime.insert(e[k]);
+
+        vector<vector<int>> al_cnt(n + 1);
+        np_visited.clear();
+        for (auto &np : not_prime)
+        {
+            if (!np_visited.count(np))
+            {
+                set<int> prime_visited;
+                int visited = dfs(al, -1, np, prime_visited);
+                for (auto &p : prime_visited)
+                    al_cnt[p].push_back(visited);
+            }
+        }
+
         long long rv = 0, sum, curr;
         for (auto &p : prime)
         {
             sum = curr = 0;
-            for (auto &v : al[p])
-                if (!prime.count(v))
-                {
-                    dfs(al, p, v, curr, sum, rv);
-                    rv += curr;
-                    sum += curr;
-                    curr = 0;
-                }
+            for (auto &v : al_cnt[p])
+            {
+                rv += sum * v + v; 
+                sum += v; 
+            }
         }
 
         return rv;
@@ -93,6 +115,12 @@ int main()
 {
     Solution sol;
     int r;
+
+    r = sol.countPaths(5, vector<vector<int>>() = {{4, 1}, {5, 4}, {2, 1}, {3, 4}});
+    cout << r << endl;
+
+    r = sol.countPaths(1, vector<vector<int>>() = {});
+    cout << r << endl;
 
     r = sol.countPaths(6, vector<vector<int>>() = {{1, 2}, {1, 3}, {2, 4}, {3, 5}, {3, 6}});
     cout << r << endl;
