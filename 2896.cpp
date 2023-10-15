@@ -39,35 +39,25 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-    int dfs(string &s1, string &s2, int f, int x, int k)
+    int dfs(vector<int> &diff, int x, int k, int p) 
     {
-        int n = s1.size();
+        int n = diff.size();
         if (k >= n)
-            return f ? 1e9 : 0;
+            return p * x;
 
-        if (dp[k][f] == 0)
+        if (p == 0)
+            return 0;
+
+        if (dp[k][p] == 0)
         {
-            int rv = 0;
-            if (s1[k] == s2[k] && f == 0)
-                rv = dfs(s1, s2, 0, x, k + 1);
-            else if (s1[k] != s2[k] && f != 0)
-                rv = dfs(s1, s2, 0, x, k + 1);
-            else
-            {
-                // flip again
-                int a = 1 + dfs(s1, s2, 1, x, k + 1);
-
-                // find the next mismatch
-                int b = 1e9;
-                for (auto i = k + 1; i < n && b == 1e9; ++i)
-                    if (s1[i] != s2[i])
-                        b = x + dfs(s1, s2, 0, x, i + 1);
-
-                rv = min(a, b);
-            }
-            dp[k][f] = rv + 1;
+            int a = 1e9, b = 1e9;
+            if (k + 1 < n)
+                a = (diff[k + 1] - diff[k]) + dfs(diff, x, k + 2, p - 1);
+            b = dfs(diff, x, k + 1, p);
+            dp[k][p] = min(a, b) + 1;
         }
-        return dp[k][f] - 1;
+
+        return dp[k][p] - 1;
     }
 
     vector<vector<int>> dp;
@@ -75,9 +65,18 @@ class Solution
 public:
     int minOperations(string s1, string s2, int x)
     {
-        dp = vector<vector<int>>(s1.size(), vector<int>(2));
-        int rv = dfs(s1, s2, 0, x, 0);
-        return rv >= 1e9 ? -1 : rv;
+        int n = s1.size();
+
+        vector<int> diff;
+        for (auto i = 0; i < n; ++i)
+            if (s1[i] != s2[i])
+                diff.push_back(i);
+
+        if (diff.size() % 2)
+            return -1;
+
+        dp = vector<vector<int>>(n, vector<int>(diff.size() + 1));
+        return dfs(diff, x, 0, diff.size() / 2);
     }
 };
 
@@ -85,6 +84,9 @@ int main()
 {
     Solution sol;
     int r;
+
+    r = sol.minOperations("11001011111", "01111000110", 2);
+    cout << r << endl;
 
     r = sol.minOperations("10110", "00011", 4);
     cout << r << endl;
