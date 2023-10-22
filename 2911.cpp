@@ -96,7 +96,7 @@ class Solution
 
         // bottoms up
         for (auto k = 1; k < kk; ++k)
-            for (auto j = 3; j < n; ++j) ///< 0 ... j
+            for (auto j = 3; j < n; ++j)         ///< 0 ... j
                 for (auto i = 1; i + 1 < j; ++i) ///< 0... i, i +1 .. j
                     dp[0][j][k] = min(dp[0][j][k], dp[0][i][k - 1] + semi[i + 1][j]);
 
@@ -120,6 +120,7 @@ public:
         return dfs_bottomsup(semi, 0, n - 1, k);
     }
 };
+
 
 int main()
 {
