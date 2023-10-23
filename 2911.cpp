@@ -11,6 +11,7 @@
 #include <bitset>
 #include <numeric>
 #include <cmath>
+#include <cstring>
 
 using namespace std;
 
@@ -37,6 +38,7 @@ TreeNode *populate(vector<int> &tree)
     return recurse(tree, 0);
 }
 
+int dp[201][201][201] = {};
 class Solution
 {
     int semiScore(string &s, int i, int j)
@@ -87,7 +89,6 @@ class Solution
     int dfs_bottomsup(vector<vector<int>> &semi, int i, int j, int kk)
     {
         int n = semi.size();
-        dp = vector<vector<vector<int>>>(n, vector<vector<int>>(n, vector<int>(kk, 1e9)));
 
         // base case
         for (auto i = 0; i < n; ++i)
@@ -97,8 +98,11 @@ class Solution
         // bottoms up
         for (auto k = 1; k < kk; ++k)
             for (auto j = 3; j < n; ++j)         ///< 0 ... j
+            {
+                dp[0][j][k] = 1e9;
                 for (auto i = 1; i + 1 < j; ++i) ///< 0... i, i +1 .. j
                     dp[0][j][k] = min(dp[0][j][k], dp[0][i][k - 1] + semi[i + 1][j]);
+            }
 
         return dp[0][n - 1][kk - 1];
     }
