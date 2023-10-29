@@ -42,42 +42,40 @@ class Solution
 public:
     int minGroupsForValidAssignment(vector<int> &nums)
     {
-        // int last = -1;
-        // for (auto &n : nums)
-        //     if (last == -1)
-        //         last = n;
-        //     else 
+        unordered_map<int, int> m;
+        for (auto &n : nums)
+            ++m[n];
 
-        int n = nums.size();
-        int l = 1, r = nums.size();
+        map<int, int> cnt;
+        for (auto &mm : m)
+            ++cnt[mm.second];
+
         int rv = 1e9;
-        while (l < r)
+        auto limit = cnt.begin()->first;
+        for (auto x = 1; x <= limit; ++x)
         {
-            int m = (l + r + 1) / 2;
-
-            int mmin = 1e9, mmax = 0;
-            unordered_map<int, int> cnt;
-            for (auto &n : nums)
-                if (++cnt[n] > m + 1)
-                    cnt[n] = 1, mmax = m + 1;
-
             bool valid = true;
+            int g = 0;
             for (auto &c : cnt)
-                mmin = min(mmin, c.second), mmax = max(mmax, c.second);
+            {
+                int f = c.first;
+                int a = f / (x + 1);
+                int b = f % (x + 1);
+                if (b == 0)
+                    g += a * c.second;
+                else if (x - b <= a)
+                    g += (a + 1) * c.second;
+                else
+                    valid = false;
+                if (!valid)
+                    break;
+            }
 
-            if (mmax - mmin <= 1)
-                l = m;
-            else
-                r = m - 1;
+            if (valid)
+                rv = min(rv, g);
         }
 
-        unordered_map<int, int> cnt;
-        int groups = 0;
-        for (auto &n : nums)
-            if (++cnt[n] > l + 1)
-                cnt[n] = 1, ++groups;
-
-        return cnt.size() + groups;
+        return rv;
     }
 };
 
@@ -86,7 +84,7 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.minGroupsForValidAssignment(vector<int>() = {1, 1, 1, 1, 1});
+    r = sol.minGroupsForValidAssignment(vector<int>() = {1, 2, 2, 3, 1});
     cout << r << endl;
 
     r = sol.minGroupsForValidAssignment(vector<int>() = {1, 2, 3, 3, 3, 3, 3});
