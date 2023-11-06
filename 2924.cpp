@@ -39,18 +39,32 @@ TreeNode *populate(vector<int> &tree)
 
 class Solution
 {
-public:
-    int lengthOfLongestSubsequence(vector<int> &nums, int target)
+    void dfs(vector<vector<int>> &al, int u, set<int> &roots, vector<int> &seen)
     {
-        vector<int> dp(target + 1);
-        dp[0] = 1;
+        if (!seen[u])
+        {
+            seen[u] = true;
+            if (al[u].empty())
+                roots.insert(u);
+            else
+                for (auto &v : al[u])
+                    dfs(al, v, roots, seen);
+        }
+    }
 
-        for (auto i = 0; i < nums.size(); ++i)
-            for (int j = target; j >= nums[i]; --j)
-                if (dp[j - nums[i]])
-                    dp[j] = max(dp[j], dp[j - nums[i]] + 1);
+public:
+    int findChampion(int n, vector<vector<int>> &edges)
+    {
+        vector<vector<int>> al(n);
+        for (auto &e : edges)
+            al[e[1]].push_back(e[0]);
 
-        return dp[target] - 1;
+        set<int> roots;
+        vector<int> seen(n);
+        for (auto i = 0; i < n; ++i)
+            dfs(al, i, roots, seen);
+
+        return roots.size() == 1 ? *begin(roots) : -1;
     }
 };
 
@@ -59,6 +73,5 @@ int main()
     Solution sol;
     int r;
 
-    r = sol.lengthOfLongestSubsequence(vector<int>() = {1, 2, 3, 4, 5}, 9);
     cout << r << endl;
 }

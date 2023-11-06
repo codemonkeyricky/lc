@@ -179,3 +179,41 @@ public:
         return rv;
     }
 };
+
+
+// segment tree without range update
+
+static constexpr int max_p = 5000;
+int st[4 * max_p] = {};
+int query(int l, int r, int p = 1, int tl = 0, int tr = max_p) {
+    if (l > r) 
+        return 0;
+    if (l == tl && r == tr)
+        return st[p];
+    int tm = (tl + tr) / 2;
+    return max(query(l, min(r, tm), p * 2, tl, tm), query(max(l, tm + 1), r, p * 2 + 1, tm + 1, tr));
+}
+int update(int pos, int new_val, int p = 1, int tl = 0, int tr = max_p) {
+    if (tl == tr)
+        return st[p] = max(st[p], new_val);
+    int tm = (tl + tr) / 2;
+    if (pos <= tm)
+        return st[p] = max(update(pos, new_val, p * 2, tl, tm), st[p * 2 + 1]);
+    return st[p] = max(st[p * 2], update(pos, new_val, p * 2 + 1, tm + 1, tr));
+}
+int maxProfit(vector<int>& prices, vector<int>& profits) {
+    int n = prices.size(), res = -1, cnt = 0, last = 0;
+    vector<int> l(n);
+    for (int i = 0; i < n - 1; ++i) {
+        l[i] = query(0, prices[i] - 1);
+        update(prices[i], profits[i]);
+    }
+    memset(st, 0, sizeof(st));
+    for (int i = n - 1; i > 0; --i) {
+        int r = query(prices[i] + 1, max_p);
+        if (min(l[i], r))
+            res = max(res, l[i] + r + profits[i]);
+        update(prices[i], profits[i]);        
+    }
+    return res;
+}

@@ -59,6 +59,9 @@ int main()
     Solution sol;
     int r;
 
+    r = sol.minIncrementOperations(vector<int>() = {0, 0, 0}, 3);
+    cout << r << endl;
+
     r = sol.minIncrementOperations(vector<int>() = {42, 19, 52, 36, 8, 5, 9}, 656);
     cout << r << endl;
 
