@@ -68,35 +68,43 @@ class Solution
     vector<int> tree;
 
 public:
-    int maxProfit(vector<int> &prices, vector<int> &profits)
+    vector<int> leftmostBuildingQueries(vector<int> &heights, vector<vector<int>> &queries)
     {
-        int n = prices.size();
+        int n = heights.size();
+        tree = vector<int>((n + 1) * 4);
 
-        tree = vector<int>(5001 * 4, -1);
+        for (auto i = 0; i < n; ++i)
+            update(1, 0, n, i, i, heights[i]);
 
-        vector<int> r(n, -1);
-        for (int i = n - 1; i >= 0; --i)
+        vector<int> rv;
+        for (auto &q : queries)
         {
-            int mmax = query(1, 0, 5000, prices[i] + 1, 5000);
-            if (mmax != -1)
-                r[i] = mmax;
-            int reset = query(1, 0, 5000, prices[i], prices[i]);
-            if (reset <= profits[i])
-                update(1, 0, 5000, prices[i], prices[i], profits[i]);
-        }
+            // make sure a is always to the left of b
+            int a = q[0], b = q[1];
+            if (a > b)
+                swap(a, b);
 
-        tree = vector<int>(5001 * 4, -1);
+            if (a == b || heights[a] < heights[b])
+            {
+                rv.push_back(b);
+                continue;
+            }
 
-        int rv = -1;
-        for (int i = 0; i < n; ++i)
-        {
-            int mmax = query(1, 0, 5000, 0, prices[i] - 1);
-            if (mmax != -1 && r[i] != -1)
-                rv = max(rv, mmax + profits[i] + r[i]);
+            int l = max(a, b), r = n - 1;
+            while (l < r)
+            {
+                int m = (l + r) / 2;
+                int h = query(1, 0, n, l, m);
+                if (heights[a] < h && heights[b] < h)
+                    r = m;
+                else
+                    l = m + 1;
+            }
 
-            int reset = query(1, 0, 5000, prices[i], prices[i]);
-            if (reset <= profits[i])
-                update(1, 0, 5000, prices[i], prices[i], profits[i]);
+            if (heights[a] < heights[l] && heights[b] < heights[l])
+                rv.push_back(l);
+            else
+                rv.push_back(-1);
         }
 
         return rv;
@@ -106,11 +114,17 @@ public:
 int main()
 {
     Solution sol;
-    int r;
+    vector<int> r;
 
-    r = sol.maxProfit(vector<int>() = {1, 2, 11, 11}, vector<int>() = {45, 7, 96, 20});
-    cout << r << endl;
+    r = sol.leftmostBuildingQueries(
+        vector<int>() = {5, 3, 8, 2, 6, 1, 4, 6},
+        vector<vector<int>>() = {{0, 7}, {3, 5}, {5, 2}, {3, 0}, {1, 6}});
+    for (auto &rr : r)
+        cout << rr << ", ";
+    cout << endl;
 
-    r = sol.maxProfit(vector<int>() = {10, 2, 3, 4}, vector<int>() = {100, 2, 7, 10});
-    cout << r << endl;
+    r = sol.leftmostBuildingQueries(vector<int>() = {6, 4, 8, 5, 2, 7}, vector<vector<int>>() = {{0, 1}, {0, 3}, {2, 4}, {3, 4}, {2, 2}});
+    for (auto &rr : r)
+        cout << rr << ", ";
+    cout << endl;
 }
