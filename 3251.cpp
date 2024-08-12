@@ -48,16 +48,16 @@ class Solution {
         for (auto k = 0; k <= nums[0]; ++k)
             dp[0][k] = 1;
 
+        ///< pick a number c up to nums[i]
+        ///< arr1: p <= c, arr2: nums[i - 1] - p >= c
         for (auto i = 1; i < n; ++i)
-            ///< pick a number c up to nums[i]
-            for (auto c = 0; c <= nums[i]; ++c)
-                for (int p = 0; p <= nums[i - 1]; ++p) {
-                    auto cp = nums[i] - c;
-                    auto pp = nums[i - 1] - p;
-                    if (p <= c)       ///< arr1: p <= c
-                        if (pp >= cp) ///< arr2: nums[i - 1] - p >= c
-                            dp[i][c] = (dp[i][c] + dp[i - 1][p]) % MOD;
+            for (auto c = 0; c <= nums[i]; ++c) {
+                auto limit = min(nums[i - 1], c);
+                for (int p = 0; p <= limit; ++p) {
+                    if (c - p >= nums[i] - nums[i - 1])
+                        dp[i][c] = (dp[i][c] + dp[i - 1][p]) % MOD;
                 }
+            }
 
         long rv = 0;
         for (auto it = begin(dp[nums.size() - 1]);
