@@ -47,44 +47,47 @@ class Solution
 
     Trie root;
 
-    int dfs(string &target, int k, Trie *n)
+    void match(string &target, int k, int l, Trie *n, vector<pair<int, int>> &result)
     {
-        if (k >= target.size())
-            return (n == &root) ? 0 : n->cost;
-            
         int index = target[k] - 'a';
 
-        if (dp[k].count(n))
-            return dp[k][n];
+        if (n->cost != 1e9)
+            result.push_back({l, n->cost});
 
-        int rv = 1e9;
+        if (k >= target.size())
+            return;
 
         if (n->lookup[index])
-        {
-            // current letter matchs
-
-            auto nn = n->lookup[index];
-
-            int a = 1e9, b = 1e9;
-
-            // if this can be a word, start a new word
-            // if (nn->cost != 1e9)
-            a = nn->cost + dfs(target, k + 1, &root);
-
-            // try matching the next word
-            b = dfs(target, k + 1, nn);
-
-            rv = min(a, b);
-        }
-        return dp[k][n] = rv;
+            match(target, k + 1, l + 1, n->lookup[index], result);
     }
 
-    vector<map<Trie *, int>> dp;
+    int dfs(string &target, int k)
+    {
+        if (k >= target.size())
+            return 0;
+
+        if (dp[k])
+            return dp[k];
+
+        vector<pair<int, int>> result;
+        match(target, k, 0, &root, result);
+
+        int rv = 1e9;
+        for (auto &[len, cost] : result)
+        {
+            int temp = cost + dfs(target, k + len);
+            rv = min(temp, rv);
+        }
+
+        return dp[k] = rv;
+    }
+
+    vector<int> dp;
 
 public:
     int minimumCost(string target, vector<string> &words, vector<int> &costs)
     {
-        dp = vector<map<Trie *, int>>(target.size());
+        dp = vector<int>(target.size());
 
         for (auto k = 0; k < words.size(); ++k)
         {
@@ -100,7 +103,7 @@ public:
             r->cost = min(r->cost, costs[k]);
         }
 
-        int rv = dfs(target, 0, &root);
+        int rv = dfs(target, 0);
         return rv >= 1e9 ? -1 : rv;
     }
 };
