@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <bitset>
 #include <cassert>
 #include <cmath>
@@ -37,33 +36,24 @@ TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
 class Solution {
   public:
-    int countOfPairs(vector<int>& nums) {
-        int n = nums.size();
+    int numberOfAlternatingGroups(vector<int>& colors, int k) {
+        auto copy = colors;
+        for (auto i = 0; i < k - 1; ++i) {
+            copy.push_back(colors[i]);
+        }
+        swap(copy, colors);
 
-        const int N = 1001;
-        const int M = 1001;
-        const int MOD = 1000000007;
+        int rv = 0;
+        for (int i = 0, j = 0; j < colors.size(); ++j) {
 
-        array<array<int, M>, N> dp = {{}};
-        for (auto k = 0; k <= nums[0]; ++k)
-            dp[0][k] = 1;
+            if (j && colors[j] == colors[j - 1])
+                i = j;
 
-        ///< pick a number c up to nums[i]
-        ///< arr1: p <= c, arr2: nums[i - 1] - p >= c
-        for (auto i = 1; i < n; ++i)
-            for (auto j = 0; j <= nums[i]; ++j) {
-                auto limit = min(nums[i - 1], j);
-                for (int k = 0; k <= limit; ++k) {
-                    if (nums[i - 1] - k >= nums[i] - j)
-                        dp[i][j] = (dp[i][j] + dp[i - 1][k]) % MOD;
-                }
+            if (j - i + 1 >= k) {
+                ++rv;
+                ++i;
             }
-
-        long rv = 0;
-        for (auto it = begin(dp[nums.size() - 1]);
-             it != end(dp[nums.size() - 1]); ++it)
-            rv = (rv + *it) % MOD;
-
+        }
         return rv;
     }
 };
@@ -72,9 +62,9 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.countOfPairs(vector<int>() = {5, 5, 5, 5});
+    r = sol.numberOfAlternatingGroups(vector<int>() = {0, 1, 0, 0, 1, 0, 1}, 6);
     cout << r << endl;
 
-    r = sol.countOfPairs(vector<int>() = {2, 3, 2});
+    r = sol.numberOfAlternatingGroups(vector<int>() = {0, 1, 0, 1, 0}, 3);
     cout << r << endl;
 }

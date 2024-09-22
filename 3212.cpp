@@ -37,33 +37,32 @@ TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
 class Solution {
   public:
-    int countOfPairs(vector<int>& nums) {
-        int n = nums.size();
+    int numberOfSubmatrices(vector<vector<char>>& grid) {
+        int m = grid.size(), n = grid[0].size();
+        int x = 0, y = 0;
+        int rv = 0;
+        vector<vector<array<int, 2>>> dp(m, vector<array<int, 2>>(n));
+        for (auto i = 0; i < m; ++i) {
+            array<int, 2> xy = {};
+            for (auto j = 0; j < n; ++j) {
+                if (grid[i][j] == 'X')
+                    ++xy[0];
+                else if (grid[i][j] == 'Y')
+                    ++xy[1];
 
-        const int N = 1001;
-        const int M = 1001;
-        const int MOD = 1000000007;
+                array<int, 2> sub = {};
+                if (i)
+                    sub = dp[i - 1][j];
+                
+                sub[0] += xy[0];
+                sub[1] += xy[1];
 
-        array<array<int, M>, N> dp = {{}};
-        for (auto k = 0; k <= nums[0]; ++k)
-            dp[0][k] = 1;
+                dp[i][j] = sub;
 
-        ///< pick a number c up to nums[i]
-        ///< arr1: p <= c, arr2: nums[i - 1] - p >= c
-        for (auto i = 1; i < n; ++i)
-            for (auto j = 0; j <= nums[i]; ++j) {
-                auto limit = min(nums[i - 1], j);
-                for (int k = 0; k <= limit; ++k) {
-                    if (nums[i - 1] - k >= nums[i] - j)
-                        dp[i][j] = (dp[i][j] + dp[i - 1][k]) % MOD;
-                }
+                if (sub[0] && sub[0] == sub[1]) 
+                    ++rv;
             }
-
-        long rv = 0;
-        for (auto it = begin(dp[nums.size() - 1]);
-             it != end(dp[nums.size() - 1]); ++it)
-            rv = (rv + *it) % MOD;
-
+        }
         return rv;
     }
 };
@@ -72,9 +71,5 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.countOfPairs(vector<int>() = {5, 5, 5, 5});
-    cout << r << endl;
-
-    r = sol.countOfPairs(vector<int>() = {2, 3, 2});
     cout << r << endl;
 }

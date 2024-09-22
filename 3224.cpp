@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <bitset>
 #include <cassert>
 #include <cmath>
@@ -37,32 +36,26 @@ TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
 class Solution {
   public:
-    int countOfPairs(vector<int>& nums) {
+    int minChanges(vector<int>& nums, int k) {
         int n = nums.size();
 
-        const int N = 1001;
-        const int M = 1001;
-        const int MOD = 1000000007;
+        vector<int> d;
+        for (auto k = 0; k < n / 2; ++k)
+            d.push_back(abs(nums[k] - nums[n - k - 1]));
+        sort(begin(d), end(d));
 
-        array<array<int, M>, N> dp = {{}};
-        for (auto k = 0; k <= nums[0]; ++k)
-            dp[0][k] = 1;
+        map<int, int> cnt;
+        for (auto& dd : d)
+            ++cnt[dd];
 
-        ///< pick a number c up to nums[i]
-        ///< arr1: p <= c, arr2: nums[i - 1] - p >= c
-        for (auto i = 1; i < n; ++i)
-            for (auto j = 0; j <= nums[i]; ++j) {
-                auto limit = min(nums[i - 1], j);
-                for (int k = 0; k <= limit; ++k) {
-                    if (nums[i - 1] - k >= nums[i] - j)
-                        dp[i][j] = (dp[i][j] + dp[i - 1][k]) % MOD;
-                }
-            }
-
-        long rv = 0;
-        for (auto it = begin(dp[nums.size() - 1]);
-             it != end(dp[nums.size() - 1]); ++it)
-            rv = (rv + *it) % MOD;
+        int rv = 1e9;
+        for (auto x = 0; x < 10001; ++x) {
+            auto it1 = lower_bound(begin(d), end(d), x - k / 2);
+            auto it2 = upper_bound(begin(d), end(d), x);
+            int x2 = it1 - begin(d);
+            int x1 = end(d) - it1 - cnt[x];
+            rv = min(rv, x1 + x2 * 2);
+        }
 
         return rv;
     }
@@ -72,9 +65,14 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.countOfPairs(vector<int>() = {5, 5, 5, 5});
+    r = sol.minChanges(vector<int>() = {1,  1,  1,  1,  0,  0,  0,  5,  4,  3,
+                                        19, 17, 16, 15, 15, 15, 19, 19, 19, 19},
+                       20);
     cout << r << endl;
 
-    r = sol.countOfPairs(vector<int>() = {2, 3, 2});
+    r = sol.minChanges(vector<int>() = {0, 1, 2, 3, 3, 6, 5, 4}, 6);
+    cout << r << endl;
+
+    r = sol.minChanges(vector<int>() = {1, 0, 1, 2, 4, 3}, 4);
     cout << r << endl;
 }

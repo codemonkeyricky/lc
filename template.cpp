@@ -11,6 +11,7 @@
 #include <bitset>
 #include <numeric>
 #include <cmath>
+#include <array>
 
 using namespace std;
 

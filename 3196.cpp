@@ -37,34 +37,19 @@ TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
 class Solution {
   public:
-    int countOfPairs(vector<int>& nums) {
+    long long maximumTotalCost(vector<int>& nums) {
         int n = nums.size();
-
-        const int N = 1001;
-        const int M = 1001;
-        const int MOD = 1000000007;
-
-        array<array<int, M>, N> dp = {{}};
-        for (auto k = 0; k <= nums[0]; ++k)
-            dp[0][k] = 1;
-
-        ///< pick a number c up to nums[i]
-        ///< arr1: p <= c, arr2: nums[i - 1] - p >= c
-        for (auto i = 1; i < n; ++i)
-            for (auto j = 0; j <= nums[i]; ++j) {
-                auto limit = min(nums[i - 1], j);
-                for (int k = 0; k <= limit; ++k) {
-                    if (nums[i - 1] - k >= nums[i] - j)
-                        dp[i][j] = (dp[i][j] + dp[i - 1][k]) % MOD;
-                }
+        vector<array<long long, 2>> dp(n); ///< [0] is odd index, [1] is even
+        for (auto i = 0; i < n; ++i) {
+            if (i == 0)
+                dp[i] = {nums[0], nums[0]};
+            else {
+                ///<
+                dp[i][0] = max(dp[i - 1][0], dp[i - 1][1]) + (long long)nums[i];
+                dp[i][1] = dp[i - 1][0] + (long long)abs(nums[i]);
             }
-
-        long rv = 0;
-        for (auto it = begin(dp[nums.size() - 1]);
-             it != end(dp[nums.size() - 1]); ++it)
-            rv = (rv + *it) % MOD;
-
-        return rv;
+        }
+        return max(dp[n - 1][0], dp[n - 1][1]);
     }
 };
 
@@ -72,9 +57,12 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.countOfPairs(vector<int>() = {5, 5, 5, 5});
+    r = sol.maximumTotalCost(vector<int>() = {-937});
     cout << r << endl;
 
-    r = sol.countOfPairs(vector<int>() = {2, 3, 2});
+    r = sol.maximumTotalCost(vector<int>() = {1, -1, 1, -1});
+    cout << r << endl;
+
+    r = sol.maximumTotalCost(vector<int>() = {1, -2, 3, 4});
     cout << r << endl;
 }

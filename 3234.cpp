@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <bitset>
 #include <cassert>
 #include <cmath>
@@ -37,33 +36,23 @@ TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
 class Solution {
   public:
-    int countOfPairs(vector<int>& nums) {
-        int n = nums.size();
-
-        const int N = 1001;
-        const int M = 1001;
-        const int MOD = 1000000007;
-
-        array<array<int, M>, N> dp = {{}};
-        for (auto k = 0; k <= nums[0]; ++k)
-            dp[0][k] = 1;
-
-        ///< pick a number c up to nums[i]
-        ///< arr1: p <= c, arr2: nums[i - 1] - p >= c
-        for (auto i = 1; i < n; ++i)
-            for (auto j = 0; j <= nums[i]; ++j) {
-                auto limit = min(nums[i - 1], j);
-                for (int k = 0; k <= limit; ++k) {
-                    if (nums[i - 1] - k >= nums[i] - j)
-                        dp[i][j] = (dp[i][j] + dp[i - 1][k]) % MOD;
+    int numberOfSubstrings(const string& s) {
+        int rv = 0;
+        for (int z = 0; z + z * z <= s.size(); ++z) {
+            int cnt[2] = {}, p = 0, old_rv = rv;
+            for (int i = 0, j = 0; i < s.size(); ++i) {
+                ++cnt[s[i] == '1'];
+                while (cnt[0] > z)
+                    --cnt[s[j++] == '1'];
+                if (cnt[0] == z && cnt[1] && cnt[1] >= z * z) {
+                    for (p = max(p, j); p < i && s[p] == '1'; ++p)
+                        ;
+                    rv += 1 + min(p - j, cnt[1] - z * z);
                 }
             }
-
-        long rv = 0;
-        for (auto it = begin(dp[nums.size() - 1]);
-             it != end(dp[nums.size() - 1]); ++it)
-            rv = (rv + *it) % MOD;
-
+            if (rv == old_rv)
+                break;
+        }
         return rv;
     }
 };
@@ -72,9 +61,12 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.countOfPairs(vector<int>() = {5, 5, 5, 5});
+    r = sol.numberOfSubstrings("10");
     cout << r << endl;
 
-    r = sol.countOfPairs(vector<int>() = {2, 3, 2});
+    r = sol.numberOfSubstrings("1011");
+    cout << r << endl;
+
+    r = sol.numberOfSubstrings("00011");
     cout << r << endl;
 }
