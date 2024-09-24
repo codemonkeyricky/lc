@@ -97,6 +97,12 @@ int main() {
     long long r;
 
     r = sol.maximumValueSum(
+        vector<int>() = {0, 92, 56, 3, 34, 23, 56}, 7,
+        vector<vector<int>>() = {
+            {2, 6}, {4, 1}, {5, 0}, {1, 0}, {3, 1}, {6, 3}});
+    cout << r << endl;
+
+    r = sol.maximumValueSum(
         vector<int>() = {7, 7, 7, 7, 7, 7}, 3,
         vector<vector<int>>() = {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}});
     cout << r << endl;
