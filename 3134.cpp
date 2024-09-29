@@ -39,16 +39,19 @@ class Solution {
 
     long long uniq_subarray(vector<int>& nums, int k) {
 
-        map<int, int> map;
         int n = nums.size();
+
+        vector<int> map(1e5 + 1);
+        int uniq = 0;
 
         long long rv = 0;
         for (long long i = 0, j = 0; j < n; ++j) {
-            ++map[nums[j]];
-            while (map.size() > k) {
-                --map[nums[i]];
-                if (map[nums[i]] == 0)
-                    map.erase(nums[i]);
+            if (map[nums[j]]++ == 0)
+                ++uniq;
+
+            while (uniq > k) {
+                if (--map[nums[i]] == 0)
+                    --uniq;
                 ++i;
             }
             rv += (j - i + 1);
