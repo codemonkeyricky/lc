@@ -45,59 +45,50 @@ class Solution {
         int n = grid.size();
         int m = grid[0].size();
 
-        vector<vector<ll>> dpw(m, vector<ll>(n));
-        vector<vector<ll>> dpb(m, vector<ll>(n));
+        ///< max_sum for with k black
+        vector<vector<ll>> p(m, vector<ll>(m));
+        vector<vector<ll>> pp(m, vector<ll>(m));
+        vector<vector<ll>> c(m, vector<ll>(m));
 
-        for (auto i = 0; i < m; ++i) {
-            for (auto j = 0; j < n; ++j) {
+        /* base case - nothing. Nothing to left of column 0 */
+        vector<long long> prev_sum(m);
 
-                ll prb, prw, pcw, pcb, prcw, prcb;
+        /* iterate through all columns */
+        for (auto j = 1; j < n; ++j) {
 
-                /* i, j, B */
+            vector<long long> sum(m);
+            long long curr = 0;
 
-                // prb = i ? dpb[i - 1][j] : 0;
-                // pcw = j ? dpw[i][j - 1] : 0;
-                // pcb = j ? dpb[i][j - 1] : 0;
-                // prev row must be also B
-                // dpb[i][j] = prb + max({pcw, pcb});
+            /* find sum at every row */
+            for (auto k = 0; k < m; ++k) {
+                curr += grid[k][j];
+                sum[k] = curr;
+            }
 
-                /* i, j, W */
+            /* iterate through all rows */
 
-                prw = i ? dpw[i - 1][j] : 0;
-                prb = i ? dpb[i - 1][j] : 0;
-                pcw = j ? dpw[i][j - 1] : 0;
-                pcb = j ? dpb[i][j - 1] : 0;
-                prcw = j && i ? dpw[i - 1][j - 1] : 0;
-                prcb = j && i ? dpb[i - 1][j - 1] : 0;
+            /* consider pp */
+            for (auto b = 0; b <= m; ++b) {
+                for (auto pb = 0; pb <= m; ++pb) {
+                    c[b][pb] =
+                        prev_sum[max(b, pb)] ///< sum of elements in the middle
+                        + grid[pb][j] + grid[pb][j]  ///< bottom of pp
+                        + grid[pb][j] + grid[pb][j]; ///< bottom of c
+                }
+            }
 
-                /* b b */
-                dpb[i][j] = max(dpb[i][j], prb + pcb - prcb);
-                /* w is not possible when prev row is */
-
-                /* w w */
-                dpb[i][j] = max(dpb[i][j], prw + pcw - prcw);
-                /* w is not possible when prev col is w */
-
-                /* w b */
-                dpb[i][j] = max(dpb[i][j], pcw + pcw - prcw);
-
-                /* b w */
-
-                /* prev row can be B or W */
-                /* prev col: if B then can use grid[i][j] */
-                // dpw[i][j] = max({prw, prb}) + max({pcb + grid[i][j],
-                // pcw});
-
-                volatile int dummy = 0;
+            /* consider p */
+            for (auto b = 0; b <= m; ++b) {
+                for (auto pb = 0; pb <= m; ++pb) {
+                    c[b][pb] =
+                        prev_sum[max(b, pb)] ///< sum of elements in the middle
+                        + grid[pb][j] + grid[pb][j]  ///< bottom of pp
+                        + grid[pb][j] + grid[pb][j]; ///< bottom of c
+                }
             }
         }
 
         ll rv = 0;
-        for (auto i = 0; i < m; ++i)
-            for (auto j = 0; j < n; ++j)
-                for (auto k = 0; k < 2; ++k)
-                    rv = max({rv, dpw[i][j], dpb[i][j]});
-
         return rv;
     }
 };
