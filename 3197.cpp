@@ -44,25 +44,25 @@ class Solution {
         int h;
     };
 
-    bool in_range(int v, int mmin, int mmax) { return v >= mmin && v <= mmax; }
+    bool overlap(rect& r1, rect& r2) {
 
-    bool overlap(rect& A, rect& B) {
-        bool x_overlap =
-            in_range(A.x, B.x, B.x + B.w) || in_range(B.x, A.x, A.x + A.w);
+        // Check if one rectangle is to the left of the other
+        if (r1.x + r1.w <= r2.x || r2.x + r2.w <= r1.x)
+            return 0;
 
-        bool y_overlap =
-            in_range(A.y, B.y, B.y + B.h) || in_range(B.y, A.y, A.y + A.h);
+        // Check if one rectangle is above the other
+        if (r1.y + r1.h <= r2.y || r2.y + r2.h <= r1.y)
+            return 0;
 
-        return x_overlap && y_overlap;
+        // If none of the above, they overlap
+        return 1;
     }
 
-    bool fit(int m, int n, array<array<int, 2>, 3>& pts,
-             array<array<int, 2>, 3>& boxes) {
-
-        for (auto i = 0; i < 3; ++i) {
-            if (pts[i][0] + boxes[i][0] > m)
+    bool fit(int m, int n, array<rect, 3>& rects) {
+        for (auto& r : rects) {
+            if (r.x + r.w > n)
                 return false;
-            if (pts[i][1] + boxes[i][1] > n)
+            if (r.y + r.h > m)
                 return false;
         }
         return true;
@@ -72,8 +72,8 @@ class Solution {
         int rv = 0;
         int m = g.size(), n = g[0].size();
         for (auto& b : boxes) {
-            for (auto i = b.x; i < b.x + b.w; ++i) {
-                for (auto j = b.y; j < b.y + b.h; ++j) {
+            for (auto i = b.y; i < b.y + b.h; ++i) {
+                for (auto j = b.x; j < b.x + b.w; ++j) {
                     rv += g[i][j];
                 }
             }
@@ -85,27 +85,33 @@ class Solution {
                    array<array<int, 2>, 3>& boxes) {
 
         /* attempt all origins for all boxes */
-        int n = boxes.size();
+        int n = pts.size();
         for (auto i = 0; i < n; ++i) {
-            for (auto j = i + 1; j < n; ++j) {
-                for (auto k = j + 1; k < n; ++k) {
+            for (auto j = 0; j < n; ++j) {
+                for (auto k = 0; k < n; ++k) {
+                    if (i != j && j != k && i != k) {
 
-                    rect r0 = {pts[i][0], pts[i][1], boxes[0][0], boxes[0][1]};
-                    rect r1 = {pts[j][0], pts[j][1], boxes[1][0], boxes[1][1]};
-                    rect r2 = {pts[k][0], pts[k][1], boxes[2][0], boxes[2][1]};
+                        rect r0 = {pts[i][0], pts[i][1], boxes[0][0],
+                                   boxes[0][1]};
+                        rect r1 = {pts[j][0], pts[j][1], boxes[1][0],
+                                   boxes[1][1]};
+                        rect r2 = {pts[k][0], pts[k][1], boxes[2][0],
+                                   boxes[2][1]};
 
-                    /* check all boxes fit */
-                    if (fit(g.size(), g[0].size(),
-                            array<array<int, 2>, 3>() = {pts[i], pts[j],
-                                                         pts[k]},
-                            boxes)) {
+                        /* check all boxes fit */
+                        if (fit(g.size(), g[0].size(),
+                                array<rect, 3>() = {r0, r1, r2})) {
 
-                        /* check boxes don't overlap */
-                        if (!overlap(r0, r1) && overlap(r1, r2) &&
-                            overlap(r0, r2)) {
-                            if (all_ones ==
-                                count(g, array<rect, 3>() = {r0, r1, r2}))
-                                return true;
+                            auto o1 = overlap(r0, r1);
+                            auto o2 = overlap(r1, r2);
+                            auto o3 = overlap(r0, r2);
+
+                            /* check boxes don't overlap */
+                            if (!o1 && !o2 && !o3) {
+                                if (all_ones ==
+                                    count(g, array<rect, 3>() = {r0, r1, r2}))
+                                    return true;
+                            }
                         }
                     }
                 }
@@ -124,22 +130,27 @@ class Solution {
 
         /* all possible box dimension */
         vector<array<int, 2>> box;
-        for (auto i = 1; i <= m; ++i)
-            for (auto j = 1; j <= n; ++j)
-                box.push_back({i, j});
+        for (auto w = 1; w <= n; ++w)
+            for (auto h = 1; h <= m; ++h)
+                box.push_back({w, h});
 
         /* all possible 3 box permutation */
         vector<array<array<int, 2>, 3>> boxes;
         for (auto i = 0; i < box.size(); ++i)
-            for (auto j = i; j < box.size(); ++j)
-                for (auto k = j; k < box.size(); ++k)
-                    boxes.push_back({box[i], box[j], box[k]});
+            for (auto j = 0; j < box.size(); ++j)
+                for (auto k = 0; k < box.size(); ++k)
+                    if (box[i][0] * box[i][1] + box[j][0] * box[j][1] +
+                            box[k][0] * box[k][1] <=
+                        m * n) {
+                        /* make sure sum of boxes <= m * n */
+                        boxes.push_back({box[i], box[j], box[k]});
+                    }
 
         /* all possible origins */
         vector<array<int, 2>> pts;
-        for (auto i = 0; i < m; ++i)
-            for (auto j = 0; j < n; ++j)
-                pts.push_back({i, j});
+        for (auto x = 0; x < n; ++x)
+            for (auto y = 0; y < m; ++y)
+                pts.push_back({x, y});
 
         /* count all ones */
         for (auto i = 0; i < m; ++i)
@@ -164,5 +175,12 @@ int main() {
     Solution sol;
     int r;
 
+    r = sol.minimumSum(vector<vector<int>>() = {{0, 0, 0, 0, 0},
+                                                {0, 0, 0, 0, 0},
+                                                {0, 0, 0, 1, 0},
+                                                {1, 1, 0, 0, 0}});
+    cout << r << endl;
+
+    r = sol.minimumSum(vector<vector<int>>() = {{1, 0, 1}, {1, 1, 1}});
     cout << r << endl;
 }
