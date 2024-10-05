@@ -137,8 +137,8 @@ class Solution {
         /* all possible 3 box permutation */
         vector<array<array<int, 2>, 3>> boxes;
         for (auto i = 0; i < box.size(); ++i)
-            for (auto j = 0; j < box.size(); ++j)
-                for (auto k = 0; k < box.size(); ++k)
+            for (auto j = i; j < box.size(); ++j)
+                for (auto k = j; k < box.size(); ++k)
                     if (box[i][0] * box[i][1] + box[j][0] * box[j][1] +
                             box[k][0] * box[k][1] <=
                         m * n) {
