@@ -82,9 +82,16 @@ class Solution {
 
         for (auto i = 0; i < s.size(); ++i) {
 
+            if (left[i] == pattern.size())
+                return i + 1 - left[i];
+            else if (left[i] == pattern.size() - 1)
+                return i + left[i];
+
             int l = i ? left[i - 1] : 0;
             int r = i < s.size() - 1 ? right[i + 1] : 0;
-            if (l + r >= pattern.size() - 1)
+
+            if (l < pattern.size() && r < pattern.size() &&
+                l + r >= pattern.size() - 1)
                 return i - (i ? left[i - 1] : 0);
         }
 
@@ -95,6 +102,9 @@ class Solution {
 int main() {
     Solution sol;
     int r;
+
+    r = sol.minStartingIndex("ede", "d");
+    cout << r << endl;
 
     r = sol.minStartingIndex("efeff", "fe");
     cout << r << endl;
