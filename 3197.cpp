@@ -2,6 +2,7 @@
 #include <array>
 #include <bitset>
 #include <cassert>
+#include <climits>
 #include <cmath>
 #include <iostream>
 #include <map>
@@ -36,138 +37,44 @@ TreeNode* recurse(vector<int>& tree, int k) {
 TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
 class Solution {
-
-    struct rect {
-        int x;
-        int y;
-        int w;
-        int h;
-    };
-
-    bool overlap(rect& r1, rect& r2) {
-
-        // Check if one rectangle is to the left of the other
-        if (r1.x + r1.w <= r2.x || r2.x + r2.w <= r1.x)
-            return 0;
-
-        // Check if one rectangle is above the other
-        if (r1.y + r1.h <= r2.y || r2.y + r2.h <= r1.y)
-            return 0;
-
-        // If none of the above, they overlap
-        return 1;
-    }
-
-    bool fit(int m, int n, array<rect, 3>& rects) {
-        for (auto& r : rects) {
-            if (r.x + r.w > n)
-                return false;
-            if (r.y + r.h > m)
-                return false;
-        }
-        return true;
-    }
-
-    int count(vector<vector<int>>& g, array<rect, 3>& boxes) {
-        int rv = 0;
-        int m = g.size(), n = g[0].size();
-        for (auto& b : boxes) {
-            for (auto i = b.y; i < b.y + b.h; ++i) {
-                for (auto j = b.x; j < b.x + b.w; ++j) {
-                    rv += g[i][j];
+    int min1(vector<vector<int>>& g, int b, int l, int t,
+             int r) { // bottom, left, top, right
+        int _b = 30, _l = 30, _t = 0, _r = 0;
+        for (int i = b; i < t; ++i)
+            for (int j = l; j < r; ++j)
+                if (g[i][j]) {
+                    _b = min(_b, i);
+                    _l = min(_l, j);
+                    _t = max(_t, i);
+                    _r = max(_r, j);
                 }
-            }
-        }
-        return rv;
+        return (_t - _b + 1) * (_r - _l + 1);
     }
-
-    bool cover_all(vector<vector<int>>& g, vector<array<int, 2>>& pts,
-                   array<array<int, 2>, 3>& boxes) {
-
-        /* attempt all origins for all boxes */
-        int n = pts.size();
-        for (auto i = 0; i < n; ++i) {
-            for (auto j = 0; j < n; ++j) {
-                for (auto k = 0; k < n; ++k) {
-                    if (i != j && j != k && i != k) {
-
-                        rect r0 = {pts[i][0], pts[i][1], boxes[0][0],
-                                   boxes[0][1]};
-                        rect r1 = {pts[j][0], pts[j][1], boxes[1][0],
-                                   boxes[1][1]};
-                        rect r2 = {pts[k][0], pts[k][1], boxes[2][0],
-                                   boxes[2][1]};
-
-                        /* check all boxes fit */
-                        if (fit(g.size(), g[0].size(),
-                                array<rect, 3>() = {r0, r1, r2})) {
-
-                            auto o1 = overlap(r0, r1);
-                            auto o2 = overlap(r1, r2);
-                            auto o3 = overlap(r0, r2);
-
-                            /* check boxes don't overlap */
-                            if (!o1 && !o2 && !o3) {
-                                if (all_ones ==
-                                    count(g, array<rect, 3>() = {r0, r1, r2}))
-                                    return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+    int min2v(vector<vector<int>>& g, int b, int l, int t, int r) {
+        int res = INT_MAX;
+        for (int i = b + 1; i <= t; ++i)
+            res = min(res, min1(g, b, l, i, r) + min1(g, i, l, t, r));
+        return res;
     }
-
-    int all_ones = 0;
+    int min2h(vector<vector<int>>& g, int b, int l, int t, int r) {
+        int res = INT_MAX;
+        for (int j = l + 1; j <= r; ++j)
+            res = min(res, min1(g, b, l, t, j) + min1(g, b, j, t, r));
+        return res;
+    }
 
   public:
-    int minimumSum(vector<vector<int>>& grid) {
-
-        int m = grid.size();
-        int n = grid[0].size();
-
-        /* all possible box dimension */
-        vector<array<int, 2>> box;
-        for (auto w = 1; w <= n; ++w)
-            for (auto h = 1; h <= m; ++h)
-                box.push_back({w, h});
-
-        /* all possible 3 box permutation */
-        vector<array<array<int, 2>, 3>> boxes;
-        for (auto i = 0; i < box.size(); ++i)
-            for (auto j = i; j < box.size(); ++j)
-                for (auto k = j; k < box.size(); ++k)
-                    if (box[i][0] * box[i][1] + box[j][0] * box[j][1] +
-                            box[k][0] * box[k][1] <=
-                        m * n) {
-                        /* make sure sum of boxes <= m * n */
-                        boxes.push_back({box[i], box[j], box[k]});
-                    }
-
-        /* all possible origins */
-        vector<array<int, 2>> pts;
-        for (auto x = 0; x < n; ++x)
-            for (auto y = 0; y < m; ++y)
-                pts.push_back({x, y});
-
-        /* count all ones */
-        for (auto i = 0; i < m; ++i)
-            for (auto j = 0; j < n; ++j)
-                all_ones += grid[i][j];
-
-        int rv = m * n;
-        for (auto& b : boxes) {
-            if (cover_all(grid, pts, b)) {
-                int area = 0;
-                for (auto& bb : b)
-                    area += bb[0] * bb[1];
-                rv = min(rv, area);
-            }
-        }
-
-        return rv;
+    int minimumSum(vector<vector<int>>& g) {
+        int res = INT_MAX, m = g.size(), n = g[0].size();
+        for (int i = 1; i <= m; ++i)
+            res = min({res, min1(g, 0, 0, i, n) + min2h(g, i, 0, m, n),
+                       min1(g, i, 0, m, n) + min2h(g, 0, 0, i, n),
+                       min1(g, i, 0, m, n) + min2v(g, 0, 0, i, n)});
+        for (int j = 1; j <= n; ++j)
+            res = min({res, min1(g, 0, 0, m, j) + min2v(g, 0, j, m, n),
+                       min1(g, 0, j, m, n) + min2v(g, 0, 0, m, j),
+                       min1(g, 0, j, m, n) + min2h(g, 0, 0, m, j)});
+        return res;
     }
 };
 
