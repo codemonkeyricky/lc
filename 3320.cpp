@@ -62,15 +62,13 @@ class Solution {
     const int E = 2;
     const int MOD = 1e9 + 7;
 
-    vvvll dp;
-
     int dfs(string& s, int k, int p, int score) {
         int n = s.size();
 
         if (k < 0) {
             return score > 1000;
         }
-        
+
         /* no way we can catch up with remaining moves - return 0*/
         if (score + k < 1000)
             return 0;
@@ -116,12 +114,14 @@ class Solution {
         return dp[k][score][p] - 1;
     }
 
+    ll dp[1001][2001][4] = {};
+
   public:
     int countWinningSequences(string s) {
         int n = s.size();
         int rv = 0;
 
-        dp = vvvll(n + 1, vvll(n + 1001, vll(4)));
+        // dp = vvvll(n + 1, vvll(n + 1001, vll(4)));
         return dfs(s, n - 1, 3, 1000);
     }
 };
