@@ -44,8 +44,10 @@ void pvi(vector<int>& v) {
 
 using vi = vector<int>;
 using vvi = vector<vector<int>>;
+using vvvi = vector<vector<vector<int>>>;
 using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
+using vvvll = vector<vector<vector<long long>>>;
 using ll = long long;
 
 class Solution {
@@ -55,11 +57,17 @@ class Solution {
      * number of ways for bob to win for a given score at k
      */
 
+    const int F = 0;
+    const int W = 1;
+    const int E = 2;
+
+    vvvll dp;
+
     int dfs(string& s, int k, char p, int score) {
         int n = s.size();
 
         if (k < 0) {
-            return score > 0; /// TODO???
+            return score > 0;
         }
 
         /*
@@ -71,29 +79,29 @@ class Solution {
         ll rv = 0;
         switch (s[k]) {
         case 'F': {
-            if (p != 'F') // same
-                rv += dfs(s, k - 1, 'F', score);
-            if (p != 'W') // wins
-                rv += dfs(s, k - 1, 'W', score + 1);
-            if (p != 'E') // loses
-                rv += dfs(s, k - 1, 'E', score - 1);
+            if (p != F) // same
+                rv += dfs(s, k - 1, F, score);
+            if (p != W) // wins
+                rv += dfs(s, k - 1, W, score + 1);
+            if (p != E) // loses
+                rv += dfs(s, k - 1, E, score - 1);
 
         } break;
         case 'W': {
-            if (p != 'F') // loses
-                rv += dfs(s, k - 1, 'F', score - 1);
-            if (p != 'W') // same
-                rv += dfs(s, k - 1, 'W', score);
-            if (p != 'E') // wins
-                rv += dfs(s, k - 1, 'E', score + 1);
+            if (p != F) // loses
+                rv += dfs(s, k - 1, F, score - 1);
+            if (p != W) // same
+                rv += dfs(s, k - 1, W, score);
+            if (p != E) // wins
+                rv += dfs(s, k - 1, E, score + 1);
         } break;
         case 'E': {
-            if (p != 'F') // wins
-                rv += dfs(s, k - 1, 'F', score + 1);
-            if (p != 'W') // loses
-                rv += dfs(s, k - 1, 'W', score - 1);
-            if (p != 'E') // same
-                rv += dfs(s, k - 1, 'E', score);
+            if (p != F) // wins
+                rv += dfs(s, k - 1, F, score + 1);
+            if (p != W) // loses
+                rv += dfs(s, k - 1, W, score - 1);
+            if (p != E) // same
+                rv += dfs(s, k - 1, E, score);
         } break;
         }
 
@@ -104,6 +112,9 @@ class Solution {
     int countWinningSequences(string s) {
         int n = s.size();
         int rv = 0;
+
+        vvvll dp = vvvll(n + 1, vvll(n + 1, vll(3)));
+
         rv += dfs(s, n - 1, -1, 0);
         return rv;
     }
