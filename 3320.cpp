@@ -60,15 +60,20 @@ class Solution {
     const int F = 0;
     const int W = 1;
     const int E = 2;
+    const int MOD = 1e9 + 7;
 
     vvvll dp;
 
-    int dfs(string& s, int k, char p, int score) {
+    int dfs(string& s, int k, int p, int score) {
         int n = s.size();
 
         if (k < 0) {
-            return score > 0;
+            return score > 1000;
         }
+        
+        /* no way we can catch up with remaining moves - return 0*/
+        if (score + k < 1000)
+            return 0;
 
         /*
          * F > E
@@ -76,36 +81,39 @@ class Solution {
          * E > W
          */
 
-        ll rv = 0;
-        switch (s[k]) {
-        case 'F': {
-            if (p != F) // same
-                rv += dfs(s, k - 1, F, score);
-            if (p != W) // wins
-                rv += dfs(s, k - 1, W, score + 1);
-            if (p != E) // loses
-                rv += dfs(s, k - 1, E, score - 1);
+        if (dp[k][score][p] == 0) {
+            ll rv = 0;
+            switch (s[k]) {
+            case 'F': {
+                if (p != F) // same
+                    rv = (rv + dfs(s, k - 1, F, score)) % MOD;
+                if (p != W) // wins
+                    rv = (rv + dfs(s, k - 1, W, score + 1)) % MOD;
+                if (p != E) // loses
+                    rv = (rv + dfs(s, k - 1, E, score - 1)) % MOD;
 
-        } break;
-        case 'W': {
-            if (p != F) // loses
-                rv += dfs(s, k - 1, F, score - 1);
-            if (p != W) // same
-                rv += dfs(s, k - 1, W, score);
-            if (p != E) // wins
-                rv += dfs(s, k - 1, E, score + 1);
-        } break;
-        case 'E': {
-            if (p != F) // wins
-                rv += dfs(s, k - 1, F, score + 1);
-            if (p != W) // loses
-                rv += dfs(s, k - 1, W, score - 1);
-            if (p != E) // same
-                rv += dfs(s, k - 1, E, score);
-        } break;
+            } break;
+            case 'W': {
+                if (p != F) // loses
+                    rv = (rv + dfs(s, k - 1, F, score - 1)) % MOD;
+                if (p != W) // same
+                    rv = (rv + dfs(s, k - 1, W, score)) % MOD;
+                if (p != E) // wins
+                    rv = (rv + dfs(s, k - 1, E, score + 1)) % MOD;
+            } break;
+            case 'E': {
+                if (p != F) // wins
+                    rv = (rv + dfs(s, k - 1, F, score + 1)) % MOD;
+                if (p != W) // loses
+                    rv = (rv + dfs(s, k - 1, W, score - 1)) % MOD;
+                if (p != E) // same
+                    rv = (rv + dfs(s, k - 1, E, score)) % MOD;
+            } break;
+            }
+            dp[k][score][p] = rv + 1;
         }
 
-        return rv;
+        return dp[k][score][p] - 1;
     }
 
   public:
@@ -113,10 +121,8 @@ class Solution {
         int n = s.size();
         int rv = 0;
 
-        vvvll dp = vvvll(n + 1, vvll(n + 1, vll(3)));
-
-        rv += dfs(s, n - 1, -1, 0);
-        return rv;
+        dp = vvvll(n + 1, vvll(n + 1001, vll(4)));
+        return dfs(s, n - 1, 3, 1000);
     }
 };
 
