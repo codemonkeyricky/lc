@@ -48,41 +48,34 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 using ll = long long;
 
+    int comb[1001][1001] = {}, dp[1001][1001] = {}, mod = 1000000007;
 class Solution {
-
-    long long n_choose_k(long long n, long long k) {
-        if (k == 0)
+    long long modPow(int x, int y, int m) {
+        if (y == 0)
             return 1;
-        return (n * n_choose_k(n - 1, k - 1)) / k;
+        long long p = modPow(x, y / 2, m) % m;
+        p = (p * p) % m;
+        return y % 2 ? (p * x) % m : p;
     }
 
   public:
     int numberOfWays(int n, int x, int y) {
-        vvi dp(n + 1, vi(x + 1));
-
-        /* dp[n][x] is n performers in x stages */
-
-        for (auto i = 1; i <= x; ++i)
-            dp[0][i] = 1;
-
-        for (auto nn = 1; nn <= n; ++nn) {
-            /*
-             * dp[nn][xx] adds a new performer to dp[nn-1][xx].
-             * New performer can join any of the stages from 1 to xx.
-             */
-            for (auto xx = 1; xx <= x; ++xx) {
-                dp[nn][xx] += dp[nn - 1][xx] * xx;
-                volatile int dummy = 0;
+        if (comb[0][0] == 0) {
+            comb[0][0] = dp[0][0] = 1;
+            for (int n = 1; n < 1001; ++n) {
+                comb[n][0] = 1;
+                for (long long x = 1; x <= n; ++x) {
+                    comb[n][x] = (comb[n - 1][x - 1] + comb[n - 1][x]) % mod;
+                    dp[n][x] = x * (dp[n - 1][x - 1] + dp[n - 1][x]) % mod;
+                }
             }
         }
-
-        // ll rv = 0;
-        // for (auto xx = 1; xx <= x; ++xx) {
-        //     /* need to spread xx across x stages using nCk */
-        //     rv = rv + dp[n][xx] * n_choose_k(x, xx); /* TODO: x choose xx */
-        // }
-
-        return dp[n][x] * y;
+        long long res = 0;
+        for (int st = 1; st <= min(n, x); ++st)
+            res = (res +
+                   modPow(y, st, mod) * comb[x][st] % mod * dp[n][st] % mod) %
+                  mod;
+        return res;
     }
 };
 
@@ -90,9 +83,24 @@ int main() {
     Solution sol;
     int r;
 
+    // r = sol.numberOfWays(1, 2, 3);
+    // cout << r << endl;
+
+    r = sol.numberOfWays(3, 3, 4);
+    cout << r << endl;
+
+    r = sol.numberOfWays(3, 2, 4);
+    cout << r << endl;
+
+    r = sol.numberOfWays(2, 2, 4);
+    cout << r << endl;
+
+    r = sol.numberOfWays(1, 1, 4);
+    cout << r << endl;
+
     // r = sol.numberOfWays(3, 3, 4);
     // cout << r << endl;
 
-    r = sol.numberOfWays(5, 2, 1);
-    cout << r << endl;
+    // r = sol.numberOfWays(5, 2, 1);
+    // cout << r << endl;
 }
