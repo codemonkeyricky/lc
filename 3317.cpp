@@ -47,6 +47,11 @@ using vvi = vector<vector<int>>;
 using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
+class Solution {
+  public:
+    int numberOfWays(int n, int x, int y) {}
+};
+
 int main() {
     Solution sol;
     int r;

@@ -35,21 +35,36 @@ TreeNode* recurse(vector<int>& tree, int k) {
 
 TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
-void pvi(vector<int>& v) {
+class Solution {
+  public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> dp(n);
 
-    for (auto& vv : v)
-        cout << vv << ", ";
-    cout << endl;
-}
+        if (n == 1)
+            return nums[0];
 
-using vi = vector<int>;
-using vvi = vector<vector<int>>;
-using vll = vector<long long>;
-using vvll = vector<vector<long long>>;
+        dp[0] = nums[0];
+        if (n >= 2)
+            dp[1] = max(nums[0], nums[1]);
+
+        for (auto i = 2; i < n; ++i) {
+            dp[i] = max(dp[i - 1], dp[i - 2] + nums[i]);
+        }
+        return dp[n - 1];
+    }
+};
 
 int main() {
     Solution sol;
     int r;
 
+    r = sol.rob(vector<int>() = {2, 1, 1, 2});
+    cout << r << endl;
+
+    r = sol.rob(vector<int>() = {1, 2, 3, 1});
+    cout << r << endl;
+
+    r = sol.rob(vector<int>() = {1, 2, 3, 1});
     cout << r << endl;
 }

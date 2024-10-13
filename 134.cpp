@@ -35,21 +35,31 @@ TreeNode* recurse(vector<int>& tree, int k) {
 
 TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
-void pvi(vector<int>& v) {
+class Solution {
+  public:
+    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+        int n = gas.size();
+        vector<int> diff;
+        for (auto i = 0; i < n; ++i)
+            diff.push_back(gas[i] - cost[i]);
 
-    for (auto& vv : v)
-        cout << vv << ", ";
-    cout << endl;
-}
+        vector<int> sum;
+        for (auto i = 0; i < n; ++i)
+            sum.push_back(diff[i] + (i ? sum[i - 1] : 0));
 
-using vi = vector<int>;
-using vvi = vector<vector<int>>;
-using vll = vector<long long>;
-using vvll = vector<vector<long long>>;
+        if (sum[n - 1] < 0)
+            return -1;
+
+        auto mmin = min_element(sum.begin(), sum.end()) - sum.begin();
+        return (mmin + 1) % n;
+    }
+};
 
 int main() {
     Solution sol;
     int r;
 
+    r = sol.canCompleteCircuit(vector<int>() = {1, 2, 3, 4, 5},
+                               vector<int>() = {3, 4, 5, 1, 2});
     cout << r << endl;
 }

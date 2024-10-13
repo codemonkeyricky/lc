@@ -35,21 +35,37 @@ TreeNode* recurse(vector<int>& tree, int k) {
 
 TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
-void pvi(vector<int>& v) {
+class Solution {
+  public:
+    int getSum(vector<int>& nums) {
 
-    for (auto& vv : v)
-        cout << vv << ", ";
-    cout << endl;
-}
+        unordered_map<int, int> cnt, sum;
 
-using vi = vector<int>;
-using vvi = vector<vector<int>>;
-using vll = vector<long long>;
-using vvll = vector<vector<long long>>;
+        int rv = 0;
+        for (auto& n : nums) {
+            cnt[n] += cnt[n - 1] + 1;
+            sum[n] += sum[n - 1] + n * (cnt[n - 1] + 1);
+            rv += sum[n];
+        }
+
+        // unordered_map<int, int> dec_len, dec_sum;
+        // for (auto& n : nums) {
+        //     dec_len[n] += dec_len[n + 1] + 1;
+        //     dec_sum[n] += n * dec_len[n] + dec_sum[n + 1];// - (n + 1);
+        //     rv += dec_sum[n];
+        // }
+
+        return rv;
+    }
+};
 
 int main() {
     Solution sol;
     int r;
 
+    // r = sol.getSum(vector<int>() = {1, 4, 2, 3});
+    // cout << r << endl;
+
+    r = sol.getSum(vector<int>() = {1, 2, 2});
     cout << r << endl;
 }

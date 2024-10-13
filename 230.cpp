@@ -35,17 +35,42 @@ TreeNode* recurse(vector<int>& tree, int k) {
 
 TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
-void pvi(vector<int>& v) {
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left),
+ * right(right) {}
+ * };
+ */
+class Solution {
+    int dfs(TreeNode* root, int& k) {
+        if (root) {
+            int rv;
+            rv = dfs(root->left, k);
+            if (rv != -1)
+                return rv;
 
-    for (auto& vv : v)
-        cout << vv << ", ";
-    cout << endl;
-}
+            --k;
+            if (k == 0)
+                return root->val;
 
-using vi = vector<int>;
-using vvi = vector<vector<int>>;
-using vll = vector<long long>;
-using vvll = vector<vector<long long>>;
+            rv = dfs(root->right, k);
+            if (rv != -1)
+                return rv;
+        }
+        return -1;
+    }
+
+  public:
+    int kthSmallest(TreeNode* root, int k) {
+        return dfs(root, k);
+    }
+};
 
 int main() {
     Solution sol;

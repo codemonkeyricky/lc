@@ -35,21 +35,37 @@ TreeNode* recurse(vector<int>& tree, int k) {
 
 TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
-void pvi(vector<int>& v) {
+class Solution {
+  public:
+    vector<int> maximumSubarrayXor(vector<int>& nums,
+                                   vector<vector<int>>& queries) {
+        int n = nums.size();
+        vector<vector<int>> pascal;
+        pascal.push_back({1});
+        for (auto i = 1; i < n; ++i) {
+            vector<int> row = {1};
+            for (auto k = 0; k + 1 < pascal.back().size(); ++k)
+                row.push_back(pascal.back()[k] + pascal.back()[k + 1]);
+            row.push_back(1);
+            pascal.push_back(row);
+        }
 
-    for (auto& vv : v)
-        cout << vv << ", ";
-    cout << endl;
-}
+        for (auto i = 0; i < n; ++i) {
 
-using vi = vector<int>;
-using vvi = vector<vector<int>>;
-using vll = vector<long long>;
-using vvll = vector<vector<long long>>;
+            for (auto j = i; j < n; ++j) {
+            }
+        }
+
+        return {};
+    }
+};
 
 int main() {
     Solution sol;
-    int r;
+    vector<int> r;
 
-    cout << r << endl;
+    r = sol.maximumSubarrayXor(
+        vector<int>() = {2, 8, 4, 32, 16, 1},
+        vector<vector<int>>() = {{0, 2}, {1, 4}, {0, 5}});
+    // cout << r << endl;
 }

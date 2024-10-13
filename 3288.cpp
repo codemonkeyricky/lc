@@ -35,21 +35,22 @@ TreeNode* recurse(vector<int>& tree, int k) {
 
 TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
-void pvi(vector<int>& v) {
+class Solution {
+  public:
+    int maxPathLength(vector<vector<int>>& coordinates, int k) {
 
-    for (auto& vv : v)
-        cout << vv << ", ";
-    cout << endl;
-}
+        vector<int> target = {1, 1};
+        auto it = upper_bound(coordinates.begin(), coordinates.end(), target);
 
-using vi = vector<int>;
-using vvi = vector<vector<int>>;
-using vll = vector<long long>;
-using vvll = vector<vector<long long>>;
+        return 0;
+    }
+};
 
 int main() {
     Solution sol;
     int r;
+
+    sol.maxPathLength(vector<vector<int>>() = {{1, 1}, {1, 2}, {2, 2}}, 3);
 
     cout << r << endl;
 }
