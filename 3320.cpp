@@ -50,6 +50,7 @@ using vvll = vector<vector<long long>>;
 using vvvll = vector<vector<vector<long long>>>;
 using ll = long long;
 
+    ll dp[1001][2001][4] = {};
 class Solution {
 
     /*
@@ -114,7 +115,6 @@ class Solution {
         return dp[k][score][p] - 1;
     }
 
-    ll dp[1001][2001][4] = {};
 
   public:
     int countWinningSequences(string s) {
