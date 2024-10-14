@@ -51,132 +51,43 @@ using vvll = vector<vector<long long>>;
 using vvvll = vector<vector<vector<long long>>>;
 using ll = long long;
 
-#define N 1001
-#define S 2001
-#define MS (S/2)
-#define P 4
-
-ll dp[N][S][P] = {};
 class Solution {
 
-    /*
-     * dp[[k][s]
-     * number of ways for bob to win for a given s at k
-     */
-
-    const int F = 0;
-    const int W = 1;
-    const int E = 2;
-    const int MOD = 1e9 + 7;
-
-    int dfs(string& alice, int k, int p, int s) {
-        int n = alice.size();
-
-        if (k < 0) {
-            return s > 1000;
-        }
-
-        /* no way we can catch up with remaining moves - return 0*/
-        if (s + k < 1000)
-            return 0;
-
-        /*
-         * F > E
-         * W > F
-         * E > W
-         */
-
-        if (dp[k][s][p] == 0) {
-            ll rv = 0;
-            switch (alice[k]) {
-            case 'F': {
-                if (p != F) // same
-                    rv = (rv + dfs(alice, k - 1, F, s)) % MOD;
-                if (p != W) // wins
-                    rv = (rv + dfs(alice, k - 1, W, s + 1)) % MOD;
-                if (p != E) // loses
-                    rv = (rv + dfs(alice, k - 1, E, s - 1)) % MOD;
-
-            } break;
-            case 'W': {
-                if (p != F) // loses
-                    rv = (rv + dfs(alice, k - 1, F, s - 1)) % MOD;
-                if (p != W) // same
-                    rv = (rv + dfs(alice, k - 1, W, s)) % MOD;
-                if (p != E) // wins
-                    rv = (rv + dfs(alice, k - 1, E, s + 1)) % MOD;
-            } break;
-            case 'E': {
-                if (p != F) // wins
-                    rv = (rv + dfs(alice, k - 1, F, s + 1)) % MOD;
-                if (p != W) // loses
-                    rv = (rv + dfs(alice, k - 1, W, s - 1)) % MOD;
-                if (p != E) // same
-                    rv = (rv + dfs(alice, k - 1, E, s)) % MOD;
-            } break;
-            }
-            dp[k][s][p] = rv + 1;
-        }
-
-        return dp[k][s][p] - 1;
-    }
-
   public:
-    int countWinningSequences(string alice) {
-
-        memset(dp, 0, sizeof(dp));
-
-        int n = alice.size();
-
-        /* base case */
-
-        for (auto s = N; s < S; ++s) {
-            for (auto p = 0; p < 3; ++p) {
-                dp[0][s][p] = 1;
+    int countWinningSequences(const string& s) {
+        int rv = 0, sz = s.size(), mod = 1000000007;
+        /* can get away caching the most recent 2 values */
+        long long dp[2][2001][3] = {};
+        dp[0][1000][0] = 1;
+        /* iterate through string */
+        for (int i = 0; i < sz; ++i) {
+            int a = s[i] == 'F' ? 2 : s[i] == 'E' ? 1 : 0;
+            /* iterate through summons */
+            for (int b = 0; b < 3; ++b) {
+                // F > E, E > W, W > F
+                int pt = a == b             ? 0
+                         : a == 0 && b == 2 ? -1
+                         : b == 0 && a == 2 ? 1
+                         : a > b            ? -1
+                                            : 1;
+                /*
+                 * iterate through scores
+                 * normalize to 1000
+                 */
+                for (int j = 1000 - i; j < 1001 + i; ++j)
+                    dp[!(i % 2)][j + pt][b] =
+                        (dp[i % 2][j][0] + dp[i % 2][j][1] + dp[i % 2][j][2] -
+                         /* 
+                          * Bob doesn't repeat
+                          * Exception when i == 0 as there's no previous.
+                          */
+                         (i == 0 ? 0 : dp[i % 2][j][b])) %
+                        mod;
             }
         }
-
-        for (auto k = 1; k < n + 1; ++k) {
-            for (auto s = 0; s < S; ++s) {
-                for (auto p = 0; p < 3; ++p) {
-                    if (alice[k - 1] == 'F') {
-                        ll rv = 0;
-                        if (p != F)
-                            rv = (rv + dp[k - 1][s + 0][F]) % MOD;
-                        if (p != W)
-                            rv = (rv + dp[k - 1][s + 1][W]) % MOD;
-                        if (p != E)
-                            rv = (rv + dp[k - 1][s - 1][E]) % MOD;
-                        dp[k][s][p] = rv;
-                    } else if (alice[k] == 'W') {
-                        ll rv = 0;
-                        if (p != F)
-                            rv = (rv + dp[k - 1][s - 1][F]) % MOD;
-                        if (p != W)
-                            rv = (rv + dp[k - 1][s + 0][W]) % MOD;
-                        if (p != E)
-                            rv = (rv + dp[k - 1][s + 1][E]) % MOD;
-                        dp[k][s][p] = rv;
-                    } else if (alice[k] == 'E') {
-                        ll rv = 0;
-                        if (p != F)
-                            rv = (rv + dp[k - 1][s + 1][F]) % MOD;
-                        if (p != W)
-                            rv = (rv + dp[k - 1][s - 1][W]) % MOD;
-                        if (p != E)
-                            rv = (rv + dp[k - 1][s + 0][E]) % MOD;
-                        dp[k][s][p] = rv;
-                    }
-                }
-            }
-        }
-
-        // return dfs(alice, n - 1, 3, 1000);
-
-        ll rv = 0;
-        for (auto i = 0; i < 3; ++i)
-            rv = (rv + dp[n][MS][i]) % MOD;
-
+        for (int j = 1001; j < 1001 + sz; ++j)
+            rv = (dp[sz % 2][j][0] + dp[sz % 2][j][1] + dp[sz % 2][j][2] + rv) %
+                 mod;
         return rv;
     }
 };
