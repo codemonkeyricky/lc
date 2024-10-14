@@ -50,12 +50,12 @@ using vvll = vector<vector<long long>>;
 using vvvll = vector<vector<vector<long long>>>;
 using ll = long long;
 
-    ll dp[1001][2001][4] = {};
+ll dp[1001][2001][4] = {};
 class Solution {
 
     /*
-     * dp[[k][score]
-     * number of ways for bob to win for a given score at k
+     * dp[[k][s]
+     * number of ways for bob to win for a given s at k
      */
 
     const int F = 0;
@@ -63,15 +63,15 @@ class Solution {
     const int E = 2;
     const int MOD = 1e9 + 7;
 
-    int dfs(string& s, int k, int p, int score) {
-        int n = s.size();
+    int dfs(string& alice, int k, int p, int s) {
+        int n = alice.size();
 
         if (k < 0) {
-            return score > 1000;
+            return s > 1000;
         }
 
         /* no way we can catch up with remaining moves - return 0*/
-        if (score + k < 1000)
+        if (s + k < 1000)
             return 0;
 
         /*
@@ -80,49 +80,57 @@ class Solution {
          * E > W
          */
 
-        if (dp[k][score][p] == 0) {
+        if (dp[k][s][p] == 0) {
             ll rv = 0;
-            switch (s[k]) {
+            switch (alice[k]) {
             case 'F': {
                 if (p != F) // same
-                    rv = (rv + dfs(s, k - 1, F, score)) % MOD;
+                    rv = (rv + dfs(alice, k - 1, F, s)) % MOD;
                 if (p != W) // wins
-                    rv = (rv + dfs(s, k - 1, W, score + 1)) % MOD;
+                    rv = (rv + dfs(alice, k - 1, W, s + 1)) % MOD;
                 if (p != E) // loses
-                    rv = (rv + dfs(s, k - 1, E, score - 1)) % MOD;
+                    rv = (rv + dfs(alice, k - 1, E, s - 1)) % MOD;
 
             } break;
             case 'W': {
                 if (p != F) // loses
-                    rv = (rv + dfs(s, k - 1, F, score - 1)) % MOD;
+                    rv = (rv + dfs(alice, k - 1, F, s - 1)) % MOD;
                 if (p != W) // same
-                    rv = (rv + dfs(s, k - 1, W, score)) % MOD;
+                    rv = (rv + dfs(alice, k - 1, W, s)) % MOD;
                 if (p != E) // wins
-                    rv = (rv + dfs(s, k - 1, E, score + 1)) % MOD;
+                    rv = (rv + dfs(alice, k - 1, E, s + 1)) % MOD;
             } break;
             case 'E': {
                 if (p != F) // wins
-                    rv = (rv + dfs(s, k - 1, F, score + 1)) % MOD;
+                    rv = (rv + dfs(alice, k - 1, F, s + 1)) % MOD;
                 if (p != W) // loses
-                    rv = (rv + dfs(s, k - 1, W, score - 1)) % MOD;
+                    rv = (rv + dfs(alice, k - 1, W, s - 1)) % MOD;
                 if (p != E) // same
-                    rv = (rv + dfs(s, k - 1, E, score)) % MOD;
+                    rv = (rv + dfs(alice, k - 1, E, s)) % MOD;
             } break;
             }
-            dp[k][score][p] = rv + 1;
+            dp[k][s][p] = rv + 1;
         }
 
-        return dp[k][score][p] - 1;
+        return dp[k][s][p] - 1;
     }
 
-
   public:
-    int countWinningSequences(string s) {
-        int n = s.size();
+    int countWinningSequences(string alice) {
+        int n = alice.size();
         int rv = 0;
 
+        // for (auto k = 0; k < n + 1; ++k) {
+        //     for (auto alice = 0; alice < 2001; ++alice) {
+        //         for (auto p = 0; p < 3; ++p) {
+        //             if(alice[k] == 'F')
+        //             dp[k][alice][p] += dp[k-1][]
+        //         }
+        //     }
+        // }
+
         // dp = vvvll(n + 1, vvll(n + 1001, vll(4)));
-        return dfs(s, n - 1, 3, 1000);
+        return dfs(alice, n - 1, 3, 1000);
     }
 };
 
