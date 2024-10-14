@@ -3,6 +3,7 @@
 #include <bitset>
 #include <cassert>
 #include <cmath>
+#include <cstring>
 #include <iostream>
 #include <map>
 #include <numeric>
@@ -50,7 +51,12 @@ using vvll = vector<vector<long long>>;
 using vvvll = vector<vector<vector<long long>>>;
 using ll = long long;
 
-ll dp[1001][2001][4] = {};
+#define N 1001
+#define S 2001
+#define MS (S/2)
+#define P 4
+
+ll dp[N][S][P] = {};
 class Solution {
 
     /*
@@ -117,20 +123,61 @@ class Solution {
 
   public:
     int countWinningSequences(string alice) {
+
+        memset(dp, 0, sizeof(dp));
+
         int n = alice.size();
-        int rv = 0;
 
-        // for (auto k = 0; k < n + 1; ++k) {
-        //     for (auto alice = 0; alice < 2001; ++alice) {
-        //         for (auto p = 0; p < 3; ++p) {
-        //             if(alice[k] == 'F')
-        //             dp[k][alice][p] += dp[k-1][]
-        //         }
-        //     }
-        // }
+        /* base case */
 
-        // dp = vvvll(n + 1, vvll(n + 1001, vll(4)));
-        return dfs(alice, n - 1, 3, 1000);
+        for (auto s = N; s < S; ++s) {
+            for (auto p = 0; p < 3; ++p) {
+                dp[0][s][p] = 1;
+            }
+        }
+
+        for (auto k = 1; k < n + 1; ++k) {
+            for (auto s = 0; s < S; ++s) {
+                for (auto p = 0; p < 3; ++p) {
+                    if (alice[k - 1] == 'F') {
+                        ll rv = 0;
+                        if (p != F)
+                            rv = (rv + dp[k - 1][s + 0][F]) % MOD;
+                        if (p != W)
+                            rv = (rv + dp[k - 1][s + 1][W]) % MOD;
+                        if (p != E)
+                            rv = (rv + dp[k - 1][s - 1][E]) % MOD;
+                        dp[k][s][p] = rv;
+                    } else if (alice[k] == 'W') {
+                        ll rv = 0;
+                        if (p != F)
+                            rv = (rv + dp[k - 1][s - 1][F]) % MOD;
+                        if (p != W)
+                            rv = (rv + dp[k - 1][s + 0][W]) % MOD;
+                        if (p != E)
+                            rv = (rv + dp[k - 1][s + 1][E]) % MOD;
+                        dp[k][s][p] = rv;
+                    } else if (alice[k] == 'E') {
+                        ll rv = 0;
+                        if (p != F)
+                            rv = (rv + dp[k - 1][s + 1][F]) % MOD;
+                        if (p != W)
+                            rv = (rv + dp[k - 1][s - 1][W]) % MOD;
+                        if (p != E)
+                            rv = (rv + dp[k - 1][s + 0][E]) % MOD;
+                        dp[k][s][p] = rv;
+                    }
+                }
+            }
+        }
+
+        // return dfs(alice, n - 1, 3, 1000);
+
+        ll rv = 0;
+        for (auto i = 0; i < 3; ++i)
+            rv = (rv + dp[n][MS][i]) % MOD;
+
+        return rv;
     }
 };
 
@@ -138,8 +185,8 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.countWinningSequences("FWEFW");
-    cout << r << endl;
+    // r = sol.countWinningSequences("FWEFW");
+    // cout << r << endl;
 
     r = sol.countWinningSequences("FFF");
     cout << r << endl;
