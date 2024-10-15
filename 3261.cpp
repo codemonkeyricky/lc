@@ -64,7 +64,7 @@ class Solution {
         zeroes.push_back({0, -1});
         int z = 0, o = 0;
 
-        vector<array<int, 2>> violations;
+        vector<array<int, 2>> intervals;
         for (auto i = 0; i < n; ++i) {
             z += s[i] == '0';
             o += s[i] == '1';
@@ -84,11 +84,50 @@ class Solution {
                 target = {o - k - 1, 0};
                 auto o_k = (*lower_bound(ones.begin(), ones.end(), target))[1];
 
-                violations.push_back({min((int)z_k, (int)o_k), i});
+                intervals.push_back({min((int)z_k, (int)o_k), i});
             }
         }
 
-        return {};
+        sort(intervals.begin(), intervals.end());
+
+        vector<int> violation_cnt(n);
+        for (auto k = 0, i = 0, c = 0; i < n; ++i) {
+            while (k < intervals.size() && intervals[k][0] <= i) {
+                c += intervals[k++][0] + 1;
+            }
+            violation_cnt[i] = c;
+        }
+
+        vector<array<int, 2>> qq; ///< right pos / query index
+
+        for (auto i = 0; i < queries.size(); ++i) {
+            qq.push_back({queries[i][1], i});
+        }
+
+        sort(qq.begin(), qq.end());
+
+        vector<int> rv(qq.size());
+
+        vector<int> dp(n);
+        for (auto k = 0, i = 0; i < n; ++i) {
+            while (k < qq.size() && qq[k][0] <= i) {
+
+                auto q = queries[qq[k][1]];
+
+                // TODO: interval
+                int interval = 1;
+                long long total = violation_cnt[q[1]] -
+                                  (q[0] ? violation_cnt[q[0]] : 0) -
+                                  interval * q[0];
+
+                int nn = q[1] - q[0] + 1;
+                rv[qq[k][1]] = nn * (nn + 1) / 2 - total;
+
+                ++k;
+            }
+        }
+
+        return rv;
     }
 };
 
