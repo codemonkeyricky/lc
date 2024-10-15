@@ -44,6 +44,7 @@ void pvi(vector<int>& v) {
 
 using vi = vector<int>;
 using vvi = vector<vector<int>>;
+using vvvi = vector<vector<vector<int>>>;
 using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
@@ -68,7 +69,30 @@ class Solution {
   public:
     bool isInterleave(string s1, string s2, string s3) {
 
-        return dfs(s1, s2, s3, s1.size() - 1, s2.size() - 1, s3.size() - 1);
+        int dp[201][101][101] = {};
+
+        /* base */
+
+        dp[0][0][0] = 1;
+        dp[0][1][0] = 1;
+        dp[0][0][1] = 1;
+
+        for (auto k = 1; k <= s3.size(); ++k) {
+            for (auto i = 0; i <= s1.size(); ++i) {
+                for (auto j = 0; j <= s2.size(); ++j) {
+                    if (i + j == k) {
+                        if (i > 0 && s1[i - 1] == s3[k - 1])
+                            dp[k][i][j] |= dp[k - 1][i - 1][j];
+                        if (j > 0 && s2[j - 1] == s3[k - 1])
+                            dp[k][i][j] |= dp[k - 1][i][j - 1];
+                    }
+                }
+            }
+        }
+
+        return dp[s3.size()][s1.size()][s2.size()];
+
+        // return dfs(s1, s2, s3, s1.size() - 1, s2.size() - 1, s3.size() - 1);
     }
 };
 
@@ -76,9 +100,15 @@ int main() {
     Solution sol;
     int r;
 
+    r = sol.isInterleave("", "", "");
+    cout << r << endl;
+
     r = sol.isInterleave("aabcc", "dbbca", "aadbbbaccc");
     cout << r << endl;
 
-    r = sol.isInterleave("aabcc", "dbbca", "aabbcbcac");
+    r = sol.isInterleave("aa", "b", "aab");
+    cout << r << endl;
+
+    r = sol.isInterleave("aabcc", "dbbca", "aadbbcbcac");
     cout << r << endl;
 }
