@@ -1,83 +1,90 @@
-#include <iostream>
-#include <vector>
-#include <cassert>
-#include <stack>
-#include <queue>
 #include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cmath>
+#include <iostream>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <set>
+#include <stack>
 #include <unordered_map>
 #include <unordered_set>
-#include <map>
-#include <set>
-#include <bitset>
-#include <numeric>
-#include <cmath>
+#include <vector>
 
 using namespace std;
 
-struct TreeNode
-{
+struct Treen {
     int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode() : val(0), left(nullptr), right(nullptr) {}
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+    Treen* left;
+    Treen* right;
+    Treen() : val(0), left(nullptr), right(nullptr) {}
+    Treen(int x) : val(x), left(nullptr), right(nullptr) {}
+    Treen(int x, Treen* left, Treen* right)
+        : val(x), left(left), right(right) {}
 };
 
-TreeNode *recurse(vector<int> &tree, int k)
-{
+Treen* recurse(vector<int>& tree, int k) {
     if (k >= tree.size() || tree[k] == -1)
         return nullptr;
 
-    return new TreeNode(tree[k], recurse(tree, k * 2 + 1), recurse(tree, k * 2 + 2));
+    return new Treen(tree[k], recurse(tree, k * 2 + 1),
+                        recurse(tree, k * 2 + 2));
 }
 
-TreeNode *populate(vector<int> &tree)
-{
-    return recurse(tree, 0);
-}
+Treen* populate(vector<int>& tree) { return recurse(tree, 0); }
 
-class Solution
-{
-    struct Trie
-    {
-        array<Trie *, 26> map = {};
-    };
+struct Trie {
+    Trie* next[26] = {};
+    int cnt = 0;
+};
 
+class Solution {
+    // Initialize the root n of the trie.
     Trie root;
 
-public:
-    vector<int> sumPrefixScores(vector<string> &words)
-    {
-        unordered_map<Trie *, int> dp;
-        auto trie = &root;
-        for (int i = 0; i < words.size(); ++i, trie = &root)
-        {
-            for (auto j = 0; j < words[i].size(); ++j)
-            {
-                if (!trie->map[words[i][j] - 'a'])
-                    trie->map[words[i][j] - 'a'] = new Trie();
-                trie = trie->map[words[i][j] - 'a'];
-                ++dp[trie];
+  public:
+    // Insert function for the word.
+    void insert(string word) {
+        auto n = &root;
+        for (char c : word) {
+            // If new prefix, create a new trie n.
+            if (!n->next[c - 'a']) {
+                n->next[c - 'a'] = new Trie();
             }
+            // Increment the count of the current prefix.
+            ++n->next[c - 'a']->cnt;
+            n = n->next[c - 'a'];
         }
-
-        vector<int> rv;
-        for (int i = 0, r = 0; i < words.size(); ++i, rv.push_back(r), r = 0, trie = &root)
-        {
-            for (auto j = 0; j < words[i].size(); ++j)
-            {
-                trie = trie->map[words[i][j] - 'a'];
-                r += dp[trie];
-            }
+    }
+    // Calculate the prefix count using this function.
+    int count(string s) {
+        auto n = &root;
+        int ans = 0;
+        // The ans would store the total sum of counts.
+        for (char c : s) {
+            ans += n->next[c - 'a']->cnt;
+            n = n->next[c - 'a'];
         }
+        return ans;
+    }
 
-        return rv;
+    vector<int> sumPrefixScores(vector<string>& words) {
+        int N = words.size();
+        // Insert words in trie.
+        for (int i = 0; i < N; i++) {
+            insert(words[i]);
+        }
+        vector<int> scores(N, 0);
+        for (int i = 0; i < N; i++) {
+            // Get the count of all prefixes of given string.
+            scores[i] = count(words[i]);
+        }
+        return scores;
     }
 };
 
-int main()
-{
+int main() {
     Solution sol;
     int r;
 

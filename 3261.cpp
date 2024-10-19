@@ -58,76 +58,43 @@ class Solution {
   public:
     vector<long long> countKConstraintSubstrings(string s, int k,
                                                  vector<vector<int>>& queries) {
-        int n = s.size();
-        vector<array<int, 2>> ones, zeroes;
-        ones.push_back({0, -1});
-        zeroes.push_back({0, -1});
-        int z = 0, o = 0;
+        long long n = s.size(), l, r, one = 0, zero = 0, cur, i, len;
 
-        vector<array<int, 2>> intervals;
-        for (auto i = 0; i < n; ++i) {
-            z += s[i] == '0';
-            o += s[i] == '1';
-
-            if (s[i] == '0')
-                zeroes.push_back({z, i});
-            else
-                ones.push_back({o, i});
-
-            if (z - k - 1 >= 0 && o - k - 1 >= 0) {
-                array<int, 2> target;
-
-                target = {z - k - 1, 0};
-                auto z_k =
-                    (*lower_bound(zeroes.begin(), zeroes.end(), target))[1];
-
-                target = {o - k - 1, 0};
-                auto o_k = (*lower_bound(ones.begin(), ones.end(), target))[1];
-
-                intervals.push_back({min((int)z_k, (int)o_k), i});
+        /* a[] contains total number of valid substrings at index */
+        vector<long long> ans, pre(n + 1), a(n);
+        l = 0;
+        for (r = 0; r < n; r++) {
+            s[r] == '1' ? one++ : zero++;
+            while (zero > k && one > k) {
+                s[l] == '1' ? one-- : zero--;
+                l++;
             }
+            cur = r - l + 1;
+            a[r] = cur;
         }
 
-        sort(intervals.begin(), intervals.end());
+        /* prefix sum */
+        for (i = 0; i < n; i++) {
+            pre[i + 1] = pre[i] + a[i];
+        }
 
-        vector<int> violation_cnt(n);
-        for (auto k = 0, i = 0, c = 0; i < n; ++i) {
-            while (k < intervals.size() && intervals[k][0] <= i) {
-                c += intervals[k++][0] + 1;
+        for (auto& q : queries) {
+            l = q[0];
+            r = q[1];
+            cur = 0;
+            len = 0;
+            for (i = l; i <= r; i++) {
+                len++;
+                if (a[i] <= len) {
+                    cur = cur + pre[r + 1] - pre[i];
+                    break;
+                } else {
+                    cur = cur + len;
+                }
             }
-            violation_cnt[i] = c;
+            ans.push_back(cur);
         }
-
-        vector<array<int, 2>> qq; ///< right pos / query index
-
-        for (auto i = 0; i < queries.size(); ++i) {
-            qq.push_back({queries[i][1], i});
-        }
-
-        sort(qq.begin(), qq.end());
-
-        vector<int> rv(qq.size());
-
-        vector<int> dp(n);
-        for (auto k = 0, i = 0; i < n; ++i) {
-            while (k < qq.size() && qq[k][0] <= i) {
-
-                auto q = queries[qq[k][1]];
-
-                // TODO: interval
-                int interval = 1;
-                long long total = violation_cnt[q[1]] -
-                                  (q[0] ? violation_cnt[q[0]] : 0) -
-                                  interval * q[0];
-
-                int nn = q[1] - q[0] + 1;
-                rv[qq[k][1]] = nn * (nn + 1) / 2 - total;
-
-                ++k;
-            }
-        }
-
-        return rv;
+        return ans;
     }
 };
 
