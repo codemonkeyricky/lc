@@ -45,28 +45,47 @@ void pvi(vector<int>& v) {
 class Solution {
   public:
     bool isMatch(string s, string p) {
-        vector<vector<bool>> dp(s.size() + 1, vector(p.size() + 1, false));
-        dp[0][0] = true;
+
+        int sz = s.size() + 1;
+        int pz = p.size() + 1;
+
+        vector<vector<int>> dp(sz + 1, vector<int>(pz));
+
+        /*
+         * dp[i][j] = s[0..i] matches up to p[0..j]
+         */
+
+        /* base case */
+        dp[0][0] = 1;
         for (int j = 0; j < p.size() && p[j] == '*'; ++j) {
             dp[0][j + 1] = true;
         }
 
-        for (int i = 1; i <= s.size(); ++i) {
-            for (int j = 1; j <= p.size(); ++j) {
-                if (p[j - 1] == '*') {
-                    /* 
-                     * first case: * has been matched one or more times 
-                     * second case: * is being matched the first time
-                     */
-                    dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
-                } else {
-                    dp[i][j] = (s[i - 1] == p[j - 1] || p[j - 1] == '?') &&
-                               dp[i - 1][j - 1];
+        for (auto i = 1; i < sz; ++i) {
+            for (auto j = 1; j < pz; ++j) {
+                if (i < sz && (s[i - 1] == p[j - 1] || p[j - 1] == '?')) {
+                    /* i and j match - take result from i-1 and j-1? */
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (p[j - 1] == '*') {
+                    int a = 0, b = 0, c = 0;
+
+                    // match many times
+                    // if (i < sz)
+                    a = dp[i - 1][j];
+
+                    // match once
+                    // if (i < sz)
+                    b = dp[i - 1][j - 1];
+
+                    // skip '*'
+                    c = dp[i][j - 1];
+
+                    dp[i][j] = max({a, b, c});
                 }
             }
         }
 
-        return dp[s.size()][p.size()];
+        return dp[sz - 1][pz - 1];
     }
 };
 
