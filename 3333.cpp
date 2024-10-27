@@ -63,16 +63,9 @@ class Solution {
             }
         }
 
-        vector<long long> prefix(cnt.size());
-        long long m = 1;
-        for (int i = 0; i < cnt.size(); ++i) {
-            m = (m * cnt[i]) % MOD;
-            prefix[i] = m;
-        }
-
         /* base case */
         vector<long long> dp(kk + 1);
-        m = cnt[0] % MOD;
+        long long m = cnt[0] % MOD;
         dp[0] = m;
         for (auto i = 1; i <= cnt[0] && i <= kk; ++i)
             dp[i] = cnt[0] - i + 1;
