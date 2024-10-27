@@ -85,9 +85,17 @@ class Solution {
             dp[0][i] = cnt[0] - i + 1;
 
         for (auto i = 1; i < cnt.size(); ++i) {
+            long long sum = ((long long)dp[i - 1][0] * cnt[i]) % MOD;
             for (auto k = 1; k <= kk; ++k) {
-                for (auto j = 1; j <= cnt[i]; ++j) {
-                    dp[i][k] = (dp[i][k] + dp[i - 1][max(0, k - j)]) % MOD;
+
+                if (k <= i + 1) {
+                    dp[i][k] = sum;
+                } else {
+                    sum -= dp[i - 1][max(0, k - cnt[i] - 1)];
+                    if (sum < 0)
+                        sum += MOD;
+                    sum = (sum + dp[i - 1][k - 1]) % MOD;
+                    dp[i][k] = sum;
                 }
             }
         }
@@ -105,18 +113,23 @@ int main() {
      * dp[0][2] = 2
      */
 
+    r = sol.possibleStringCount("ggggggggaaaaallsssssaaaaaaaaaiiqqqqqqqqqqbbbbb"
+                                "bbvvfffffjjjjeeeeeefffmmiiiix",
+                                34);
+    cout << r << endl;
+
     r = sol.possibleStringCount("aadddf", 3);
     cout << r << endl;
 
-    r = sol.possibleStringCount("bb", 1);
-    cout << r << endl;
+    // r = sol.possibleStringCount("bb", 1);
+    // cout << r << endl;
 
     r = sol.possibleStringCount("aaabbb", 3);
     cout << r << endl;
 
-    r = sol.possibleStringCount("aabbccdd", 8);
-    cout << r << endl;
+    // r = sol.possibleStringCount("aabbccdd", 8);
+    // cout << r << endl;
 
-    r = sol.possibleStringCount("aabbccdd", 7);
-    cout << r << endl;
+    // r = sol.possibleStringCount("aabbccdd", 7);
+    // cout << r << endl;
 }
