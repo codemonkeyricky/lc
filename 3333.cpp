@@ -50,19 +50,19 @@ using vvll = vector<vector<long long>>;
 class Solution {
     const int MOD = 1e9 + 7;
 
-    int dfs(vector<int>& cnt, int i, int k, vector<long long>& suffix) {
+    int dfs(vector<int>& cnt, int i, int k, vector<long long>& prefix) {
         int n = cnt.size();
 
         if (k <= 0) {
-            return i >= n ? 1 : suffix[i];
+            return i < 0 ? 1 : prefix[i];
         }
 
-        if (i >= cnt.size())
+        if (i < 0)
             return 0;
 
         int rv = 0;
         for (auto j = 1; j <= cnt[i]; ++j) {
-            rv = (rv + dfs(cnt, i + 1, k - j, suffix)) % MOD;
+            rv = (rv + dfs(cnt, i - 1, k - j, prefix)) % MOD;
         }
         return rv;
     }
@@ -80,14 +80,24 @@ class Solution {
             }
         }
 
-        vector<long long> suffix(cnt.size());
+        vector<long long> prefix(cnt.size());
         long long m = 1;
-        for (int i = cnt.size() - 1; i >= 0; --i) {
+        for (int i = 0; i < cnt.size(); ++i) {
             m = (m * cnt[i]) % MOD;
-            suffix[i] = m;
+            prefix[i] = m;
         }
 
-        return dfs(cnt, 0, k, suffix);
+        vector<vector<int>> dp(cnt.size() + 1, vector<int>(2001));
+
+        // for (auto i = 0; i < cnt.size(); ++i) {
+        //     for (auto kk = 0; kk <= k; ++kk) {
+        //         for (auto j = 1; j <= cnt[i]; ++j) {
+        //             dp[i][k] = dp[i][j] + dp[i - 1][]
+        //         }
+        //     }
+        // }
+
+        return dfs(cnt, cnt.size() - 1, k, prefix);
     }
 };
 
