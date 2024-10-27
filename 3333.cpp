@@ -54,11 +54,17 @@ class Solution {
     int possibleStringCount(string word, int kk) {
         vector<int> cnt;
 
+        long long mm = 1;
         for (auto i = 1, c = 1; i <= word.size(); ++i) {
             if (i < word.size() && word[i - 1] == word[i]) {
                 ++c;
             } else {
-                cnt.push_back(c);
+                if (cnt.size() > kk) {
+                    mm = (mm * c) % MOD;
+                } else {
+                    cnt.push_back(c);
+                }
+
                 c = 1;
             }
         }
@@ -91,7 +97,7 @@ class Solution {
             }
         }
 
-        return dp[kk];
+        return (dp[kk] * mm) % MOD;
     }
 };
 
