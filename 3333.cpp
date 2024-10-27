@@ -50,8 +50,6 @@ using vvll = vector<vector<long long>>;
 class Solution {
     const int MOD = 1e9 + 7;
 
-    vector<vector<int>> dp;
-
   public:
     int possibleStringCount(string word, int kk) {
         vector<int> cnt;
@@ -72,35 +70,35 @@ class Solution {
             prefix[i] = m;
         }
 
-        dp = vector<vector<int>>(cnt.size(), vector<int>(kk + 1));
-
-        m = 1;
-        for (int i = 0; i < cnt.size(); ++i) {
-            m = (m * cnt[i]) % MOD;
-            dp[i][0] = m;
-        }
-
         /* base case */
+        vector<long long> dp(kk + 1);
+        m = cnt[0] % MOD;
+        dp[0] = m;
         for (auto i = 1; i <= cnt[0] && i <= kk; ++i)
-            dp[0][i] = cnt[0] - i + 1;
+            dp[i] = cnt[0] - i + 1;
 
         for (auto i = 1; i < cnt.size(); ++i) {
-            long long sum = ((long long)dp[i - 1][0] * cnt[i]) % MOD;
+
+            auto dpp = dp;
+            dp = vector<long long>(kk + 1);
+            dp[0] = (dpp[0] * cnt[i]) % MOD;
+
+            long long sum = ((long long)dpp[0] * cnt[i]) % MOD;
             for (auto k = 1; k <= kk; ++k) {
 
                 if (k <= i + 1) {
-                    dp[i][k] = sum;
+                    dp[k] = sum;
                 } else {
-                    sum -= dp[i - 1][max(0, k - cnt[i] - 1)];
+                    sum -= dpp[max(0, k - cnt[i] - 1)];
                     if (sum < 0)
                         sum += MOD;
-                    sum = (sum + dp[i - 1][k - 1]) % MOD;
-                    dp[i][k] = sum;
+                    sum = (sum + dpp[k - 1]) % MOD;
+                    dp[k] = sum;
                 }
             }
         }
 
-        return dp[cnt.size() - 1][kk];
+        return dp[kk];
     }
 };
 
