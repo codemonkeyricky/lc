@@ -50,25 +50,10 @@ using vvll = vector<vector<long long>>;
 class Solution {
     const int MOD = 1e9 + 7;
 
-    int dfs(vector<int>& cnt, int i, int k, vector<long long>& prefix) {
-        int n = cnt.size();
-
-        if (k <= 0) {
-            return i < 0 ? 1 : prefix[i];
-        }
-
-        if (i < 0)
-            return 0;
-
-        int rv = 0;
-        for (auto j = 1; j <= cnt[i]; ++j) {
-            rv = (rv + dfs(cnt, i - 1, k - j, prefix)) % MOD;
-        }
-        return rv;
-    }
+    vector<vector<int>> dp;
 
   public:
-    int possibleStringCount(string word, int k) {
+    int possibleStringCount(string word, int kk) {
         vector<int> cnt;
 
         for (auto i = 1, c = 1; i <= word.size(); ++i) {
@@ -87,23 +72,44 @@ class Solution {
             prefix[i] = m;
         }
 
-        vector<vector<int>> dp(cnt.size() + 1, vector<int>(2001));
+        dp = vector<vector<int>>(cnt.size(), vector<int>(kk + 1));
 
-        // for (auto i = 0; i < cnt.size(); ++i) {
-        //     for (auto kk = 0; kk <= k; ++kk) {
-        //         for (auto j = 1; j <= cnt[i]; ++j) {
-        //             dp[i][k] = dp[i][j] + dp[i - 1][]
-        //         }
-        //     }
-        // }
+        m = 1;
+        for (int i = 0; i < cnt.size(); ++i) {
+            m = (m * cnt[i]) % MOD;
+            dp[i][0] = m;
+        }
 
-        return dfs(cnt, cnt.size() - 1, k, prefix);
+        /* base case */
+        for (auto i = 1; i <= cnt[0] && i <= kk; ++i)
+            dp[0][i] = cnt[0] - i + 1;
+
+        for (auto i = 1; i < cnt.size(); ++i) {
+            for (auto k = 1; k <= kk; ++k) {
+                for (auto j = 1; j <= cnt[i]; ++j) {
+                    dp[i][k] = (dp[i][k] + dp[i - 1][max(0, k - j)]) % MOD;
+                }
+            }
+        }
+
+        return dp[cnt.size() - 1][kk];
     }
 };
 
 int main() {
     Solution sol;
     int r;
+
+    /*
+     * dp[0][1] = 3
+     * dp[0][2] = 2
+     */
+
+    r = sol.possibleStringCount("aadddf", 3);
+    cout << r << endl;
+
+    r = sol.possibleStringCount("bb", 1);
+    cout << r << endl;
 
     r = sol.possibleStringCount("aaabbb", 3);
     cout << r << endl;
