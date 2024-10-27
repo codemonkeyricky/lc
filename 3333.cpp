@@ -57,6 +57,9 @@ class Solution {
             return i >= n ? 1 : suffix[i];
         }
 
+        if (i >= cnt.size())
+            return 0;
+
         int rv = 0;
         for (auto j = 1; j <= cnt[i]; ++j) {
             rv = (rv + dfs(cnt, i + 1, k - j, suffix)) % MOD;
@@ -92,7 +95,7 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.possibleStringCount("aabb", 3);
+    r = sol.possibleStringCount("aaabbb", 3);
     cout << r << endl;
 
     r = sol.possibleStringCount("aabbccdd", 8);
