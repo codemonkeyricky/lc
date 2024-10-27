@@ -4,7 +4,6 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
-#include <list>
 #include <map>
 #include <numeric>
 #include <queue>
@@ -48,57 +47,57 @@ using vvi = vector<vector<int>>;
 using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
-class LRUCache {
+class Solution {
+    const int MOD = 1e9 + 7;
 
-    int cap = 0;
+    int dfs(vector<int>& cnt, int i, int k, vector<long long>& suffix) {
+        int n = cnt.size();
 
-    list<int> lru; ///< list of keys
-    unordered_map<int, pair<int, list<int>::iterator>>
-        kv; ///< key / [value, it]
+        if (k <= 0) {
+            return i >= n ? 1 : suffix[i];
+        }
 
-    void refresh(int key) {
-        auto it = kv[key].second;
-        lru.erase(it);
-        lru.push_back(key);
-        it = prev(lru.end());
-        kv[key].second = it;
+        int rv = 0;
+        for (auto j = 1; j <= cnt[i]; ++j) {
+            rv = (rv + dfs(cnt, i + 1, k - j, suffix)) % MOD;
+        }
+        return rv;
     }
 
   public:
-    LRUCache(int capacity) { cap = capacity; }
+    int possibleStringCount(string word, int k) {
+        vector<int> cnt;
 
-    int get(int key) {
-        if (kv.count(key)) {
-            refresh(key);
-            return kv[key].first;
-        }
-        return -1;
-    }
-
-    void put(int key, int value) {
-
-        if (kv.count(key)) {
-            /* key exists */
-            kv[key].first = value;
-            refresh(key);
-        } else { ///< kv.size() == cap
-            while (kv.size() >= cap) {
-                auto k = lru.front();
-                lru.pop_front();
-                kv.erase(k);
+        for (auto i = 1, c = 1; i <= word.size(); ++i) {
+            if (i < word.size() && word[i - 1] == word[i]) {
+                ++c;
+            } else {
+                cnt.push_back(c);
+                c = 1;
             }
-
-            lru.push_back(key);
-            auto it = prev(lru.end());
-            kv[key] = {value, it};
         }
+
+        vector<long long> suffix(cnt.size());
+        long long m = 1;
+        for (int i = cnt.size() - 1; i >= 0; --i) {
+            m = (m * cnt[i]) % MOD;
+            suffix[i] = m;
+        }
+
+        return dfs(cnt, 0, k, suffix);
     }
 };
 
 int main() {
-    LRUCache lru(2);
+    Solution sol;
+    int r;
 
-    lru.put(1, 1);
+    r = sol.possibleStringCount("aabb", 3);
+    cout << r << endl;
 
-    // cout << r << endl;
+    r = sol.possibleStringCount("aabbccdd", 8);
+    cout << r << endl;
+
+    r = sol.possibleStringCount("aabbccdd", 7);
+    cout << r << endl;
 }
