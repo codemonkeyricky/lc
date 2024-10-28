@@ -43,15 +43,15 @@ void pvi(vector<int>& v) {
     cout << endl;
 }
 
-using vi = vector<int>;
-using vvi = vector<vector<int>>;
-using vvvi = vector<vector<vector<int>>>;
-using vll = vector<long long>;
-using vvll = vector<vector<long long>>;
-
 class Solution {
-    const int mod = 1e9 + 7;
-    vvvi dp; 
+    using vi = vector<int>;
+    using vvi = vector<vector<int>>;
+    using vvvi = vector<vector<vector<int>>>;
+    using vll = vector<long long>;
+    using vvll = vector<vector<long long>>;
+
+    const int MOD = 1e9 + 7;
+    vvvi dp;
 
   public:
     int dfs(int k, vector<int>& nums, int g1, int g2) {
@@ -73,15 +73,43 @@ class Solution {
             /* propagate to g2 */
             int take2 = dfs(k + 1, nums, g1, __gcd(g2, nums[k]));
 
-            // Summing up all the possibilites
-            dp[k][g1][g2] = (0ll + skip + take1 + take2) % mod + 1;
+            /* skip all */
+            dp[k][g1][g2] = (0ll + skip + take1 + take2) % MOD + 1;
         }
         return dp[k][g1][g2] - 1;
     }
 
     int subsequencePairCount(vector<int>& nums) {
-        dp = vvvi(201, vvi(201, vi(201)));
-        return dfs(0, nums, 0, 0);
+
+        int n = nums.size();
+        int mmax = *max_element(nums.begin(), nums.end()) + 1;
+
+#if 0
+        dp = vvvi(n, vvi(mmax, vi(mmax)));
+        dfs(0, nums, 0, 0);
+        return dp[0][0][0] - 1;
+#else
+        /* dp[k][i][j] */
+
+        dp = vvvi(n + 1, vvi(mmax, vi(mmax)));
+
+        /* base case */
+        for (auto i = 1; i < mmax; ++i)
+            dp[0][i][i] = 1;
+
+        for (auto k = 1; k < n + 1; ++k) {
+            for (auto i = 0; i < mmax; ++i) {
+                for (auto j = 0; j < mmax; ++j) {
+                    dp[k][i][j] = (dp[k][i][j] + dp[k - 1][i][j]) % MOD;
+                    dp[k][i][j] =
+                        (dp[k][i][j] + dp[k - 1][gcd(i, nums[k - 1])][j]) % MOD;
+                    dp[k][i][j] =
+                        (dp[k][i][j] + dp[k - 1][i][gcd(j, nums[k - 1])]) % MOD;
+                }
+            }
+        }
+        return dp[n][0][0];
+#endif
     }
 };
 
@@ -89,5 +117,9 @@ int main() {
     Solution sol;
     int r;
 
+    r = sol.subsequencePairCount(vector<int>() = {10, 20, 30});
+    cout << r << endl;
+
+    r = sol.subsequencePairCount(vector<int>() = {1, 2, 3, 4});
     cout << r << endl;
 }
