@@ -48,11 +48,11 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
 class Solution {
-    /* modulus */
-    static constexpr int M = 1000000007;
-    static constexpr int MUL = 27;
 
     int rabin_karp(string& haystack, string& needle) {
+
+        static constexpr int MOD = 1000000007;
+        static constexpr int MUL = 27;
 
         /* Intuition:
          * Assume a number 12345, and we want to find if 45 exists.
@@ -69,8 +69,8 @@ class Solution {
         long hash = 0, power = 1;
         for (auto& c : needle) {
             /* add 1 because if a is 0 then hash of a = aa = aaa = ... */
-            hash = (hash * MUL + c - 'a' + 1) % M;
-            power = (power * MUL) % M;
+            hash = (hash * MUL + c - 'a' + 1) % MOD;
+            power = (power * MUL) % MOD;
         }
 
         /* perform rolling hash */
@@ -79,13 +79,13 @@ class Solution {
         for (auto i = 0; i < haystack.size(); ++i) {
 
             /* add new character */
-            rolling = (rolling * MUL + haystack[i] - 'a' + 1) % M;
+            rolling = (rolling * MUL + haystack[i] - 'a' + 1) % MOD;
 
             /* remove old */
             if (i >= needle.size()) {
                 rolling -= (haystack[i - needle.size()] - 'a' + 1) * power;
                 while (rolling < 0)
-                    rolling += M;
+                    rolling += MOD;
             }
 
             /* did we find target? */
@@ -98,30 +98,20 @@ class Solution {
 
     // Compute lps
     vector<int> get_lps(string& pat) {
-        // Length of the previous longest prefix suffix
-        int len = 0;
 
-        int M = pat.size();
-        vector<int> lps(M);
+        int n = pat.size();
+        vector<int> lps(n);
 
-        // lps[0] is always 0
+        int i = 1, j = 0;
         lps[0] = 0;
-
-        // loop calculates lps[i] for i = 1 to M-1
-        int i = 1;
-        while (i < M) {
-            if (pat[i] == pat[len]) {
-                len++;
-                lps[i] = len;
-                i++;
-            } else // (pat[i] != pat[len])
-            {
-                if (len != 0) {
-                    len = lps[len - 1];
-                } else // if (len == 0)
-                {
-                    lps[i] = 0;
-                    i++;
+        while (i < n) {
+            if (pat[i] == pat[j]) {
+                lps[i++] = ++j;
+            } else {
+                if (j != 0) {
+                    j = lps[j - 1];
+                } else {
+                    lps[i++] = 0;
                 }
             }
         }
@@ -135,17 +125,27 @@ class Solution {
 
         int i = 0, j = 0;
         while (n - i >= m - j) {
+
+            /*
+             * i points to haystack
+             * j points to needle
+             */
+
             if (p[j] == s[i]) {
                 ++i, ++j;
             }
 
             if (j == m) {
+                /* match found */
                 return i - m;
             } else if (i < n && p[j] != s[i]) {
-                if (j != 0)
+                if (j != 0) {
+                    /* smart unwind */
                     j = lps[j - 1];
-                else
+                } else {
+                    /* cannot unwind anymore */
                     i = i + 1;
+                }
             }
         }
         return -1;
@@ -166,10 +166,14 @@ int main() {
     Solution sol;
     int r;
 
+    r = sol.strStr("aaaaaaaaaaaabaa", "aaaabaa");
+    cout << r << endl;
+
+    r = sol.strStr("mississippi", "issip");
+    cout << r << endl;
 
     r = sol.strStr("aba", "b");
     cout << r << endl;
-
 
     r = sol.strStr("aaa", "aa");
     cout << r << endl;
