@@ -96,15 +96,80 @@ class Solution {
         return -1;
     }
 
+    // Compute lps
+    vector<int> get_lps(string& pat) {
+        // Length of the previous longest prefix suffix
+        int len = 0;
+
+        int M = pat.size();
+        vector<int> lps(M);
+
+        // lps[0] is always 0
+        lps[0] = 0;
+
+        // loop calculates lps[i] for i = 1 to M-1
+        int i = 1;
+        while (i < M) {
+            if (pat[i] == pat[len]) {
+                len++;
+                lps[i] = len;
+                i++;
+            } else // (pat[i] != pat[len])
+            {
+                if (len != 0) {
+                    len = lps[len - 1];
+                } else // if (len == 0)
+                {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+
+        return lps;
+    }
+
+    int kmp(string& s, string& p, vector<int>& lps) {
+        int m = lps.size();
+        int n = s.size();
+
+        int i = 0, j = 0;
+        while (n - i >= m - j) {
+            if (p[j] == s[i]) {
+                ++i, ++j;
+            }
+
+            if (j == m) {
+                return i - m;
+            } else if (i < n && p[j] != s[i]) {
+                if (j != 0)
+                    j = lps[j - 1];
+                else
+                    i = i + 1;
+            }
+        }
+        return -1;
+    }
+
   public:
     int strStr(string haystack, string needle) {
+#if 0
         return rabin_karp(haystack, needle);
+#else
+        auto lps = get_lps(needle);
+        return kmp(haystack, needle, lps);
+#endif
     }
 };
 
 int main() {
     Solution sol;
     int r;
+
+
+    r = sol.strStr("aba", "b");
+    cout << r << endl;
+
 
     r = sol.strStr("aaa", "aa");
     cout << r << endl;
