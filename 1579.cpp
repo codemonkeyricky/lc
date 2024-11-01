@@ -82,23 +82,11 @@ class Solution {
         }
 
         vector<int> copy = parents;
-        for (; i < edges.size(); i++) {
-            if (edges[i][0] != 2)
-                break;
-
-            auto p1 = find(parents, edges[i][1]);
-            auto p2 = find(parents, edges[i][2]);
-            if (p1 != p2) {
-                if (parents[p1] > parents[p2])
-                    swap(p1, p2);
-                parents[p1] += parents[p2];
-                parents[p2] = p1;
-            } else {
-                rv++;
-            }
+        for (; i < edges.size() && edges[i][0] == 2; i++) {
+            if (!unionize(parents, edges[i][1], edges[i][2]))
+                ++rv;
         }
-        auto p = find(parents, 1);
-        if (abs(parents[p]) < n)
+        if (abs(parents[find(parents, 1)]) < n)
             return -1;
 
         parents = copy;
@@ -118,8 +106,7 @@ class Solution {
             }
         }
 
-        p = find(parents, 1);
-        if (abs(parents[p]) < n)
+        if (abs(parents[find(parents, 1)]) < n)
             return -1;
 
         return rv;
