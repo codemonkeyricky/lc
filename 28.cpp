@@ -166,6 +166,12 @@ int main() {
     Solution sol;
     int r;
 
+    r = sol.strStr("aaaaaaabaaa", "aaabaaa");
+    cout << r << endl;
+
+    r = sol.strStr("aaaaaaabc", "aaabc");
+    cout << r << endl;
+
     r = sol.strStr("aaaaaaaaaaaabaa", "aaaabaa");
     cout << r << endl;
 
