@@ -94,10 +94,6 @@ class Solution {
   public:
     int maxNumEdgesToRemove(int n, vector<vector<int>>& edges) {
 
-        /* The given graph is assumed to be complete (ie. alice and bob can
-         * traverse to all nodes). The goal is to find all redundant edges to
-         * remove. */
-
         /* process type 3 connections first */
         sort(begin(edges), end(edges), greater<vector<int>>());
 
@@ -118,10 +114,12 @@ class Solution {
             if (!unionize(parents, edges[i][1], edges[i][2]))
                 ++rv;
         }
+
+        /* can bob travel to all nodes? */
         if (abs(parents[find(parents, 1)]) < n)
             return -1;
 
-        /* process roads only alice can use */
+        /* restore and process alice only roads */
         parents = copy;
         for (; i < edges.size(); i++) {
             /* since we added all the two way roads already, any repeated
@@ -130,9 +128,11 @@ class Solution {
                 ++rv;
         }
 
+        /* can alice travel to all nodes? */
         if (abs(parents[find(parents, 1)]) < n)
             return -1;
 
+        /* both bob and alice can travel to all nodes */
         return rv;
     }
 };
