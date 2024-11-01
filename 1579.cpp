@@ -91,19 +91,8 @@ class Solution {
 
         parents = copy;
         for (; i < edges.size(); i++) {
-            if (edges[i][0] != 1)
-                break;
-
-            auto p1 = find(parents, edges[i][1]);
-            auto p2 = find(parents, edges[i][2]);
-            if (p1 != p2) {
-                if (parents[p1] > parents[p2])
-                    swap(p1, p2);
-                parents[p1] += parents[p2];
-                parents[p2] = p1;
-            } else {
-                rv++;
-            }
+            if (!unionize(parents, edges[i][1], edges[i][2]))
+                ++rv;
         }
 
         if (abs(parents[find(parents, 1)]) < n)
