@@ -49,46 +49,29 @@ using vvll = vector<vector<long long>>;
 
 class Solution {
   public:
-    int findMin(vector<int>& nums) {
-
-        /*
-         * We have points, l, m, r. We must look at r, because we can have the
-         * pathological case of rotate by one:
-         * {1, 2, 3, 4, 5, 0}
-         *
-         * Looking at l + r isn't good enough, because in the following case,
-         * minimum value can land in either left or right:
-         * {5, 0, 1, 2, 3, 4}
-         * {3, 4, 5, 0, 1, 2}
-         *
-         * We must evaluate based on m and r.
-         */
-
-#if 1
-        /* solution 1 - converge from right */
-        int l = 0, r = nums.size() - 1;
-        while (l < r) {
-            int m = (l + r) / 2;
-            if (nums[m] > nums[r]) {
-                l = m + 1;
-            } else {
-                r = m;
+    long long countSubarrays(vector<int>& nums, int k) {
+        unordered_map<int, int> cnt;
+        auto rv = 0ll;
+        for (auto& n : nums) {
+            /*
+             * Due to the AND property, cnt is never larger than 32
+             * Once we start a new subarray, the number of bits can only reduce.
+             */
+            unordered_map<int, int> cnt1;
+            if ((k & n) == k) {
+                /* n has the same bits or more as k */
+                cnt1[n] = 1;
+                for (auto [v, count] : cnt) {
+                    /* iterate though previously cached values and AND with
+                     * them */
+                    cnt1[v & n] += count;
+                }
+                /* only add the subarray with value k */
+                rv += cnt1[k];
             }
+            swap(cnt, cnt1);
         }
-        return nums[l];
-#else
-        /* solution 2 - converge from left */
-        int l = 0, r = nums.size() - 1;
-        while (l < r) {
-            int m = (l + r + 1) / 2;
-            if (nums[m - 1] > nums[r]) {
-                l = m;
-            } else {
-                r = m - 1;
-            }
-        }
-        return nums[l];
-#endif
+        return rv;
     }
 };
 
@@ -96,9 +79,5 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.findMin(vector<int>() = {4, 5, 6, 7, 0, 1, 2});
-    cout << r << endl;
-
-    r = sol.findMin(vector<int>() = {3, 4, 5, 1, 2});
     cout << r << endl;
 }
