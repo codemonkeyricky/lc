@@ -53,18 +53,22 @@ class Solution {
 
         if (*it <= m) {
 
-            /* erase something from x - perform maintenence */
+            /* erase from x - perform maintenence */
 
             /* remove m from sum */
             sum -= m[0] * m[1];
+
             if (it != cn.begin()) {
-                --it;
                 /* include prev(it) into sum */
+                --it;
                 sum += (*it)[0] * (*it)[1];
             } else {
                 /* everything is removed */
-                if (it_size >= 0) {
-                    ++it;
+                if (it_size > 0) {
+
+                    /* ++it if *it is being removed */
+                    if (*it == m)
+                        ++it;
                     --it_size;
                 }
             }
@@ -151,9 +155,12 @@ int main() {
     Solution sol;
     vector<long long> r;
 
-    r = sol.findXSum(vector<int>() = {2, 3, 3, 4, 5, 6, 5, 4, 6, 3, 5, 5}, 6,
-                     6);
-    pvll(r);
+    // r = sol.findXSum(vector<int>() = {1, 5, 3, 6, 6, 2, 6, 3, 2, 5, 2}, 5, 5);
+    // pvll(r);
+
+    // r = sol.findXSum(vector<int>() = {2, 3, 3, 4, 5, 6, 5, 4, 6, 3, 5, 5}, 6,
+    //                  6);
+    // pvll(r);
 
     r = sol.findXSum(vector<int>() = {1, 1, 2, 2, 3, 4, 2, 3}, 6, 2);
     pvll(r);
