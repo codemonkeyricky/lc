@@ -49,6 +49,8 @@ using vvll = vector<vector<long long>>;
 
 class Solution {
 
+    const int MOD = 1e9 + 7;
+
     long long nk(long long n, long long k) {
         if (k == 0)
             return 1;
@@ -75,20 +77,17 @@ class Solution {
         for (j = k; j < num.size() && num[j] == num[k]; ++j)
             ;
 
-        int pj = 1;
-        for (auto i = k + 1; i < j; ++i) {
-            pj *= i - k;
-        }
-
-        long long rv = 0, pi = 1, s = 0, d = num[k] - '0';
-        for (auto i = k; i <= j; ++i, s += num[i] - '0') {
+        long long rv = 0, d = num[k] - '0';
+        for (auto i = k; i <= j; ++i) {
             auto odds = i - k;
             auto evens = j - i;
             auto odd_spots = odd;
             auto even_spots = num.size() - k - odd;
             auto a = nk(odd_spots, odds);
             auto b = nk(even_spots, evens);
-            rv = rv + a * b * dfs(num, j, odd - odds, sum + (odds - evens) * d);
+            rv = (rv +
+                  a * b * dfs(num, j, odd - odds, sum + (odds - evens) * d)) %
+                 MOD;
         }
 
         return rv;
@@ -112,6 +111,9 @@ class Solution {
 int main() {
     Solution sol;
     int r;
+
+    r = sol.countBalancedPermutations("074309063180061");
+    cout << r << endl;
 
     r = sol.countBalancedPermutations("123");
     cout << r << endl;
