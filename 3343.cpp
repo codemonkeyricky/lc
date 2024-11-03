@@ -49,35 +49,63 @@ using vvll = vector<vector<long long>>;
 
 class Solution {
 
-    int dfs(string& nums, int even, int odd, int sum) {
+    long long nk(long long n, long long k) {
+        if (k == 0)
+            return 1;
+        return (n * nk(n - 1, k - 1)) / k;
+    }
 
-        /* add even,  subtract odd */
+    long long dfs(string& num, /* num */
+                  int k,       /* index at num */
+                  int odd,     /* how many odd spots left */
+                  int sum) {
+        int n = num.size();
 
-        int k = nums.size() - even - odd;
+        if (odd < 0)
+            return 0;
 
-        /* base case */
-        if (even == 0 || odd == 0) {
-            auto r =
-                accumulate(nums.begin() + k, nums.end(), 0ll,
-                           [](long long a, char b) { return a + b - '0'; });
-            if (even)
-                return (sum + r) == 0;
-            else
-                return (sum - r) == 0;
+        if (odd > num.size() - k)
+            return 0;
+
+        if (k >= n)
+            return sum == 0;
+
+        /* find how many numbers here have the same digit */
+        int j;
+        for (j = k; j < num.size() && num[j] == num[k]; ++j)
+            ;
+
+        int pj = 1;
+        for (auto i = k + 1; i < j; ++i) {
+            pj *= i - k;
         }
 
-        /* general case */
+        long long rv = 0, pi = 1, s = 0, d = num[k] - '0';
+        for (auto i = k; i <= j; ++i, s += num[i] - '0') {
+            auto odds = i - k;
+            auto evens = j - i;
+            auto odd_spots = odd;
+            auto even_spots = num.size() - k - odd;
+            auto a = nk(odd_spots, odds);
+            auto b = nk(even_spots, evens);
+            rv = rv + a * b * dfs(num, j, odd - odds, sum + (odds - evens) * d);
+        }
 
-        long long a = dfs(nums, even - 1, odd, sum + nums[k] - '0');
-        long long b = dfs(nums, even, odd - 1, sum - nums[k] - '0');
-
-        return a + b;
+        return rv;
     }
 
   public:
     int countBalancedPermutations(string num) {
-        int n = num.size();
-        return dfs(num, (n + 1) / 2, n / 2, 0);
+
+        sort(num.begin(), num.end());
+        auto sum =
+            accumulate(num.begin(), num.end(), 0ll,
+                       [](long long sum, char c) { return sum + c - '0'; });
+
+        if (sum % 2)
+            return 0;
+
+        return dfs(num, 0, (num.size() + 1) / 2, 0);
     }
 };
 
@@ -86,5 +114,8 @@ int main() {
     int r;
 
     r = sol.countBalancedPermutations("123");
+    cout << r << endl;
+
+    r = sol.countBalancedPermutations("112");
     cout << r << endl;
 }
