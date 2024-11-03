@@ -87,12 +87,13 @@ class Solution {
                 auto evens = j - i;
                 auto odd_spots = odd;
                 auto even_spots = num.size() - k - odd;
-                auto a = nk(odd_spots, odds);
-                auto b = nk(even_spots, evens);
-                rv = (rv +
-                      a * b *
-                          dfs(num, j, odd - odds, sum + (odds - evens) * d)) %
-                     MOD;
+                auto a = nk(odd_spots, odds) % MOD;
+                auto b = nk(even_spots, evens) % MOD;
+                auto c =
+                    dfs(num, j, odd - odds, sum + (odds - evens) * d) % MOD;
+                a = (a * b) % MOD;
+                c = (a * c) % MOD;
+                rv = (rv + c) % MOD;
             }
 
             dp[k][odd][sum] = rv;
@@ -123,6 +124,10 @@ class Solution {
 int main() {
     Solution sol;
     int r;
+
+    r = sol.countBalancedPermutations(
+        "3074854061738586680242241777508376598021020957021049407196171055");
+    cout << r << endl;
 
     r = sol.countBalancedPermutations(
         "34873486406991899612015176290787725169025811074");
