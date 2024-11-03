@@ -57,6 +57,8 @@ class Solution {
         return (n * nk(n - 1, k - 1)) / k;
     }
 
+    vector<vector<unordered_map<int, long long>>> dp;
+
     long long dfs(string& num, /* num */
                   int k,       /* index at num */
                   int odd,     /* how many odd spots left */
@@ -72,25 +74,31 @@ class Solution {
         if (k >= n)
             return sum == 0;
 
-        /* find how many numbers here have the same digit */
-        int j;
-        for (j = k; j < num.size() && num[j] == num[k]; ++j)
-            ;
+        if (!dp[k][odd].count(sum)) {
 
-        long long rv = 0, d = num[k] - '0';
-        for (auto i = k; i <= j; ++i) {
-            auto odds = i - k;
-            auto evens = j - i;
-            auto odd_spots = odd;
-            auto even_spots = num.size() - k - odd;
-            auto a = nk(odd_spots, odds);
-            auto b = nk(even_spots, evens);
-            rv = (rv +
-                  a * b * dfs(num, j, odd - odds, sum + (odds - evens) * d)) %
-                 MOD;
+            /* find how many numbers here have the same digit */
+            int j;
+            for (j = k; j < num.size() && num[j] == num[k]; ++j)
+                ;
+
+            long long rv = 0, d = num[k] - '0';
+            for (auto i = k; i <= j; ++i) {
+                auto odds = i - k;
+                auto evens = j - i;
+                auto odd_spots = odd;
+                auto even_spots = num.size() - k - odd;
+                auto a = nk(odd_spots, odds);
+                auto b = nk(even_spots, evens);
+                rv = (rv +
+                      a * b *
+                          dfs(num, j, odd - odds, sum + (odds - evens) * d)) %
+                     MOD;
+            }
+
+            dp[k][odd][sum] = rv;
         }
 
-        return rv;
+        return dp[k][odd][sum];
     }
 
   public:
@@ -104,6 +112,10 @@ class Solution {
         if (sum % 2)
             return 0;
 
+        dp = vector<vector<unordered_map<int, long long>>>(
+            num.size(),
+            vector<unordered_map<int, long long>>((num.size() + 1) / 2 + 1));
+
         return dfs(num, 0, (num.size() + 1) / 2, 0);
     }
 };
@@ -111,6 +123,10 @@ class Solution {
 int main() {
     Solution sol;
     int r;
+
+    r = sol.countBalancedPermutations(
+        "34873486406991899612015176290787725169025811074");
+    cout << r << endl;
 
     r = sol.countBalancedPermutations("074309063180061");
     cout << r << endl;
