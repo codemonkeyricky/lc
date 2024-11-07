@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <bitset>
 #include <cassert>
 #include <cmath>
@@ -34,16 +35,20 @@ TreeNode* recurse(vector<int>& tree, int k) {
 
 TreeNode* populate(vector<int>& tree) { return recurse(tree, 0); }
 
-class Solution {
-    vector<int> tree, lazy;
+void pvi(vector<int>& v) {
 
-    void push(int v) {
-        tree[v * 2] += lazy[v];
-        lazy[v * 2] += lazy[v];
-        tree[v * 2 + 1] += lazy[v];
-        lazy[v * 2 + 1] += lazy[v];
-        lazy[v] = 0;
-    }
+    for (auto& vv : v)
+        cout << vv << ", ";
+    cout << endl;
+}
+
+using vi = vector<int>;
+using vvi = vector<vector<int>>;
+using vll = vector<long long>;
+using vvll = vector<vector<long long>>;
+
+class NumArray {
+    vector<int> tree;
 
     void update(int v, int tl, int tr, int l, int r, int addend) {
 
@@ -52,9 +57,7 @@ class Solution {
 
         if (l == tl && tr == r) {
             tree[v] += addend;
-            lazy[v] += addend;
         } else {
-            push(v); /* range update */
             int tm = (tl + tr) / 2;
             update(v * 2, tl, tm, l, min(r, tm), addend);
             update(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r, addend);
@@ -74,7 +77,6 @@ class Solution {
             /* leaf nodes */
             return tree[v];
 
-        push(v); /* range update */
         int tm = (tl + tr) / 2;
 
         /* TODO: use case specific */
@@ -82,50 +84,41 @@ class Solution {
                query(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r);
     }
 
-    int n;
+    int _n;
 
   public:
-    string shiftingLetters(string s, vector<vector<int>>& shifts) {
+    NumArray(vector<int>& nums) {
+        int n = _n = nums.size();
+        tree = vector<int>(4 * n);
 
-        n = s.size();
-        tree = lazy = vector<int>(4 * n);
-
-        for (auto& shift : shifts) {
-            auto l = shift[0];
-            auto r = shift[1];
-            auto add = shift[2] ? 1 : -1;
-            update(1, 0, n - 1, l, r, add);
-        }
-
-        auto rv = s;
         for (auto i = 0; i < n; ++i) {
-            auto shift = query(1, 0, n - 1, i, i);
-            rv[i] = (((rv[i] - 'a') + shift) % 26 + 26) % 26 + 'a';
+            update(1, 0, _n - 1, i, i, nums[i]);
         }
-        return rv;
+    }
+
+    void update(int index, int val) {
+        /* call segment tree update */
+        auto v = query(1, 0, _n - 1, index, index);
+        update(1, 0, _n - 1, index, index, -v);
+        update(1, 0, _n - 1, index, index, val);
+    }
+
+    int sumRange(int left, int right) {
+        return query(1, 0, _n - 1, left, right);
     }
 };
 
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray* obj = new NumArray(nums);
+ * obj->update(index,val);
+ * int param_2 = obj->sumRange(left,right);
+ */
+
 int main() {
-    Solution sol;
-    string r;
+    vector<int> init = {1, 3, 5};
+    NumArray na(init);
+    int r;
 
-    r = sol.shiftingLetters("xuwdbdqik", vector<vector<int>>() = {{4, 8, 0},
-                                                                  {4, 4, 0},
-                                                                  {2, 4, 0},
-                                                                  {2, 4, 0},
-                                                                  {6, 7, 1},
-                                                                  {2, 2, 1},
-                                                                  {0, 2, 1},
-                                                                  {8, 8, 0},
-                                                                  {1, 3, 1}});
-    cout << r << endl;
-
-    r = sol.shiftingLetters("dztz",
-                            vector<vector<int>>() = {{0, 0, 0}, {1, 1, 1}});
-    cout << r << endl;
-
-    r = sol.shiftingLetters(
-        "abc", vector<vector<int>>() = {{0, 1, 0}, {1, 2, 1}, {0, 2, 1}});
     cout << r << endl;
 }
