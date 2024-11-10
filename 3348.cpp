@@ -121,41 +121,55 @@ class Solution {
         }
 
         /* fill in reverse */
-        for (int i = num.size() - 1; i >= keep; --i) {
+        string extra;
+        for (int i = num.size() - 1; cnt[2] || cnt[3] || cnt[5] || cnt[7];
+             --i) {
+
+            char* ref = &num[0];
+            if (i - keep < 0)
+                extra += '0', ref = &extra.back();
+            else
+                ref = &num[i];
+
             if (cnt[3] >= 2) {
                 /* 9 */
-                num[i] = 9 + '0', cnt[3] -= 2;
+                *ref = 9 + '0', cnt[3] -= 2;
             } else if (cnt[2] >= 3) {
                 /* 8 */
-                num[i] = 8 + '0', cnt[2] -= 3;
+                *ref = 8 + '0', cnt[2] -= 3;
             } else if (cnt[7] >= 1) {
                 /* 7 */
-                num[i] = 7 + '0', cnt[7] -= 1;
+                *ref = 7 + '0', cnt[7] -= 1;
             } else if (cnt[2] >= 1 && cnt[3] >= 1) {
                 /* 6 */
-                num[i] = 6 + '0', cnt[2] -= 1, cnt[3] -= 1;
+                *ref = 6 + '0', cnt[2] -= 1, cnt[3] -= 1;
             } else if (cnt[5] >= 1) {
                 /* 5 */
-                num[i] = 5 + '0', cnt[5] -= 1;
+                *ref = 5 + '0', cnt[5] -= 1;
             } else if (cnt[2] >= 2) {
                 /* 4 */
-                num[i] = 4 + '0', cnt[2] -= 2;
+                *ref = 4 + '0', cnt[2] -= 2;
             } else if (cnt[3] >= 1) {
-                /* 4 */
-                num[i] = 3 + '0', cnt[3] -= 1;
+                /* 3 */
+                *ref = 3 + '0', cnt[3] -= 1;
             } else if (cnt[2] >= 1) {
                 /* 2 */
-                num[i] = 2 + '0', cnt[2] -= 1;
+                *ref = 2 + '0', cnt[2] -= 1;
             }
         }
 
-        return num;
+        reverse(extra.begin(), extra.end());
+
+        return extra + num;
     }
 };
 
 int main() {
     Solution sol;
     string r;
+
+    r = sol.smallestNumber("10", 320);
+    cout << r << endl;
 
     r = sol.smallestNumber("12355", 50);
     cout << r << endl;
