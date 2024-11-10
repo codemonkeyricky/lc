@@ -48,8 +48,26 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
 class Solution {
+
+    void nextp(string& s) {
+        int i = s.size() - 2;
+        int k = i;
+        /* find first smaller number while iterating */
+        while (i >= 0 && s[i + 1] < s[i])
+            --i;
+
+        if (i >= 0) {
+            int j = s.size() - 1;
+            while (s[i] >= s[j])
+                --j;
+            swap(s[i], s[j]);
+        }
+        reverse(s.begin() + i + 1, s.end());
+    }
+
   public:
     string smallestNumber(string num, long long t) {
+        auto copy = num;
 
         vector<int> cnt(8);
         auto tt = t;
@@ -160,13 +178,28 @@ class Solution {
 
         reverse(extra.begin(), extra.end());
 
-        return extra + num;
+        auto rv = extra + num;
+        if (rv.size() > copy.size() || rv > copy)
+            return rv;
+
+        /* rv and copy have the same length, but rv is lexi smaller */
+        while (rv < copy) {
+            nextp(rv);
+        }
+
+        return rv;
     }
 };
 
 int main() {
     Solution sol;
     string r;
+
+    r = sol.smallestNumber("56", 24);
+    cout << r << endl;
+
+    r = sol.smallestNumber("19", 2);
+    cout << r << endl;
 
     r = sol.smallestNumber("10", 320);
     cout << r << endl;
