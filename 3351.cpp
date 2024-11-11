@@ -48,6 +48,7 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
 class Solution {
+    static constexpr int MOD = 1e9 + 7;
 
   public:
     int sumOfGoodSubsequences(vector<int>& nums) {
@@ -65,16 +66,16 @@ class Solution {
 
             if (dp.count(n - 1)) {
                 auto [r, l] = dp[n - 1];
-                rolling += r, len += l;
+                rolling = (rolling + r) % MOD, len = (len + l) % MOD;
             }
 
             if (dp.count(n + 1)) {
                 auto [r, l] = dp[n + 1];
-                rolling += r, len += l;
+                rolling = (rolling + r) % MOD, len = (len + l) % MOD;
             }
 
-            rolling = rolling + n * (++len);
-            sum += rolling;
+            rolling = (rolling + ((long long)n * (++len) % MOD)) % MOD;
+            sum = (sum + rolling) % MOD;
 
             dp[n][0] += rolling;
             dp[n][1] += len;
