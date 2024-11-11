@@ -72,34 +72,38 @@ class Solution {
         /* base case */
         if (k >= n) {
             if (ones == 0) {
-                // cout << curr << endl;
-
                 return 1;
             } else
                 return 0;
         }
 
-        int a = 0, b = 0;
+        if (dp[k][ones][ceiling] == 0) {
 
-        if (ceiling) {
-            /* must follow s[k] */
-            if (s[k] == '1' && ones) {
-                a = dfs(s, k + 1, ones - 1, true);
-                b = dfs(s, k + 1, ones, false);
+            int a = 0, b = 0;
+
+            if (ceiling) {
+                /* must follow s[k] */
+                if (s[k] == '1' && ones) {
+                    a = dfs(s, k + 1, ones - 1, true);
+                    b = dfs(s, k + 1, ones, false);
+                } else {
+                    b = dfs(s, k + 1, ones, true);
+                }
             } else {
-                b = dfs(s, k + 1, ones, true);
+                if (ones) {
+                    a = dfs(s, k + 1, ones - 1, false);
+                }
+                b = dfs(s, k + 1, ones, false);
             }
-        } else {
-            if (ones) {
-                a = dfs(s, k + 1, ones - 1, false);
-            }
-            b = dfs(s, k + 1, ones, false);
+            dp[k][ones][ceiling] = a + b + 1;
         }
 
-        return a + b;
+        return dp[k][ones][ceiling] - 1;
     }
 
     vector<int> lookup; // bits to number of ops to 1
+
+    vector<vector<vector<int>>> dp;
 
   public:
     int countKReducibleNumbers(string s, int k) {
@@ -131,9 +135,12 @@ class Solution {
                 check.push_back(i);
         }
 
+        dp = vector<vector<vector<int>>>(
+            801, vector<vector<int>>(801, vector<int>(2)));
+
         long long rv = 0;
         for (auto& k : check) {
-            rv = rv + dfs(s, 0, k, true, "");
+            rv = rv + dfs(s, 0, k, true);
         }
 
         return rv;
