@@ -48,17 +48,38 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
 class Solution {
+
   public:
     int sumOfGoodSubsequences(vector<int>& nums) {
         int n = nums.size();
+
+        unordered_map<int, array<long long, 2>> dp;
+
         long long rolling = 0;
 
         long long sum = 0;
         int l = 0;
-        for (auto i = 0; i < n; ++i) {
-            rolling = rolling + nums[i] * (++l);
+        for (auto& n : nums) {
+
+            long long rolling = 0, len = 0;
+
+            if (dp.count(n - 1)) {
+                auto [r, l] = dp[n - 1];
+                rolling += r, len += l;
+            }
+
+            if (dp.count(n + 1)) {
+                auto [r, l] = dp[n + 1];
+                rolling += r, len += l;
+            }
+
+            rolling = rolling + n * (++len);
             sum += rolling;
+
+            dp[n][0] += rolling;
+            dp[n][1] += len;
         }
+
         return sum;
     }
 };
