@@ -65,7 +65,7 @@ class Solution {
     }
 
     /* equal or less */
-    int dfs(string& s, int k, int ones, bool ceiling, string curr) {
+    int dfs(string& s, int k, int ones, bool ceiling) {
 
         int n = s.size();
 
@@ -84,16 +84,16 @@ class Solution {
         if (ceiling) {
             /* must follow s[k] */
             if (s[k] == '1' && ones) {
-                a = dfs(s, k + 1, ones - 1, true, curr + '1');
-                b = dfs(s, k + 1, ones, false, curr + '0');
+                a = dfs(s, k + 1, ones - 1, true);
+                b = dfs(s, k + 1, ones, false);
             } else {
-                b = dfs(s, k + 1, ones, true, curr + '0');
+                b = dfs(s, k + 1, ones, true);
             }
         } else {
             if (ones) {
-                a = dfs(s, k + 1, ones - 1, false, curr + '1');
+                a = dfs(s, k + 1, ones - 1, false);
             }
-            b = dfs(s, k + 1, ones, false, curr + '0');
+            b = dfs(s, k + 1, ones, false);
         }
 
         return a + b;
