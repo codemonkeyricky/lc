@@ -131,11 +131,24 @@ class Solution {
         quick(nums, pivot + 1, high);
     }
 
+    void bubble(vector<int>& nums) {
+        int n = nums.size();
+
+        for (auto j = 0; j < n; ++j) {
+            for (int i = j; i >= 1; --i) {
+                if (nums[i] < nums[i - 1])
+                    swap(nums[i], nums[i - 1]);
+                else
+                    break;
+            }
+        }
+    }
+
   public:
     vector<int> sortArray(vector<int>& nums) {
         // merge(nums, 0, nums.size());
-
-        quick(nums, 0, nums.size() - 1);
+        // quick(nums, 0, nums.size() - 1);
+        bubble(nums);
 
         return nums;
     }
