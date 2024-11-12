@@ -49,6 +49,8 @@ using vvll = vector<vector<long long>>;
 
 class Solution {
 
+    /* OC - TLE */
+
     void merge(vector<int>& nums, int i, int j) {
 
         /* base condition */
@@ -82,11 +84,58 @@ class Solution {
         }
     }
 
-    void quick() {}
+    int partition(vector<int>& nums, int low, int high) {
+
+        if (low >= high)
+            return -1;
+
+        /*
+         * [0] is the pivot
+         * everything smaller than pivot is on the left, everything bigger is on
+         * the right.
+         */
+        int pivot = low, l = pivot + 1, r = high;
+        while (l <= r) {
+            if (nums[l] < nums[pivot]) {
+                /* already smaller */
+                ++l;
+            } else if (nums[r] >= nums[pivot]) {
+                /* already bigger */
+                --r;
+            } else {
+                /* l and r both violate - swap them */
+                swap(nums[l], nums[r]);
+            }
+        }
+        /* moves pivot to place */
+        swap(nums[pivot], nums[r]);
+
+        return r;
+    }
+
+    /* TLE in OJ */
+
+    void quick(vector<int>& nums, int low, int high) {
+
+        if (low >= high)
+            return;
+
+        /*
+         * quick sort ensures pivot is always in the final spot, and all smaller
+         * elementse are left and bigger elements are right. Recursively sort
+         * left and right.
+         */
+
+        int pivot = partition(nums, low, high);
+        quick(nums, low, pivot);
+        quick(nums, pivot + 1, high);
+    }
 
   public:
     vector<int> sortArray(vector<int>& nums) {
-        merge(nums, 0, nums.size());
+        // merge(nums, 0, nums.size());
+
+        quick(nums, 0, nums.size() - 1);
 
         return nums;
     }
