@@ -69,14 +69,20 @@ class Solution {
 
         sort(diff.begin(), diff.end());
 
-        if (unknown && diff.empty())
-            return 0;
-
         array<int, 2> pair;
-        if (unknown)
+        if (diff.size())
             pair = {*diff.begin(), diff.back()};
 
-        for (auto i = 0; i < n; ++i) {
+        int i = 0, j = n - 1;
+        if (diff.empty()) {
+            while (i < n && nums[i] == -1)
+                ++i;
+            while (j >= 0 && nums[j] == -1)
+                --j;
+        }
+
+        int ii = i, jj = j;
+        for (; i <= j; ++i) {
             if (nums[i] == -1) {
                 if (i == 0) {
                     nums[i] = pair[0];
@@ -92,7 +98,8 @@ class Solution {
         }
 
         int rv = 0;
-        for (auto i = 1; i < n; ++i) {
+        i = ii, j = jj;
+        for (i = i + 1; i <= j; ++i) {
             rv = max(rv, abs(nums[i] - nums[i - 1]));
         }
 
@@ -103,6 +110,9 @@ class Solution {
 int main() {
     Solution sol;
     int r;
+
+    r = sol.minDifference(vector<int>() = {-1, -1, 13, 34});
+    cout << r << endl;
 
     r = sol.minDifference(vector<int>() = {1, 12});
     cout << r << endl;
