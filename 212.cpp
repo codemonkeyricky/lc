@@ -48,76 +48,48 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
 class Solution {
+    using vi = vector<int>;
+    using vvi = vector<vector<int>>;
+    using vvc = vector<vector<char>>;
+    using vs = vector<string>;
+    bool dfs(vvc& b, string& w, int i, int j, int kk, vvi& seen) {
+        int m = b.size(), n = b[0].size();
 
-    struct Trie {
-        array<Trie*, 26> chars = {};
-        bool word = false;
-    };
-
-    Trie root;
-
-    void dfs(vector<vector<char>>& b, Trie* t, int i, int j, string& curr,
-             vector<vector<int>>& visited, unordered_set<string>& seen) {
-
-        int k = b[i][j] - 'a';
-        if (!t->chars[k]) {
-            return;
-        }
-
-        t = t->chars[k];
-
-        curr += string(1, b[i][j]);
-
-        if (t->word) {
-            seen.insert(curr);
-        }
-
-        int m = b.size();
-        int n = b[0].size();
-
-        visited[i][j] = true;
-
-        vector<int> offset = {0, -1, 0, 1, 0};
+        if (w[kk] != b[i][j])
+            return false;
+        if (kk + 1 == w.size())
+            return true;
+        bool rv = false;
+        vi offset = {0, -1, 0, 1, 0};
+        seen[i][j] = true;
         for (auto k = 0; k < 4; ++k) {
-            auto ni = i + offset[k + 0];
+            auto ni = i + offset[k];
             auto nj = j + offset[k + 1];
             if (ni >= 0 && ni < m && nj >= 0 && nj < n) {
-                if (!visited[ni][nj]) {
-                    dfs(b, t, ni, nj, curr, visited, seen);
+                if (!seen[ni][nj]) {
+                    rv |= dfs(b, w, ni, nj, kk + 1, seen);
                 }
             }
         }
-
-        visited[i][j] = false;
-
-        curr.pop_back();
+        seen[i][j] = false;
+        return rv;
     }
 
   public:
-    vector<string> findWords(vector<vector<char>>& b, vector<string>& w) {
-
-        /* Create trie */
-
-        for (auto& ww : w) {
-            Trie* trie = &root;
-            for (auto& c : ww) {
-                int k = c - 'a';
-                if (trie->chars[k] == nullptr)
-                    trie->chars[k] = new Trie();
-                trie = trie->chars[k];
-            }
-            trie->word = true;
-        }
-
-        unordered_set<string> rv;
+    vector<string> findWords(vector<vector<char>>& b, vector<string>& words) {
         int m = b.size(), n = b[0].size();
-        vector<vector<int>> visited(m, vector<int>(n));
-        for (auto i = 0; i < m; ++i) {
-            for (auto j = 0; j < n; ++j) {
-                dfs(b, &root, i, j, string() = "", visited, rv);
+
+        set<string> rv;
+        for (auto k = 0; k < words.size(); ++k) {
+            for (auto i = 0; i < m; ++i) {
+                for (auto j = 0; j < n; ++j) {
+                    auto seen = vvi(12, vi(12));
+                    if (dfs(b, words[k], i, j, 0, seen)) {
+                        rv.insert(words[k]);
+                    }
+                }
             }
         }
-
         return vector<string>(rv.begin(), rv.end());
     }
 };
@@ -126,8 +98,14 @@ int main() {
     Solution sol;
     int r;
 
-    sol.findWords(vector<vector<char>>() = {{'a', 'a'}},
-                  vector<string>() = {"aaa"});
+    sol.findWords(vector<vector<char>>() =
+                      {
+                          {'a', 'b', 'c'},
+                          {'a', 'e', 'd'},
+                          {'a', 'f', 'g'},
+
+                      },
+                  vector<string>() = {"eaafgdcba"});
 
     sol.findWords(vector<vector<char>>() = {{'o', 'a', 'a', 'n'},
                                             {'e', 't', 'a', 'e'},

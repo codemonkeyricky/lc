@@ -61,19 +61,17 @@ class Solution {
             if (nums[i] != -1 &&
                 (i && nums[i - 1] == -1 ||
                  (i != nums.size() - 1) && nums[i + 1] == -1)) {
-                lower.push_back(nums[i] -
-                                diff); // Minimum possible value for the element
-                upper.push_back(nums[i] +
-                                diff); // Maximum possible value for the element
+
+                /* min and max possible value for missing number */
+                lower.push_back(nums[i] - diff);
+                upper.push_back(nums[i] + diff);
             }
         }
 
         // Calculate the minimum and maximum values considering the allowed
         // difference
-        int mmin = *min_element(lower.begin(), lower.end()) +
-                   2 * diff; // The lower bound value
-        int mmax = *max_element(upper.begin(), upper.end()) -
-                   2 * diff; // The upper bound value
+        int mmin = *min_element(lower.begin(), lower.end()) + 2 * diff;
+        int mmax = *max_element(upper.begin(), upper.end()) - 2 * diff;
 
         // Now, for each -1 in the array, try to fill it with either `minValue`
         // or `maxValue`
@@ -108,49 +106,39 @@ class Solution {
     // Main function to find the minimum possible difference between adjacent
     // elements
     int minDifference(vector<int>& nums) {
-        int missingCount = 0;
+        int missing = 0;
 
-        // Count how many missing values (-1) are in the array
         for (int x : nums)
             if (x == -1)
-                missingCount++;
+                ++missing;
 
-        // If no missing values, calculate the maximum difference between
-        // adjacent elements
-        if (missingCount == 0) {
-            int maxDiff = 0;
+        if (missing == 0) {
+            int diff = 0;
             for (int i = 0; i < nums.size() - 1; i++) {
-                maxDiff = max(
-                    maxDiff,
+                diff = max(
+                    diff,
                     abs(nums[i] - nums[i + 1])); // Find the largest difference
             }
-            return maxDiff;
-        }
-        // If all elements are missing, the minimum difference is 0 since we can
-        // set them to the same value
-        else if (missingCount == nums.size())
+            return diff;
+        } else if (missing == nums.size()) {
+
             return 0;
+        }
 
-        // Perform binary search to find the minimum possible `maxDiff`
-        int low = 0;
-        int high =
-            1000000005; // A large enough number to represent the upper bound
+        int l = 0;
+        int r = 1000000005;
 
-        // Binary search for the minimum `maxDiff`
-        while (low != high) {
-            int mid =
-                (low + high) / 2; // Find the midpoint of the current range
+        while (l < r) {
+            int m = (l + r) / 2; // Find the midpoint of the current range
 
-            // Test if the current maxDiff is feasible
-            if (isValidDifference(nums, mid)) {
-                high = mid; // If feasible, try a smaller `maxDiff`
+            if (isValidDifference(nums, m)) {
+                r = m; // If feasible, try a smaller `maxDiff`
             } else {
-                low = mid + 1; // If not feasible, try a larger `maxDiff`
+                l = m + 1; // If not feasible, try a larger `maxDiff`
             }
         }
 
-        // Return the smallest `maxDiff` that worked
-        return low;
+        return l;
     }
 };
 
