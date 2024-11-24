@@ -73,8 +73,6 @@ class Solution {
 
         if (trie->ending) {
             rv.insert(s);
-            s.pop_back();
-            return;
         }
 
         vi offset = {0, -1, 0, 1, 0};
