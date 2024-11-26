@@ -48,22 +48,26 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
 class Solution {
+    int dfs(vector<int>& nums, int i, int j) {
+
+        if (i == j)
+            return nums[i - 1] * nums[i] * nums[i + 1];
+
+        int rv = 0;
+        for (auto k = i; k <= j; ++k) {
+            int c = nums[k] * nums[i - 1] * nums[j + 1];
+            int l = dfs(nums, i, k - 1);
+            int r = dfs(nums, k + 1, j);
+            rv = max(rv, l + c + r);
+        }
+        return rv;
+    }
+
   public:
-    int leastInterval(vector<char>& tasks, int n) {
-        array<int, 26> freq = {};
-        int high = 0;
-
-        for (auto& t : tasks) {
-            high = max(high, ++freq[t - 'A']);
-        }
-
-        /* anchors by the highest count */
-        int ticks = (high - 1) * (n + 1);
-        for (auto f : freq) {
-            if (f == high)
-                ++ticks;
-        }
-        return max((int)tasks.size(), ticks);
+    int maxCoins(vector<int>& nums) {
+        nums.insert(nums.begin(), 1);
+        nums.push_back(1);
+        return dfs(nums, 1, nums.size() - 2);
     }
 };
 
@@ -71,17 +75,9 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.leastInterval(vector<char>() = {'A', 'A', 'A', 'B', 'B', 'B', 'C',
-                                            'C', 'C', 'D', 'D', 'E'},
-                          3);
+    r = sol.maxCoins(vector<int>() = {3, 1, 5, 8});
     cout << r << endl;
 
-    r = sol.leastInterval(vector<char>() = {'A', 'A', 'B', 'B', 'C', 'D'}, 1);
-    cout << r << endl;
-
-    r = sol.leastInterval(vector<char>() = {'A', 'A', 'A', 'B', 'C'}, 3);
-    cout << r << endl;
-
-    r = sol.leastInterval(vector<char>() = {'X', 'X', 'Y', 'Y'}, 2);
+    r = sol.maxCoins(vector<int>() = {4, 2, 3, 7});
     cout << r << endl;
 }
