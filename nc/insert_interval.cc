@@ -48,33 +48,32 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
 class Solution {
-    int dfs(vector<int>& prices, int j) {
-        if (j <= 0)
-            return 0;
-
-        int rv = dfs(prices, j - 1);
-        for (int i = j - 1; i >= 0; --i) {
-            if (prices[j] > prices[i])
-                rv = max(rv, prices[j] - prices[i] + dfs(prices, i - 2));
-        }
-        return rv;
-    }
-
   public:
-    int maxProfit(vector<int>& p) {
-        int n = p.size();
-        vector<int> dp(n + 1);
+    vector<vector<int>> insert(vector<vector<int>>& intervals,
+                               vector<int>& newInterval) {
 
-        for (auto j = 1; j < n + 1; ++j) {
-            dp[j] = dp[j - 1];
-            for (auto i = 1; i < j; ++i) {
-                if (p[i - 1] < p[j - 1]) {
-                    dp[j] = max(dp[j], p[j - 1] - p[i - 1] + dp[i - 2]);
-                }
+        map<int, int> dp;
+        for (auto& interval : intervals) {
+            ++dp[interval[0]];
+            --dp[interval[1]];
+        }
+        ++dp[newInterval[0]];
+        --dp[newInterval[1]];
+
+        vector<vector<int>> rv;
+        int sum = 0, l = 0, r = 0;
+        for (auto& d : dp) {
+            int psum = sum;
+            sum += d.second;
+            if (psum == 0) {
+                l = d.first;
+            }
+            if (sum == 0) {
+                rv.push_back({l, d.first});
             }
         }
 
-        return dp[n];
+        return rv;
     }
 };
 
@@ -82,6 +81,6 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.maxProfit(vector<int>() = {1, 3, 4, 0, 4});
-    cout << r << endl;
+    sol.insert(vector<vector<int>>() = {{1, 2}, {3, 4}},
+               vector<int>() = {2, 3});
 }

@@ -48,33 +48,23 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
 class Solution {
-    int dfs(vector<int>& prices, int j) {
-        if (j <= 0)
-            return 0;
-
-        int rv = dfs(prices, j - 1);
-        for (int i = j - 1; i >= 0; --i) {
-            if (prices[j] > prices[i])
-                rv = max(rv, prices[j] - prices[i] + dfs(prices, i - 2));
-        }
-        return rv;
-    }
-
   public:
-    int maxProfit(vector<int>& p) {
-        int n = p.size();
-        vector<int> dp(n + 1);
-
-        for (auto j = 1; j < n + 1; ++j) {
-            dp[j] = dp[j - 1];
-            for (auto i = 1; i < j; ++i) {
-                if (p[i - 1] < p[j - 1]) {
-                    dp[j] = max(dp[j], p[j - 1] - p[i - 1] + dp[i - 2]);
+    int lengthOfLongestSubstring(string s) {
+        int n = s.size();
+        array<int, 256> cnt = {};
+        int rv = 0, too_many = 0;
+        for (auto i = 0, j = 0; j < n; ++j) {
+            if (++cnt[s[j]] > 1) {
+                ++too_many;
+            }
+            while (too_many) {
+                if (--cnt[s[i++]] == 1) {
+                    --too_many;
                 }
             }
+            rv = max(rv, j - i + 1);
         }
-
-        return dp[n];
+        return rv;
     }
 };
 
@@ -82,6 +72,6 @@ int main() {
     Solution sol;
     int r;
 
-    r = sol.maxProfit(vector<int>() = {1, 3, 4, 0, 4});
+    r = sol.lengthOfLongestSubstring("pwwkew");
     cout << r << endl;
 }

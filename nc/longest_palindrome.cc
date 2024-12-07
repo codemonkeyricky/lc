@@ -48,40 +48,44 @@ using vll = vector<long long>;
 using vvll = vector<vector<long long>>;
 
 class Solution {
-    int dfs(vector<int>& prices, int j) {
-        if (j <= 0)
-            return 0;
-
-        int rv = dfs(prices, j - 1);
-        for (int i = j - 1; i >= 0; --i) {
-            if (prices[j] > prices[i])
-                rv = max(rv, prices[j] - prices[i] + dfs(prices, i - 2));
-        }
-        return rv;
-    }
-
   public:
-    int maxProfit(vector<int>& p) {
-        int n = p.size();
-        vector<int> dp(n + 1);
+    string longestPalindrome(string s) {
+        int n = s.size();
+        vector<vector<int>> dp(n, vector<int>(n));
 
-        for (auto j = 1; j < n + 1; ++j) {
-            dp[j] = dp[j - 1];
-            for (auto i = 1; i < j; ++i) {
-                if (p[i - 1] < p[j - 1]) {
-                    dp[j] = max(dp[j], p[j - 1] - p[i - 1] + dp[i - 2]);
-                }
+        /* base case */
+        string rv;
+        rv += s[0];
+
+        for (auto i = 0; i < n; ++i) {
+            dp[i][i] = 1;
+        }
+
+        for (auto i = 0; i + 1 < n; ++i) {
+            if (s[i] == s[i + 1]) {
+                dp[i][i + 1] = 2;
+                rv = s.substr(i, 2);
             }
         }
 
-        return dp[n];
+        for (auto j = 0; j < n; ++j) {
+            for (auto i = 0; i + 1 < j; ++i) {
+                if (s[i] == s[j] && dp[i + 1][j - 1]) {
+                    dp[i][j] = dp[i + 1][j - 1] + 2;
+                    if (dp[i][j] > rv.size()) {
+                        rv = s.substr(i, j - i + 1);
+                    }
+                }
+            }
+        }
+        return rv;
     }
 };
 
 int main() {
     Solution sol;
-    int r;
+    string r;
 
-    r = sol.maxProfit(vector<int>() = {1, 3, 4, 0, 4});
+    r = sol.longestPalindrome("aacabdkacaa");
     cout << r << endl;
 }
