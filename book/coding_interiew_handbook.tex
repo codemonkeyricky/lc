@@ -1,0 +1,53 @@
+
+% \documentclass[draft]{report}
+
+\RequirePackage{luatex85}% TeXLive 2017 fix for \geometry
+\documentclass{kdp}
+\usepackage{geometry}
+
+\usepackage{tlatex}
+% \usepackage{listings}
+\usepackage{xcolor}
+\usepackage{comment}
+\usepackage{fancyhdr}
+\usepackage{amssymb}
+\usepackage{inputenc}
+\usepackage{svg}
+\usepackage{framed}
+
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows}
+
+
+% !TeX spellcheck = en_GB 
+
+% Configure fancyhdr
+\pagestyle{fancy}
+\fancyhf{} % Clear default header and footer
+
+% Header settings
+\fancyhead[L]{\nouppercase{\leftmark}} % Chapter number and title on the left
+% \fancyhead[C]{Center Header}    % Centered header
+\fancyhead[R]{\thepage}     % Right-aligned header
+
+% Footer settings
+% \fancyfoot[L]{Left Footer}      % Left-aligned footer
+% \fancyfoot[C]{Page \thepage}    % Centered footer with page number
+% \fancyfoot[R]{Right Footer}     % Right-aligned footer
+
+% java -cp /home/richard/dev/tla2tex/tla2tools.jar  tla2tex.TeX  book.tex 
+
+\title{Coding Interview Handbook \\ Early Preview}
+
+\author{Richard Tang}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section*{Acknowledgement}
+
+\tableofcontents
+
+\part{Introduction}
+
+\end{document}
